@@ -1,4 +1,3 @@
-
 DROP TABLE IF EXISTS `pre_attachments`;
 CREATE TABLE `pre_attachments` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -15,13 +14,15 @@ CREATE TABLE `pre_attachments` (
   `cTime` int(11) unsigned NOT NULL,
   `status` tinyint(1) NOT NULL,
   `favor` int(11) unsigned NOT NULL,
-  `areaid` int(10) unsigned NOT NULL,
   `remote` varchar(255) NOT NULL,
   `comments` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `logid` (`logid`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1215 DEFAULT CHARSET=utf8;
 
+-- ----------------------------
+-- Table structure for pre_comments
+-- ----------------------------
 DROP TABLE IF EXISTS `pre_comments`;
 CREATE TABLE `pre_comments` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -39,7 +40,9 @@ CREATE TABLE `pre_comments` (
   KEY `logid` (`logid`)
 ) ENGINE=MyISAM AUTO_INCREMENT=161570 DEFAULT CHARSET=utf8;
 
-
+-- ----------------------------
+-- Table structure for pre_feedback
+-- ----------------------------
 DROP TABLE IF EXISTS `pre_feedback`;
 CREATE TABLE `pre_feedback` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -57,79 +60,50 @@ CREATE TABLE `pre_feedback` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-
+-- ----------------------------
+-- Table structure for pre_posts
+-- ----------------------------
 DROP TABLE IF EXISTS `pre_posts`;
 CREATE TABLE `pre_posts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL,
-  `colid` int(5) NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `content` mediumtext NOT NULL,
-  `hits` int(11) NOT NULL,
-  `cTime` int(11) NOT NULL,
-  `updateTime` int(11) NOT NULL,
-  `status` tinyint(1) NOT NULL,
-  `top` tinyint(1) NOT NULL,
-  `favors` int(11) unsigned NOT NULL,
-  `lat` varchar(50) NOT NULL,
-  `long` varchar(50) NOT NULL,
-  `mapZoom` tinyint(3) NOT NULL,
-  `sourceurl` varchar(255) NOT NULL,
-  `sourceinfo` varchar(255) NOT NULL,
-  `keywords` varchar(255) NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `classify` tinyint(1) NOT NULL DEFAULT '1',
-  `comments` int(10) NOT NULL,
-  `platform` char(16) NOT NULL,
-  `areaid` int(10) unsigned NOT NULL,
-  `redirect` varchar(255) NOT NULL,
-  `nearby` varchar(255) NOT NULL,
-  `faceimg` int(10) NOT NULL,
-  `favorite` int(10) unsigned NOT NULL,
+  `uid` int(11) NOT NULL COMMENT '作者ID',
+  `title` varchar(255) NOT NULL COMMENT '标题',
+  `content` text NOT NULL COMMENT '正文',
+  `faceimg` int(10) NOT NULL COMMENT '封面图',
+  `classify` tinyint(1) NOT NULL DEFAULT '1' COMMENT '分类',
+  `lat` varchar(50) NOT NULL COMMENT '纬度',
+  `long` varchar(50) NOT NULL COMMENT '经度',
+  `mapZoom` tinyint(3) NOT NULL COMMENT '地图缩放级别',
+  `comments` int(10) NOT NULL COMMENT '评论数',
+  `favors` int(11) unsigned NOT NULL COMMENT '点赞数',
+  `favorite` int(10) unsigned NOT NULL COMMENT '收藏数',
+  `top` tinyint(1) NOT NULL COMMENT '是否置顶',
+  `hits` int(11) NOT NULL COMMENT '阅读数',
   `tagids` varchar(255) NOT NULL COMMENT '标签组',
-  `groupid` int(10) NOT NULL COMMENT '所属团队',
+  `status` tinyint(1) NOT NULL,
+  `cTime` int(11) NOT NULL COMMENT '创建世界',
+  `updateTime` int(11) NOT NULL COMMENT '最近更新时间',
   PRIMARY KEY (`id`),
   KEY `hits` (`hits`),
-  KEY `colid` (`colid`),
-  KEY `areaid` (`areaid`),
   KEY `classify` (`classify`),
   KEY `uid` (`uid`)
 ) ENGINE=MyISAM AUTO_INCREMENT=151832 DEFAULT CHARSET=utf8;
 
-
+-- ----------------------------
+-- Table structure for pre_users
+-- ----------------------------
 DROP TABLE IF EXISTS `pre_users`;
 CREATE TABLE `pre_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `truename` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `groupid` tinyint(3) unsigned NOT NULL DEFAULT '0',
-  `register_ip` char(15) NOT NULL,
-  `last_login_ip` char(15) NOT NULL,
-  `register_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `last_login_time` int(10) unsigned NOT NULL DEFAULT '0',
-  `login_count` int(10) unsigned NOT NULL DEFAULT '0',
-  `status` tinyint(1) NOT NULL,
-  `email_status` tinyint(1) unsigned NOT NULL,
-  `reputation` smallint(8) unsigned NOT NULL,
-  `badge` smallint(8) unsigned NOT NULL,
-  `posts` int(10) unsigned NOT NULL,
-  `answers` int(10) unsigned NOT NULL,
-  `tips` int(10) unsigned NOT NULL,
-  `favors` int(10) unsigned NOT NULL,
-  `fans` int(10) unsigned NOT NULL,
-  `last_update` int(10) unsigned NOT NULL,
-  `hits` int(10) NOT NULL,
-  `extra` text NOT NULL,
-  `sex` tinyint(1) NOT NULL DEFAULT '-1',
-  `classify` tinyint(1) NOT NULL DEFAULT '1' COMMENT '用户分类',
-  `areaid` int(10) NOT NULL COMMENT '所在地区',
+  `truename` varchar(16) NOT NULL COMMENT '用户名',
+  `password` varchar(32) NOT NULL COMMENT '密码',
+  `contact` varchar(255) NOT NULL COMMENT '联系方式',
   `avatar` varchar(255) NOT NULL COMMENT '用户头像',
-  `creditStatus` tinyint(1) NOT NULL COMMENT '认证状态',
-  `tagids` varchar(255) NOT NULL COMMENT '标签组',
-  `content` varchar(255) NOT NULL COMMENT '个人简介',
+  `content` text NOT NULL COMMENT '个人简介',
+  `hits` int(10) NOT NULL COMMENT '点击次数',
+  `sex` tinyint(1) NOT NULL COMMENT '性别',
+  `isAdmin` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否管理员',
+  `status` tinyint(1) NOT NULL COMMENT '状态',
   PRIMARY KEY (`id`),
-  KEY `name` (`username`),
-  KEY `email` (`email`)
+  KEY `email` (`contact`)
 ) ENGINE=MyISAM AUTO_INCREMENT=40978 DEFAULT CHARSET=utf8;

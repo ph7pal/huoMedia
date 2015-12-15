@@ -904,5 +904,27 @@ class zmf {
         }
         return $str;
     }
+    
+    /**
+     * 处理语言输出
+     * @param type $type
+     * @param type $value
+     * @return type
+     */
+    public static function t($type, $value = '') {
+        $str = Yii::t('default', $type);
+        if (isset($value) && !is_array($value)) {
+            return sprintf($str, $value);
+        } elseif (is_array($value)) {
+            $_tmp = join(',', $value);
+
+            //foreach($value as $s){
+            $str = sprintf($str, $_tmp);
+            //}
+            return $str;
+        } else {
+            return $str;
+        }
+    }
 
 }
