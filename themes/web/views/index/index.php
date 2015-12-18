@@ -1,8 +1,3 @@
-<div class="index-fixed-navbar">
-    <div class="container">
-        dfdfd
-    </div>
-</div>
 <div class="container content">    
     <div class="main-part">
         <div class="post-item">

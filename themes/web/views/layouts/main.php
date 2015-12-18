@@ -1,5 +1,5 @@
 <?php $this->beginContent('/layouts/common'); ?>
-<!--<div class="navbar navbar-default" role="navigation">
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -16,8 +16,8 @@
             <ul class="nav navbar-nav navbar-right">
                 
             </ul>
-        </div>/.nav-collapse 
+        </div>
     </div> 
-</div>-->
+</div>
 <?php echo $content; ?>
 <?php $this->endContent(); ?>

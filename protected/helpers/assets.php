@@ -47,8 +47,12 @@ class assets {
     }
 
     public function loadCssJs($type = 'web', $action = '') {
-        $_staticUrl = zmf::config('cssJsStaticUrl');
-        $staticUrl = $_staticUrl ? $_staticUrl : zmf::config('baseurl');
+        if(YII_DEBUG){
+            $staticUrl = Yii::app()->baseUrl.'/';
+        }else{
+            $_staticUrl = zmf::config('cssJsStaticUrl');
+            $staticUrl = $_staticUrl ? $_staticUrl : zmf::config('baseurl');
+        }
         $cs = Yii::app()->clientScript;
         $c = Yii::app()->getController()->id;
         $a = Yii::app()->getController()->getAction()->id;

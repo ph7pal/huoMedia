@@ -17,5 +17,6 @@
     </head>
     <body>       
         <?php echo $content; ?>
+        <?php assets::jsConfig('web');?> 
     </body>
 </html>

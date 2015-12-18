@@ -38,18 +38,6 @@ body{
     background: #e1e8e5;
     z-index: -2
 }
-.index-fixed-navbar{
-    width: 100%;
-    height: 45px;
-    position: fixed;
-    left: 0;
-    top:0;
-    background: #fff;
-    z-index: 9;
-    box-shadow: 0 1px 3px rgba(0,0,0,.3);
-    -moz-box-shadow: 0 1px 3px rgba(0,0,0,.3);
-    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.3);
-}
 /*右侧------*/
 .author-avatar-box{
     width: 278px;

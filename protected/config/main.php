@@ -1,6 +1,5 @@
 <?php
 
-
 $rewrite = require('rewrite.php');
 
 return array(
@@ -52,7 +51,7 @@ return array(
             'class' => 'system.base.CStatePersister',
             'stateFile' => dirname(__FILE__) . '/../runtime/state.bin',
         ),
-        'db' => require('db.php'),
+        'db' => require(dirname(__FILE__) . '/../runtime/config/db.php'),
         'errorHandler' => array(
             'errorAction' => 'site/error',
         ),
@@ -71,5 +70,9 @@ return array(
             ),
         ),
     ),
-    'params' => require(dirname(__FILE__) . '/params.php'),
+    'params' => array(
+        'c' => require(dirname(__FILE__) . '/../runtime/config/config.php'),
+        'author' => '@阿年飞少',
+        'copyrightInfo' => 'COPYRIGHT&copy;2015-2016 blog.newsoul.cn BY 阿年飞少.',
+    )
 );

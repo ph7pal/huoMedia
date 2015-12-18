@@ -62,11 +62,13 @@ class SiteController extends Q {
                     $arr = array(
                         'latestLoginTime' => zmf::now(),
                     );
+                    
                     $uid = Yii::app()->user->id;
-                    User::model()->updateByPk($uid, $arr);
+//                    User::model()->updateByPk($uid, $arr);
+                    
                     zmf::delCookie('checkWithCaptcha');
                     zmf::delFCache($cacheKey);
-                    $this->redirect(array('user/view', 'code' => Posts::encode($uid, 'user')));
+                    $this->redirect(array('user/view', 'code' => $uid));
                 } else {
                     zmf::updateFCacheCounter($cacheKey, 1, 3600);
                     zmf::setCookie('checkWithCaptcha', 1, 86400);

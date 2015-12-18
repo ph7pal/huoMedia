@@ -8,24 +8,19 @@
 class U extends CUserIdentity {
 
     private $_id;
-    public $email;
+    public $username;
 
-    public function __construct($email, $password) {
-        parent::__construct($username, $password);
-        $this->email = $email;
+    public function __construct($username, $password) {
+        parent::__construct($username, $password);        
+        $this->username=$username;
     }
 
     /**
      * Authenticates a user.
      * @return boolean whether authentication succeeds.
      */
-    public function authenticate() {
-        $validator = new CEmailValidator;
-        if($validator->validateValue($this->email)){
-            $user = Users::model()->find('email=:email', array(':email'=>  $this->email));
-        }else{
-            $user = Users::model()->find('truename=:truename', array(':truename'=>  $this->email));
-        }
+    public function authenticate() {        
+        $user = Users::model()->find('truename=:truename', array(':truename'=>  $this->username)); 
         if ($user === null)
             $this->errorCode = self::ERROR_USERNAME_INVALID;
         else if($user['status']!=Posts::STATUS_PASSED)

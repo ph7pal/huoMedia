@@ -24,9 +24,6 @@ class Q extends Controller {
             '/weixin/',
         );
         $set = true;
-//        if (Posts::checkImg($currentUrl)) {
-//            $set = false;
-//        }
         if ($set) {
             foreach ($arr as $val) {
                 if (!$set) {
