@@ -44,6 +44,8 @@ class Posts extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
+            array('uid', 'default', 'setOnEmpty' => true, 'value' => zmf::uid()),
+            array('cTime,updateTime', 'default', 'setOnEmpty' => true, 'value' => zmf::now()),
             array('uid, title, content', 'required'),
             array('uid, faceimg, classify, mapZoom, comments, top, hits, status, cTime, updateTime', 'numerical', 'integerOnly' => true),
             array('title, tagids', 'length', 'max' => 255),
@@ -141,6 +143,64 @@ class Posts extends CActiveRecord {
      */
     public static function model($className = __CLASS__) {
         return parent::model($className);
+    }
+    
+    /**
+     * 处理内容
+     * @param type $content
+     * @return type
+     */
+    public static function handleContent($content) {
+        $pattern = "/<[img|IMG].*?data=[\'|\"](.*?)[\'|\"].*?[\/]?>/i";
+        preg_match_all($pattern, $content, $match);
+        $arr_attachids = array();
+        if (!empty($match[0])) {
+            $arr = array();
+            foreach ($match[0] as $key => $val) {
+                $_key = $match[1][$key];
+                $arr[$_key] = $val;
+                $arr_attachids[] = $match[1][$key];
+            }
+            if (!empty($arr)) {
+                foreach ($arr as $thekey => $imgsrc) {
+                    $content = str_ireplace("{$imgsrc}", '[attach]' . $thekey . '[/attach]', $content);
+                }
+            }
+        }
+        $content = strip_tags($content, '<b><strong><em><span><a><p><u><i><img><br><br/>');
+        $replace = array(
+            "/style=\"[^\"]*?\"/i"
+        );
+        $to = array(
+            ''
+        );
+        $content = preg_replace($replace, $to, $content);
+        $data = array(
+            'content' => $content,
+            'attachids' => $arr_attachids,
+        );
+        return $data;
+    }
+    
+    public static function getAll($params, &$pages, &$comLists) {
+        $sql = $params['sql'];
+        if (!$sql) {
+            return false;
+        }
+        $pageSize = $params['pageSize'];
+        $_size = isset($pageSize) ? $pageSize : 30;
+        $com = Yii::app()->db->createCommand($sql)->query();
+        //添加限制，最多取1000条记录
+        //todo，按不同情况分不同最大条数
+        $total=$com->rowCount>1000 ? 1000 : $com->rowCount;
+        $pages = new CPagination($total);
+        $criteria = new CDbCriteria();
+        $pages->pageSize = $_size;
+        $pages->applylimit($criteria);
+        $com = Yii::app()->db->createCommand($sql . " LIMIT :offset,:limit");
+        $com->bindValue(':offset', $pages->currentPage * $pages->pageSize);
+        $com->bindValue(':limit', $pages->pageSize);
+        $comLists = $com->queryAll();
     }
 
 }

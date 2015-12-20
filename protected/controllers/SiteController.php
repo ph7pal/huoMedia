@@ -21,7 +21,7 @@ class SiteController extends Q {
         }
     }
 
-    public function actionIndex() {
+    public function actionError() {
         if ($error = Yii::app()->errorHandler->error) {
             switch ($error['code']) {
                 case 404:

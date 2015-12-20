@@ -7,9 +7,16 @@ class Q extends Controller {
 
     public $layout = 'main';
     public $referer;
+    public $uid;
+    public $userInfo;
 
     function init() {
         parent::init();
+        $uid=  zmf::uid();
+        if($uid){
+            $this->uid=$uid;
+            $this->userInfo=  Users::getOne($uid);
+        }
         self::_referer();
     }
 

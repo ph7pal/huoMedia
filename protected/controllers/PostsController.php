@@ -7,6 +7,14 @@ class PostsController extends Q {
     public $favored = false;
     public $favorited = false;
     public $selectColid; //当前选择的文章分类
+    
+    public function actionView($id){
+        $info=  $this->loadModel($id);
+        $data=array(
+            'info'=>$info
+        );
+        $this->render('view',$data);
+    }
 
     /**
      * 已取消其他文章类型，默认为游记
@@ -14,8 +22,8 @@ class PostsController extends Q {
      */
 
     public function actionCreate($id = '') {
-        $id = zmf::filterInput($id);
-        if (!zmf::uid()) {
+        $id = zmf::myint($id);
+        if (!$this->uid) {
             $this->redirect(array('site/login'));
         }
         if ($id) {
@@ -33,7 +41,6 @@ class PostsController extends Q {
             //处理文本
             $filter = Posts::handleContent($_POST['Posts']['content']);
             $_POST['Posts']['content'] = $filter['content'];
-            unset(Yii::app()->session['checkHasBadword']);
             if (!empty($filter['attachids'])) {
                 $attkeys = array_filter(array_unique($filter['attachids']));
                 if (!empty($attkeys)) {
@@ -52,7 +59,7 @@ class PostsController extends Q {
                         Attachments::model()->updateAll(array('status' => Posts::STATUS_PASSED, 'logid' => $model->id), 'id IN(' . $attstr . ')');
                     }
                 }
-                $this->redirect(array('index', 'id' => $model->id));
+                $this->redirect(array('view', 'id' => $model->id));
             }
         }
         $this->pageTitle = '与世界分享你的旅行见闻 - ' . zmf::config('sitename');

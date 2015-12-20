@@ -15,8 +15,7 @@ class Comments extends CActiveRecord {
     public function rules() {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
-        return array(
-            array('uid', 'default', 'setOnEmpty' => true, 'value' => Yii::app()->user->isGuest ? mt_rand(1, 40000) : Yii::app()->user->id),
+        return array(            
             array('uid, logid,content,classify, status, cTime', 'required'),
             array('status', 'numerical', 'integerOnly' => true),
             array('uid, touid, logid, commentid, tocommentid, cTime', 'length', 'max' => 11),

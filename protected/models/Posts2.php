@@ -347,67 +347,7 @@ class Posts extends CActiveRecord {
         return $info;
     }
 
-    /**
-     * 处理内容
-     * @param type $content
-     * @return type
-     */
-    public static function handleContent($content) {
-        $pattern = "/<[img|IMG].*?data=[\'|\"](.*?)[\'|\"].*?[\/]?>/i";
-        preg_match_all($pattern, $content, $match);
-        $arr_attachids = array();
-        if (!empty($match[0])) {
-            $arr = array();
-            foreach ($match[0] as $key => $val) {
-                $_key = $match[1][$key];
-                $arr[$_key] = $val;
-                $arr_attachids[] = $match[1][$key];
-            }
-            if (!empty($arr)) {
-                foreach ($arr as $thekey => $imgsrc) {
-                    $content = str_ireplace("{$imgsrc}", '[attach]' . $thekey . '[/attach]', $content);
-                }
-            }
-        }
-        $content = strip_tags($content, '<b><strong><em><span><a><p><u><i><img><br><br/>');
-        $replace = array(
-            '/<a.*?href="(.*?)".*?>(.+?)<\/a>/ie',
-            '/(((http|https):\/\/)[a-z0-9;&#@=_~%\?\/\.\,\+\-\!\:]+)/ie', //替换纯文本链接
-            "/style=\"[^\"]*?\"/i"
-        );
-        $to = array(
-            "self::autoUrl('\\1','\\2')",
-            "self::textUrl('\\1')",
-            ''
-        );
-        $content = preg_replace($replace, $to, $content);
-        if (zmf::config('checkBadWords')) {
-            $h_style = zmf::config("badwordsHandleStyle");
-            //仅过滤
-            if ($h_style === 'filter') {
-                $content = zmf::badWordsReplace($content);
-                //仅通知 过滤通知    
-            } elseif ($h_style === 'notice' OR $h_style === 'filterNotice') {
-                $status = Yii::app()->session['checkHasBadword'];
-                if ($status != 'yes') {
-                    $keywords = zmf::getBadwords();
-                    foreach ($keywords as $word) {
-                        if (mb_strpos($content, $word) !== false) {
-                            Yii::app()->session['checkHasBadword'] = 'yes';
-                        }
-                    }
-                }
-                if ($h_style === 'filterNotice') {
-                    $content = zmf::badWordsReplace($content);
-                }
-            }
-        }
-        $data = array(
-            'content' => $content,
-            'attachids' => $arr_attachids,
-        );
-        return $data;
-    }
+    
 
     /**
      * 判断发布内容是否应被禁止通过
@@ -459,30 +399,6 @@ class Posts extends CActiveRecord {
             'status' => $status,
             'msg' => $reason,
         );
-    }
-
-    /**
-     * 给内容自动加上坐标链接
-     * @param type $data
-     * @return boolean
-     */
-    public static function autoLink($data) {
-        $path = zmf::config('async_push_path');
-        $host = zmf::config('async_push_host');
-        if (!$path || !$host) {
-            return false;
-        }
-        $content = $data['content'];
-        $url = $data['url'];
-        if (!$data || !$content || !$url) {
-            return false;
-        }
-        $id = uniqid();
-        $dir = Yii::app()->basePath . '/runtime/autolink';
-        zmf::createUploadDir($dir);
-        file_put_contents($dir . "/$id.txt", $content);
-        $asyncdata = "method=linkPoi&" . $url . "&fileid={$id}";
-        AsyncController::Async($asyncdata, 'get');
     }
 
     /**

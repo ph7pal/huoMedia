@@ -2,10 +2,6 @@
 
 class Controller extends CController {
 
-    public function init() {
-        parent::init();
-    }
-
     public function message($status = 0, $message = '', $url = '', $time = 3, $jump = true, $render = true) {
         if (empty($url)) {
             $url = Yii::app()->user->returnUrl;
