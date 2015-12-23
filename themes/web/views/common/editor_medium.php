@@ -8,16 +8,51 @@
  * @datetime 2015-12-23  15:46:51 
  */
 $cs = Yii::app()->clientScript;
+$cs->registerScriptFile(Yii::app()->baseUrl . '/jsCssSrc/js/ajaxfileupload.js', CClientScript::POS_END);
 $cs->registerScriptFile(Yii::app()->baseUrl . '/medium/js/medium-editor.min.js', CClientScript::POS_END);
+//$cs->registerScriptFile(Yii::app()->baseUrl . '/medium/ext/dist/js/medium-editor-insert-plugin.min.js', CClientScript::POS_END);
 $cs->registerCssFile(Yii::app()->baseUrl . '/medium/css/medium-editor.min.css');
 $cs->registerCssFile(Yii::app()->baseUrl . '/medium/css/themes/bootstrap.min.css');
 ?>
 <div class="editable"></div>
 <script>
+    function ajaxFileUpload() {
+        $.ajaxFileUpload({
+            url: '<?php echo Yii::app()->createUrl('attachments/upload', array()); ?>',
+            fileElementId: 'upload-file',
+            type: 'post',
+            multi:true,
+            data: {'PHPSESSID': '<?php echo Yii::app()->session->sessionID; ?>', 'YII_CSRF_TOKEN': '<?php echo Yii::app()->request->csrfToken; ?>'},
+            dataType: 'json',
+            success: function (res) {
+
+            }
+        })
+    }
     $("document").ready(function () {
+        var HighlighterButton = MediumEditor.Extension.extend({
+            name: 'highlighter',
+            init: function () {
+                this.button = this.document.createElement('button');
+                this.button.classList.add('medium-editor-action');
+                this.button.innerHTML = '<div style="position:relative"><i class="fa fa-image"></i><input type="file" name="upload-file" id="upload-file" style="opacity: 0; position: absolute; top: 0px; left: 0px; width: 60px; height: 60px;" onchange="ajaxFileUpload()"></div>';
+                this.button.title = 'Highlight';
+
+                this.on(this.button, 'click', this.handleClick.bind(this));
+            },
+            getButton: function () {
+                return this.button;
+            },
+            handleClick: function (event) {
+                //this.classApplier.toggleSelection();
+                //alert('my func');
+            }
+        });
+
         var editor = new MediumEditor('.editable', {
             autoLink: true,
             imageDragging: true,
+            buttonLabels: 'fontawesome',
             toolbar: {
                 buttons: [
                     {
@@ -52,17 +87,7 @@ $cs->registerCssFile(Yii::app()->baseUrl . '/medium/css/themes/bootstrap.min.css
                         name: 'removeFormat',
                         aria: '清除样式'
                     },
-                    {
-                        name: 'upload',
-                        action: 'upload',
-                        aria: 'upload',
-                        tagNames: ['img'],
-                        contentDefault: '<b>H1</b>',
-                        classList: ['custom-class-h1'],
-                        attrs: {
-                            'data-custom-attr': 'attr-value-h1'
-                        }
-                    }
+                    'highlighter'
                 ]
             },
             placeholder: {
@@ -76,10 +101,19 @@ $cs->registerCssFile(Yii::app()->baseUrl . '/medium/css/themes/bootstrap.min.css
             anchorPreview: {
                 hideDelay: 300
             },
+            keyboardCommands: {
+                commands: [
+                    {
+                        command: 'highlighter',
+                        key: '0',
+                        meta: true,
+                        shift: true,
+                        alt: true
+                    }
+                ],
+            },
             extensions: {
-//                upload:function(e){
-//                    console.log('heheh');
-//                }
+                'highlighter': new HighlighterButton()
             }
         });
     })

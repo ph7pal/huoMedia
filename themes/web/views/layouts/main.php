@@ -19,7 +19,7 @@
             </ul>
             <?php }else{ ?>
             <ul class="nav navbar-nav navbar-right">
-                <li><?php echo CHtml::link('上传作品', array('posts/create'),array('role'=>'menuitem')); ?></li>
+                <li><?php echo CHtml::link('<i class="fa fa-plus"></i>上传作品', array('posts/create'),array('role'=>'menuitem')); ?></li>
                 <li><?php echo CHtml::link('提醒', array('users/notice'),array('role'=>'menuitem')); ?></li>
                 <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $this->userInfo['truename'];?> <span class="caret"></span></a>               

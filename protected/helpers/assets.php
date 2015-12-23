@@ -63,6 +63,7 @@ class assets {
         if ($type == 'web') {
             $cssArr = array(
                 'bootstrap',
+                'font-awesome',
                 'zmf',
             );
             $jsArr = array(

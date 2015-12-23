@@ -20,7 +20,7 @@
 <div class="add-post-form">
     <?php $form=$this->beginWidget('CActiveForm', array(
             'id'=>'posts-form',
-            'enableAjaxValidation'=>true,
+            'enableAjaxValidation'=>false,
     )); ?>
             <?php echo $form->errorSummary($model); ?>
             <div class="form-group">
