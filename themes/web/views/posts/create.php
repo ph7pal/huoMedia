@@ -30,7 +30,8 @@
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'content'); ?>
-                <?php $this->renderPartial('/common/editor_bd', array('model' => $model,'content' => $model->content,'uploadurl'=>$uploadurl)); ?>
+                <?php //$this->renderPartial('/common/editor_bd', array('model' => $model,'content' => $model->content,'uploadurl'=>$uploadurl)); ?>
+                <?php $this->renderPartial('/common/editor_medium', array('model' => $model,'content' => $model->content)); ?>
                 <?php echo $form->error($model,'content'); ?>
             </div>
             <div class="form-group">

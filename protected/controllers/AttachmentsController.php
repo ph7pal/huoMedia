@@ -1,10 +1,28 @@
 <?php
 
 class AttachmentsController extends Q {
+    
+    public function init(){
+        parent::init();
+        $action=  zmf::val('action',1);
+        if($action=='config'){
+            $arr=array(
+                'imageFieldName'=>'upfile',
+                'imageMaxSize'=>'2048000',
+                'imageAllowFiles'=>array(".png", ".jpg", ".jpeg", ".gif", ".bmp"),
+            );
+            echo CJSON::encode($arr);
+            exit();
+        }
+    }
 
     
 
     public function actionUpload() {
+        
+        zmf::test($_POST);
+        zmf::test($_FILES);
+        exit();
         $uptype = zmf::filterInput($_GET['type'], 't', 1);
         $logid = zmf::filterInput($_GET['id']); //所属对象
         $reImgsize = zmf::filterInput($_GET['imgsize']); //返回图片的尺寸
