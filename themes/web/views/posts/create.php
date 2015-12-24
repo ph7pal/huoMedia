@@ -13,7 +13,8 @@
     .add-post-form{
         width: 640px;
         margin: 50px auto 0;
-        padding: 0 10px
+        padding: 0 10px;
+        border: 1px solid #000
     }
 </style>
 <?php $uploadurl=Yii::app()->createUrl('attachments/upload',array('type'=>'posts','imgsize'=>600));?>
@@ -24,18 +25,15 @@
     )); ?>
             <?php echo $form->errorSummary($model); ?>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'title'); ?>
                 <?php echo $form->textField($model,'title',array('size'=>60,'maxlength'=>255,'class'=>'form-control')); ?>
-                <?php echo $form->error($model,'title'); ?>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'content'); ?>
                 <?php //$this->renderPartial('/common/editor_bd', array('model' => $model,'content' => $model->content,'uploadurl'=>$uploadurl)); ?>
-                <?php $this->renderPartial('/common/editor_medium', array('model' => $model,'content' => $model->content)); ?>
-                <?php echo $form->error($model,'content'); ?>
+                <?php $this->renderPartial('/common/editor_medium', array('model' => $model,'content' => $model->content)); ?>                
             </div>
             <div class="form-group">
                     <?php echo CHtml::submitButton($model->isNewRecord ? '提交' : '更新',array('class'=>'btn btn-success pull-right','id'=>'editorSubmit')); ?>
             </div>
     <?php $this->endWidget(); ?>
+    
 </div><!-- form -->
