@@ -60,19 +60,25 @@ $cs->registerCssFile(Yii::app()->baseUrl . '/medium/css/themes/bootstrap.min.css
     <a href="javascript:;" onclick="$('#upload-file').click();"><i class="fa fa-image func-btn"></i></a>
     <a href="javascript:;"><i class="fa fa-video-camera func-btn"></i></a>
     <a href="javascript:;"><i class="fa fa-table func-btn"></i></a>
-    <input type="file" name="upload-file" id="upload-file" onchange="ajaxFileUpload()"/>
+    <input type="file" name="filedata" id="upload-file" onchange="ajaxFileUpload()"/>
 </div>
 <script>
     function ajaxFileUpload() {
         $.ajaxFileUpload({
-            url: '<?php echo Yii::app()->createUrl('attachments/upload', array()); ?>',
+            url: '<?php echo Yii::app()->createUrl('attachments/upload', array('type'=>'posts')); ?>',
             fileElementId: 'upload-file',
             type: 'post',
             multi: true,
             data: {'PHPSESSID': '<?php echo Yii::app()->session->sessionID; ?>', 'YII_CSRF_TOKEN': '<?php echo Yii::app()->request->csrfToken; ?>'},
             dataType: 'json',
             success: function (res) {
-
+                if(res.status===1){
+                    var html='<p><img src="'+res.imgsrc+'" class="img-responsive" data="'+res.attachid+'"/></p><p><br/></p>';
+                    zmf.editor.setContent(html);
+                }else{
+                    alert(res.msg);
+                }
+                return false;
             }
         })
     }    
@@ -82,7 +88,7 @@ $cs->registerCssFile(Yii::app()->baseUrl . '/medium/css/themes/bootstrap.min.css
             btndom.fadeOut(300);
         }else{
             var holderPos=$('#content-textarea').offset();        
-            var pos=$('.editable').caret('position');            
+            var pos=$('#content-textarea').caret('position');            
             btndom.css('top',pos.top+holderPos.top-8);
             btndom.fadeIn(300);
         }
@@ -107,7 +113,7 @@ $cs->registerCssFile(Yii::app()->baseUrl . '/medium/css/themes/bootstrap.min.css
             }
         });
 
-        var editor = new MediumEditor('.editable', {
+        zmf.editor = new MediumEditor('.editable', {
             autoLink: true,
             imageDragging: true,
             buttonLabels: 'fontawesome',
@@ -144,8 +150,7 @@ $cs->registerCssFile(Yii::app()->baseUrl . '/medium/css/themes/bootstrap.min.css
                     {
                         name: 'removeFormat',
                         aria: '清除样式'
-                    },
-                    'highlighter'
+                    }
                 ]
             },
             placeholder: {
@@ -158,29 +163,18 @@ $cs->registerCssFile(Yii::app()->baseUrl . '/medium/css/themes/bootstrap.min.css
             },
             anchorPreview: {
                 hideDelay: 300
-            },
-            keyboardCommands: {
-                commands: [
-                    {
-                        command: 'highlighter',
-                        key: '0',
-                        meta: true,
-                        shift: true,
-                        alt: true
-                    }
-                ],
-            },
+            },            
             extensions: {
-                'highlighter': new HighlighterButton()
+                //'highlighter': new HighlighterButton()
             }
         });
         
         
-        editor.subscribe('editableInput', function (event, editable) {
+        zmf.editor.subscribe('editableInput', function (event, editable) {
             showBtns();            
             //editor.getFocusedElement();
         });
-        $('.editable').focusin(function(){
+        $('#content-textarea').focusin(function(){
             showBtns();  
         });
         $('.toggle-funcs-btn').unbind('click').click(function(){

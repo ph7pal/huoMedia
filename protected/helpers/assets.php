@@ -24,6 +24,7 @@ class assets {
             'currentSessionId' => Yii::app()->session->sessionID,
         );
         $arr['web'] = array(
+            'editor'=>'',
             'allowImgTypes' => zmf::config('imgAllowTypes'),
             'allowImgPerSize' => zmf::formatBytes(zmf::config('imgMaxSize')),
             'perAddImgNum' => zmf::config('imgUploadNum'),

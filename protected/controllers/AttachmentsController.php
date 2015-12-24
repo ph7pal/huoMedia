@@ -1,34 +1,13 @@
 <?php
 
 class AttachmentsController extends Q {
-    
-    public function init(){
-        parent::init();
-        $action=  zmf::val('action',1);
-        if($action=='config'){
-            $arr=array(
-                'imageFieldName'=>'upfile',
-                'imageMaxSize'=>'2048000',
-                'imageAllowFiles'=>array(".png", ".jpg", ".jpeg", ".gif", ".bmp"),
-            );
-            echo CJSON::encode($arr);
-            exit();
-        }
-    }
-
-    
 
     public function actionUpload() {
-        
-        zmf::test($_POST);
-        zmf::test($_FILES);
-        exit();
         $uptype = zmf::filterInput($_GET['type'], 't', 1);
         $logid = zmf::filterInput($_GET['id']); //所属对象
         $reImgsize = zmf::filterInput($_GET['imgsize']); //返回图片的尺寸
         $fileholder = zmf::filterInput($_GET['fileholder'], 't', 1); //上传控件的ID
-        //将ads替换为flash
-        if (!isset($uptype) OR ! in_array($uptype, array('columns', 'coverimg', 'flash', 'link', 'album', 'posts', 'poi', 'poipost', 'answer', 'question', 'siteinfo', 'goods'))) {
+        if (!isset($uptype) OR ! in_array($uptype, array('posts'))) {
             $this->jsonOutPut(0, '请设置上传所属类型' . $uptype);
         }
         if (Yii::app()->request->getParam('PHPSESSID')) {
@@ -37,21 +16,7 @@ class AttachmentsController extends Q {
             Yii::app()->session->open();
         }
         if (Yii::app()->user->isGuest) {
-            $this->jsonOutPut(0, Yii::t('default', 'loginfirst'));
-        }
-        $checkInfo = UserPower::check('addImage', true);
-        if (!$checkInfo['status']) {
-            $this->jsonOutPut(0, $checkInfo['msg']);
-        }
-        if ($uptype == 'poi') {
-            if (!$logid || !is_numeric($logid)) {
-                $this->jsonOutPut(0, '无效上传，请重试');
-            } else {
-                $poiInfo = Position::model()->findByPk($logid);
-                if (!$poiInfo || $poiInfo['status'] != Posts::STATUS_PASSED) {
-                    $this->jsonOutPut(0, '无效上传，请重试');
-                }
-            }
+            $this->jsonOutPut(0, '请先登录');
         }
         if (!$fileholder) {
             $fileholder = 'filedata';
@@ -59,7 +24,6 @@ class AttachmentsController extends Q {
         if (!isset($_FILES[$fileholder]) || !is_uploaded_file($_FILES[$fileholder]["tmp_name"]) || $_FILES[$fileholder]["error"] != 0) {
             $this->jsonOutPut(0, '无效上传，请重试');
         }
-        $model = new Attachments();
         $img = CUploadedFile::getInstanceByName($fileholder);
         $ext = $img->getExtensionName();
         $size = $img->getSize();
@@ -75,168 +39,64 @@ class AttachmentsController extends Q {
             $this->jsonOutPut(0, "要求上传的图片尺寸，宽不能不小于" . zmf::config('imgMinWidth') . "px，高不能小于" . zmf::config('imgMinHeight') . "px.");
         }
         $ctime = zmf::now();
-        $dirs = zmf::uploadDirs($ctime, 'app', $uptype, null, true);
-        $fileName = uniqid() . '.' . $ext;
-        $origin = $dirs['origin'];
-        unset($dirs['origin']);
-        $uploadedFiles = array();
-        $uploadedFiles[] = array(
-            'from' => $origin . $fileName,
-            'to' => zmf::ftpPath($ctime, $uptype, 'origin') . $fileName
-        );
+        $dir = zmf::uploadDirs($ctime, 'app', $uptype);
+        zmf::createUploadDir($dir);
+        $fileName = zmf::uuid() . '.' . $ext;
+        $origin = $dir;
         if (move_uploaded_file($_FILES[$fileholder]["tmp_name"], $origin . $fileName)) {
             $data = array();
-            if ($uptype == 'posts') {
-                $status = Posts::STATUS_DELED;
-            } else {
-                $status = Posts::STATUS_PASSED;
-            }
-            $data['uid'] = Yii::app()->user->id;
+            $status = Posts::STATUS_NOTPASSED;
+            $data['uid'] = zmf::uid();
             $data['logid'] = $logid;
             $data['filePath'] = $fileName;
-            $data['fileDesc'] = $fileName;
+            $data['fileDesc'] = '';
             $data['classify'] = $uptype;
             $data['covered'] = '0';
-            $data['cTime'] = time();
+            $data['cTime'] = $ctime;
             $data['status'] = $status;
             $data['width'] = $sizeinfo[0];
             $data['height'] = $sizeinfo[1];
             $data['size'] = $size;
-            if ($uptype == 'poi') {
-                $data['areaid'] = $poiInfo['areaid'];
-            }
+            $model = new Attachments();
             $model->attributes = $data;
-            if ($model->validate()) {
-                if ($model->save()) {
-                    if ($uptype == 'poi') {
-                        Posts::updateCount($logid, 'Position', 1, 'attach');
+            if ($model->save()) {
+                $attachid = $model->id;
+                $returnImgDir = zmf::getUpExtraUrl($ctime);
+                $saveName = $uptype . '/' . $returnImgDir . '/' . $fileName;
+                $accessKey = zmf::config('qiniuAk');
+                $secretKey = zmf::config('qiniuSk');
+                $bucket = zmf::config('qiniuBucket');
+                if ($accessKey && $secretKey && $bucket) {
+                    $auth = new Auth($accessKey, $secretKey);
+                    $token = $auth->uploadToken($bucket);
+                    $uploadMgr = new UploadManager();
+                    list($ret, $err) = $uploadMgr->putFile($token, $saveName, $origin . $fileName);
+                    if ($err !== null) {
+                        zmf::fp(var_export($err));
+                        $this->jsonOutPut(0, '上传至云服务错误');
                     }
-//                    $image = Yii::app()->image->load($origin . $fileName);
-//                    $_quality = zmf::config('imgQuality');
-//                    $quality = isset($quality) ? $quality : 100;
-                    Yii::import('application.vendors.thinkphp.*');
-                    require_once 'ImageGd.php';
-                    foreach ($dirs as $dk => $_dir) {
-                        $image = new ImageGd($origin . $fileName);
-                        if ($dk < 600) {
-                            $image->thumb($dk, $dk * 0.75, 'center');
-                        } else {
-                            $image->thumb($dk, $dk);
-                            $image->water(Yii::app()->basePath . '/../common/images/water.png',2);
-                        }
-                        $image->save($_dir . $fileName);
-                        $_todir = zmf::ftpPath($ctime, $uptype, $dk);
-                        $uploadedFiles[] = array(
-                            'id' => $model->id,
-                            'from' => $_dir . $fileName,
-                            'to' => $_todir . $fileName
-                        );
-                    }
-                    $imgsize = $reImgsize > 0 ? $reImgsize : 170;
-                    $returnimg = zmf::uploadDirs($ctime, 'site', $uptype, $imgsize) . $fileName;
-                    $outPutData = array(
-                        'status' => 1,
-                        'attachid' => $model->id,
-                        'imgsrc' => $returnimg
-                    );
-                    $json = CJSON::encode($outPutData);
-                    if (zmf::config('ftpon')) {
-                        $asyncdata = "method=ftpupload&json=" . zmf::jiaMi(CJSON::encode($uploadedFiles));
-                        AsyncController::Async($asyncdata);
-                    }
-                    echo $json;
-                } else {
-                    $this->jsonOutPut(0, '写入数据库错误');
                 }
+                $returnimg = zmf::uploadDirs($ctime, 'site', $uptype) . $fileName;
+                $returnimg = zmf::getThumbnailUrl($returnimg, '650', $uptype);
+                $_attr = array(
+                    'id' => $attachid,
+                    'imgurl' => $returnimg,
+                );
+                $html = '';
+                if ($uptype == 'posts') {
+                    //$html=  $this->renderPartial('/posts/_addImg',array('data'=>$_attr),true);
+                }
+                $outPutData = array(
+                    'status' => 1,
+                    'attachid' => $attachid,
+                    'imgsrc' => $returnimg,
+                    'html' => $html,
+                );
+                $json = CJSON::encode($outPutData);
+                echo $json;
             } else {
-                $this->jsonOutPut(0, '数据验证错误');
+                $this->jsonOutPut(0, '写入数据库错误');
             }
         }
     }
-
-    /**
-     * 不入数据库的上传
-     * 不做压缩和缩略图处理
-     */
-    public function actionSimpleUpload() {
-        $uptype = zmf::filterInput($_GET['type'], 't', 1);
-        $fileholder = zmf::filterInput($_GET['fileholder'], 't', 1); //上传控件的ID
-        $fileName = zmf::filterInput($_GET['fileName'], 't', 1); //上传后保存名字
-        $keyid = zmf::filterInput($_GET['keyid']); //所属对象ID        
-        if (!isset($uptype) OR ! in_array($uptype, array('topArea', 'avatar', 'area'))) {
-            $this->jsonOutPut(0, '请设置上传所属类型' . $uptype);
-        }
-        if (Yii::app()->request->getParam('PHPSESSID')) {
-            Yii::app()->session->close();
-            Yii::app()->session->setSessionID(Yii::app()->request->getParam('PHPSESSID'));
-            Yii::app()->session->open();
-        }
-        if (Yii::app()->user->isGuest) {
-            $this->jsonOutPut(0, Yii::t('default', 'loginfirst'));
-        }
-        if ($uptype == 'avatar' && !$keyid) {
-            $this->jsonOutPut(0, '缺少参数');
-        }
-        $checkInfo = UserPower::check('addImage', true);
-        if (!$checkInfo['status']) {
-            $this->jsonOutPut(0, $checkInfo['msg']);
-        }
-
-        if (!$fileholder) {
-            $fileholder = 'filedata';
-        }
-        if (!isset($_FILES[$fileholder]) || !is_uploaded_file($_FILES[$fileholder]["tmp_name"]) || $_FILES[$fileholder]["error"] != 0) {
-            $this->jsonOutPut(0, '无效上传，请重试');
-        }
-        $img = CUploadedFile::getInstanceByName($fileholder);
-        $ext = $img->getExtensionName();
-        $size = $img->getSize();
-        if ($size > zmf::config('imgMaxSize')) {
-            $this->jsonOutPut(0, '上传文件最大尺寸为：' . tools::formatBytes(zmf::config('imgMaxSize')));
-        }
-        $upExt = zmf::config("imgAllowTypes");
-        if (!preg_match('/^(' . str_replace('*.', '|', str_replace(';', '', $upExt)) . ')$/i', $ext)) {
-            $this->jsonOutPut(0, '上传文件扩展名必需为：' . $upExt);
-        }
-        if (!$fileName) {
-            $fileName = uniqid() . '.' . $ext;
-        }
-        if ($uptype == 'avatar') {
-            $fileName = $keyid . '.jpg';
-        }
-        if ($uptype == 'topArea') {
-            $todir = zmf::attachBase('app') . '/daodao/';
-            $returnDir = zmf::attachBase('site') . '/daodao/';
-        } elseif ($uptype == 'avatar') {
-            $todir = zmf::attachBase('app') . '/avatar/origin/' . $keyid . '/';
-            $todir2 = zmf::attachBase('app') . '/avatar/big/' . $keyid . '/';
-            $todir3 = zmf::attachBase('app') . '/avatar/small/' . $keyid . '/';
-            $returnDir = zmf::attachBase('site') . '/avatar/small/' . $keyid . '/';
-        } elseif ($uptype == 'area') {
-            $todir = zmf::attachBase('app') . '/area/';
-            $returnDir = zmf::attachBase('site') . '/area/';
-        }
-        zmf::createUploadDir($todir);
-        if (move_uploaded_file($_FILES[$fileholder]["tmp_name"], $todir . $fileName)) {
-            if ($uptype == 'avatar') {
-                $image = Yii::app()->image->load($todir . $fileName);
-                zmf::createUploadDir($todir2);
-                zmf::createUploadDir($todir3);
-                $image->smart_resize(100, 100)->quality(95);
-                $image->save($todir2 . $fileName);
-                $image->smart_resize(50, 50)->quality(95);
-                $image->save($todir3 . $fileName);
-            }
-            $outPutData = array(
-                'status' => 1,
-                'imgsrc' => $returnDir . $fileName,
-                'attachid' => '',
-            );
-            $json = CJSON::encode($outPutData);
-            echo $json;
-        } else {
-            $this->jsonOutPut(0, '上传失败');
-        }
-    }
-
 }

@@ -26,4 +26,20 @@ class Controller extends CController {
         Yii::app()->end();
     }
 
+    public function jsonOutPut($status = 0, $msg = '', $return = false, $end = true) {
+        $outPutData = array(
+            'status' => $status,
+            'msg' => $msg
+        );
+        $json = CJSON::encode($outPutData);
+        if ($return) {
+            return $json;
+        } else {
+            echo $json;
+        }
+        if ($end) {
+            Yii::app()->end();
+        }
+    }
+
 }
