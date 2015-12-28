@@ -29,7 +29,8 @@
             </div>
             <div class="form-group">
                 <?php //$this->renderPartial('/common/editor_bd', array('model' => $model,'content' => $model->content,'uploadurl'=>$uploadurl)); ?>
-                <?php $this->renderPartial('/common/editor_medium', array('model' => $model,'content' => $model->content)); ?>                
+                <?php //$this->renderPartial('/common/editor_medium', array('model' => $model,'content' => $model->content)); ?>                
+                <?php $this->renderPartial('/common/editor_boot', array('model' => $model,'content' => $model->content)); ?>                
             </div>
             <div class="form-group">
                     <?php echo CHtml::submitButton($model->isNewRecord ? '提交' : '更新',array('class'=>'btn btn-success pull-right','id'=>'editorSubmit')); ?>

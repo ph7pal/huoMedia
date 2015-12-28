@@ -237,7 +237,7 @@ Released under the MIT License <http://www.opensource.org/licenses/mit-license.p
 							'text-indent'      : '-9999px'
 						});
 					}
-					$button.html('<span class="fa fa-plus"></span> <span class="uploadify-button-text">' + settings.buttonText + '</span>')
+					$button.html('<span class="uploadify-button-text">' + settings.buttonText + '</span>')
 					.css({
 						'height'      : settings.height + 'px',
 						'width'       : settings.width + 'px'
