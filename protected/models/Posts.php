@@ -46,6 +46,7 @@ class Posts extends CActiveRecord {
         return array(
             array('uid', 'default', 'setOnEmpty' => true, 'value' => zmf::uid()),
             array('cTime,updateTime', 'default', 'setOnEmpty' => true, 'value' => zmf::now()),
+            array('status', 'default', 'setOnEmpty' => true, 'value' => Posts::STATUS_PASSED),
             array('uid, title, content', 'required'),
             array('uid, faceimg, classify, mapZoom, comments, top, hits, status, cTime, updateTime', 'numerical', 'integerOnly' => true),
             array('title, tagids', 'length', 'max' => 255),
