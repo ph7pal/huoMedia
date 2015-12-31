@@ -69,6 +69,7 @@ class assets {
             );
             $jsArr = array(
                 'zmf',
+                'bootstrap',
             );
             $cs->registerCoreScript('jquery');
         } elseif ($type == 'mobile') {

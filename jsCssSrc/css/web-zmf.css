@@ -5,19 +5,15 @@ body{
     /*background: rgba(229,229,229,.95);*/
 }
 
-.container{
-    width: 960px;
+.navbar .container{
+    width: 640px;
     position: relative;    
     padding-left: 0;
     padding-right: 0
 }
-.content{
-    margin-top: 60px;
-    margin-bottom:  240px;
-}
 .main-part{
     width: 640px;
-    float: left;
+    margin: 0 auto
 }
 .module{
     background: #fff;
