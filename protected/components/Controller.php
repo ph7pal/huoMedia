@@ -42,4 +42,49 @@ class Controller extends CController {
         }
     }
 
+    /**
+     * 判断用户是否有权限
+     * @param type $type 判断权限类型
+     * @param type $fuid 用户ID，默认为当前登录用户
+     * @param type $return 是否返回
+     * @param type $json 是否以JSON格式输出
+     * @return boolean
+     */
+    public function checkPower($type, $fuid = '', $return = false, $json = false) {
+        $uid = $fuid ? $fuid : Yii::app()->user->id;
+        if (!$uid) {
+            if ($return) {
+                return false;
+            } elseif (!$json AND ! Yii::app()->request->isAjaxRequest) {
+                $this->message(0, '请先登录', Yii::app()->createUrl('admin/site/login'));
+            } else {
+                $this->jsonOutPut(0, '请先登录');
+            }
+        }
+        if ($type == 'login') {
+            $pinfo = Admins::model()->find('uid=:uid', array(':uid' => $uid));
+            if (!$pinfo) {
+                if ($return) {
+                    return false;
+                } elseif (!$json AND ! Yii::app()->request->isAjaxRequest) {
+                    $this->message(0, '不是管理员', Yii::app()->createUrl('admin/site/logout'));
+                } else {
+                    $this->jsonOutPut(0, '不是管理员');
+                }
+            }
+            return true;
+        }
+        $power = Admins::model()->find('powers=:p AND uid=:uid', array(':p' => $type, ':uid' => $uid));
+        if (!$power) {
+            if ($return) {
+                return false;
+            } elseif (!$json AND ! Yii::app()->request->isAjaxRequest) {
+                $this->message(0, '您无权该操作');
+            } else {
+                $this->jsonOutPut(0, '您无权该操作');
+            }
+        }
+        return true;
+    }
+
 }

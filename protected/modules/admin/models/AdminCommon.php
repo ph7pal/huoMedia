@@ -1,0 +1,54 @@
+<?php
+
+class AdminCommon extends CActiveRecord {
+
+    public static function navbar() {
+        $c = Yii::app()->getController()->id;
+        $a = Yii::app()->getController()->getAction()->id;
+        $attr['login'] = array(
+            'title' => '首页',
+            'url' => Yii::app()->createUrl('admin/index/index'),
+            'active' => in_array($c, array('index'))
+        );
+        $attr['posts'] = array(
+            'title' => '文章',
+            'url' => Yii::app()->createUrl('admin/posts/index'),
+            'active' => in_array($c, array('posts'))
+        );
+        $attr['comments'] = array(
+            'title' => '评论',
+            'url' => Yii::app()->createUrl('admin/attachments/index'),
+            'active' => in_array($c, array('attachments'))
+        );
+        $attr['group'] = array(
+            'title' => '标签',
+            'url' => Yii::app()->createUrl('admin/group/index'),
+            'active' => in_array($c, array('group'))
+        );
+        
+        $attr['user'] = array(
+            'title' => '用户',
+            'url' => Yii::app()->createUrl('admin/user/index'),
+            'active' => in_array($c, array('user'))
+        );
+        
+        
+        $attr['attachments'] = array(
+            'title' => '图片',
+            'url' => Yii::app()->createUrl('admin/attachments/index'),
+            'active' => in_array($c, array('attachments'))
+        );
+        $attr['system'] = array(
+            'title' => '系统',
+            'url' => Yii::app()->createUrl('admin/site/navbar'),
+            'active' => in_array($c, array('site','config'))
+        );
+        foreach ($attr as $k => $v) {
+            if (!Controller::checkPower($k, '', true)) {
+                //unset($attr[$k]);
+            }
+        }
+        return $attr;
+    }
+
+}

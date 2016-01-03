@@ -53,7 +53,28 @@ class zmf {
         }
     }
 
+    public static function stripStr($string) {
+        $string = strip_tags($string);
+        $replace = array(
+            '/\[attach\](\d+)\[\/attach\]/i',
+            '/\[atone\](\d+)\[\/atone\]/i',
+            "/\[url=.+?\](.+?)\[\/url\]/i",
+            "/\[texturl=.+?\].+?\[\/texturl\]/i",
+            "/\[poi=.+?\](.+?)\[\/poi\]/i",
+        );
+        $to = array(
+            '',
+            '',
+            '$1',
+            '',
+            '$1',
+        );
+        $string = preg_replace($replace, $to, $string);
+        return $string;
+    }
+    
     public static function subStr($string, $sublen = 20, $start = 0, $separater = '...') {
+        $string = self::stripStr($string);
         $code = 'UTF-8';
         if ($code == 'UTF-8') {
             $string = strip_tags($string);

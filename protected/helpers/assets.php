@@ -68,11 +68,21 @@ class assets {
                 'zmf',
             );
             $jsArr = array(
-                'zmf',
                 'bootstrap',
+                'zmf',                
             );
             $cs->registerCoreScript('jquery');
         } elseif ($type == 'mobile') {
+            $cssArr = array(
+                'frozen',
+            );
+            $jsArr = array(
+                'zepto',
+                'frozen',
+            );
+            $cssArr[] = 'mobile';
+            $jsArr[] = 'mobile';
+        }elseif ($type == 'admin') {
             $cssArr = array(
                 'frozen',
             );

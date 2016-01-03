@@ -2,15 +2,28 @@ body{
     font-family: "helvetica neue",arial,sans-serif;
     font-size: 14px;
     color: #444;
+    background: #fafafa
     /*background: rgba(229,229,229,.95);*/
 }
-
+button, input, select, textarea,.form-control,.btn{
+    border-radius: 0
+}
 .navbar .container{
     width: 640px;
     position: relative;    
     padding-left: 0;
-    padding-right: 0
+    padding-right: 0;
+    height: 80px
 }
+.navbar-default{
+    background: #fff
+}
+.navbar-nav>li>a{
+    padding-top: 25px;
+    padding-bottom: 25px;
+    line-height: 30px
+}
+
 .main-part{
     width: 640px;
     margin: 0 auto

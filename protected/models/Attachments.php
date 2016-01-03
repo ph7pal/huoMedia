@@ -67,7 +67,7 @@ class Attachments extends CActiveRecord {
         if ($poiInfo['faceimg']) {
             $info = Attachments::getOne($poiInfo['faceimg']);
             if ($info) {
-                $url = zmf::uploadDirs($info['cTime'], 'site', $info['classify'], $size) . $info['filePath'];
+                $url = zmf::uploadDirs($info['cTime'], 'site', $info['classify']) . $info['filePath'];
             }
         }
         return $url;

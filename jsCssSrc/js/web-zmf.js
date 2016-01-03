@@ -18,7 +18,24 @@ function rebind() {
         var dom = $(this);
         favorite(dom);
     });
-     
+    $("a[action=select-tag]").unbind('click').click(function () {
+        var dom = $(this);
+        var tagid=dom.attr('action-data');
+        if(!tagid){
+            return false;
+        }
+        var _pdom=dom.parent('.tag-item');
+        if(_pdom.hasClass('active')){
+            _pdom.removeClass('active');
+            dom.children('input').remove();
+        }else{
+            _pdom.addClass('active');
+            var _html='<input type="hidden" name="tags[]" value="'+tagid+'"/>';
+            dom.append(_html);
+        }
+        
+    });
+    $('[data-toggle="tooltip"]').tooltip()  
     //输入框自动变大
     //textareaAutoResize();
     //意见反馈
