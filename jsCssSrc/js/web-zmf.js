@@ -35,6 +35,12 @@ function rebind() {
         }
         
     });
+    $("a[action=add-comment]").click(function() {        
+        var dom = $(this);
+        var k = dom.attr("action-data");
+        var t = dom.attr("action-type");
+        addComment(dom, t, k);
+    });
     $('[data-toggle="tooltip"]').tooltip()  
     //输入框自动变大
     //textareaAutoResize();
@@ -225,6 +231,35 @@ function favorite(dom) {
             alert(result.msg);
         }
         return false;
+    });
+}
+function addComment(dom) {
+    var k = dom.attr("action-data");
+    var t = dom.attr("action-type");
+    var to = $('#replyoneHolder-' + k).attr('tocommentid');
+    var c = $('#content-' + t + '-' + k).val();
+    if (!k || !t || !c) {
+        dialog({msg: '请填写内容'});
+        return false;
+    }
+    if (!to) {
+        to = 0;
+    }
+    if (!checkAjax()) {
+        return false;
+    }
+    $.post(zmf.addCommentUrl, {k: k, t: t, c: c, to: to, YII_CSRF_TOKEN: zmf.csrfToken}, function(result) {
+        ajaxReturn = true;
+        result = eval('(' + result + ')');
+        if (result['status'] == '1') {
+            $('#content-' + t + '-' + k).val('');
+            $("#comments-" + t + "-" + k).append(result['msg']);
+            cancelReplyOne(k);
+        } else if (result['status'] == '2') {
+            dialog({msg: zmf.loginHtml});
+        } else {
+            dialog({msg: result['msg']});
+        }
     });
 }
 /**

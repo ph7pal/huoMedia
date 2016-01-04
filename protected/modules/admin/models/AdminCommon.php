@@ -17,22 +17,20 @@ class AdminCommon extends CActiveRecord {
         );
         $attr['comments'] = array(
             'title' => '评论',
-            'url' => Yii::app()->createUrl('admin/attachments/index'),
-            'active' => in_array($c, array('attachments'))
+            'url' => Yii::app()->createUrl('admin/comments/index'),
+            'active' => in_array($c, array('comments'))
         );
         $attr['group'] = array(
             'title' => '标签',
-            'url' => Yii::app()->createUrl('admin/group/index'),
-            'active' => in_array($c, array('group'))
+            'url' => Yii::app()->createUrl('admin/tags/index'),
+            'active' => in_array($c, array('tags'))
         );
         
         $attr['user'] = array(
             'title' => '用户',
-            'url' => Yii::app()->createUrl('admin/user/index'),
-            'active' => in_array($c, array('user'))
+            'url' => Yii::app()->createUrl('admin/users/index'),
+            'active' => in_array($c, array('users'))
         );
-        
-        
         $attr['attachments'] = array(
             'title' => '图片',
             'url' => Yii::app()->createUrl('admin/attachments/index'),
@@ -40,7 +38,7 @@ class AdminCommon extends CActiveRecord {
         );
         $attr['system'] = array(
             'title' => '系统',
-            'url' => Yii::app()->createUrl('admin/site/navbar'),
+            'url' => Yii::app()->createUrl('admin/config/index'),
             'active' => in_array($c, array('site','config'))
         );
         foreach ($attr as $k => $v) {

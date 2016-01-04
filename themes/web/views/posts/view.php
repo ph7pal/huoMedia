@@ -30,5 +30,6 @@
     </div>
     <div class="module">
         <p>评论</p>
+        <?php $this->renderPartial('/posts/_addComment', array('keyid' => $info['id'], 'type' => 'posts')); ?>
     </div>
 </div>

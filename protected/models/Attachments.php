@@ -51,8 +51,8 @@ class Attachments extends CActiveRecord {
      * @param type $data
      * @return string
      */
-    public function getUrl($data) {
-        $_imgurl = zmf::uploadDirs($data['cTime'], 'site', $data['classify'], 170) . $data['filePath'];
+    public function getUrl($data, $size = '170') {
+        $_imgurl = zmf::uploadDirs($data['cTime'], 'site', $data['classify']) . $data['filePath'];
         return $_imgurl;
     }
 

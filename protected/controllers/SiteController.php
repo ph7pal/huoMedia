@@ -22,23 +22,21 @@ class SiteController extends Q {
     }
 
     public function actionError() {
+        $this->layout='common';
         if ($error = Yii::app()->errorHandler->error) {
-            switch ($error['code']) {
-                case 404:
-                    $tpl = 'error';
-                    //$this->redirect(zmf::config('baseurl'), true, 301);
-                    break;
-                case 400:
-                case 500: $tpl = 'error';
-                    break;
-                default: $tpl = 'error';
-                    break;
-            }
-            if (Yii::app()->request->isAjaxRequest)
-                echo $error['message'];
-            else {
-                $this->pageTitle = '出现了错误~';
-                $this->render('/error/' . $tpl, $error);
+            if (Yii::app()->request->isAjaxRequest) {
+                $outPutData = array(
+                    'status' => 0,
+                    'msg' => $error['message'],
+                    'code' => $error['code']
+                );
+                $json = CJSON::encode($outPutData);
+                header("Content-type:application/json;charset=UTF-8");
+                echo $json;
+                Yii::app()->end();
+            } else {
+                $this->pageTitle='提示';
+                $this->render('error', $error);
             }
         }
     }

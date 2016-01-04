@@ -1,11 +1,57 @@
 <?php
 
 class PostsController extends Admin {
+    
+    public function actionIndex() {
+        $uid = zmf::val('uid', 2);
+        $username = zmf::val('username', 1);
+        $start = zmf::val('start', 1);
+        $end = zmf::val('end', 1);
+        $orderBy = zmf::val('orderBy', 1);
 
-    /**
-     * 已取消其他文章类型，默认为游记
-     * @param type $classify，分类
-     */
+
+        $criteria = new CDbCriteria();
+        $criteria->addCondition('`status`=' . Posts::STATUS_PASSED);
+        if ($username) {
+            $uinfo = Users::model()->find("username LIKE '%{$username}%'");
+            if ($uinfo) {
+                $uid = $uinfo['id'];
+            }
+        }
+        if ($uid) {
+            $criteria->addCondition("uid='{$uid}'");
+        }
+        if ($start) {
+            $start = strtotime($start, $now);
+            $criteria->addCondition("cTime>='{$start}'");
+        }
+        if ($end) {
+            $end = strtotime($end, $now);
+            $criteria->addCondition("cTime<='{$end}'");
+        }
+
+        if ($orderBy == 'hits') {
+            $criteria->order = 'hits DESC';
+        } elseif ($orderBy == 'favors') {
+            $criteria->order = 'favors DESC';
+        } elseif ($orderBy == 'imgs') {
+            $criteria->order = 'imgs DESC';
+        } elseif ($orderBy == 'videos') {
+            $criteria->order = 'videos DESC';
+        } else {
+            $criteria->order = 'cTime DESC';
+        }
+        $count = Posts::model()->count($criteria);
+        $pager = new CPagination($count);
+        $pager->pageSize = 30;
+        $pager->applyLimit($criteria);
+        $posts = Posts::model()->findAll($criteria);
+
+        $this->render('index', array(
+            'pages' => $pager,
+            'posts' => $posts,
+        ));
+    }
 
     public function actionCreate($id = '') {
         $this->layout='common';
