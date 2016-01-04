@@ -11,7 +11,14 @@
 <?php //$_uname=Users::getUserInfo($data['uid'],'truename'); ?>
 <div class="media" id="comment_<?php echo $data['id']; ?>">   
     <div class="media-body">
+        <p><b>用户</b></p>
         <p><?php echo $data['content']; ?></p>
-        <p class="color-grey"><?php echo zmf::formatTime($data['cTime']); ?></p>
+        <p class="help-block">
+            <?php echo zmf::formatTime($data['cTime']); ?>
+            <span class="pull-right">
+                <?php echo CHtml::link('回复','javascript:;',array('onclick'=>"replyOne('".$data['id']."','".$data['logid']."','网页')"));?>                
+                <?php if($this->uid==$postInfo['uid']){echo CHtml::link('删除','javascript:;',array('onclick'=>''));}?>                
+            </span>
+        </p>
     </div>
 </div>

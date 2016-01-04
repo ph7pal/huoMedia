@@ -41,13 +41,13 @@ class AjaxController extends Q {
         $model = new Comments();
         $toNotice = true;
         if ($to) {
-            $comInfo = Posts::getSimpleInfo(array('keyid' => $to, 'origin' => 'comments'));
+            $comInfo = Comments::model()->findByPk($to);            
             if (!$comInfo || $comInfo['status'] != Posts::STATUS_PASSED) {
                 $to = '';
             } elseif ($comInfo['uid'] == $uid) {
                 $toNotice = false;
             } else {
-                $touid = $comInfo['uid'];
+                $touid = $comInfo['uid']>0 ? $comInfo['uid'] : '';
                 $toNotice = true;
             }
         }
@@ -93,6 +93,142 @@ class AjaxController extends Q {
             }
         } else {
             $this->jsonOutPut(0, '新增评论失败');
+        }
+    }
+
+    public function actionGetContents() {
+        $data = zmf::filterInput($_POST['data']);
+        $page = zmf::filterInput($_POST['page']);
+        $type = zmf::filterInput($_POST['type'], 't', 1);
+        if (!$data || !$type) {
+            $this->jsonOutPut(0, '数据不全，请核实');
+        }
+        if (!in_array($type, array('comments'))) {
+            $this->jsonOutPut(0, '暂不允许的分类');
+        }
+        if ($page < 1 || !is_numeric($page)) {
+            $page = 1;
+        }
+        $limit = 30;
+        $longHtml = '';
+        $postInfo = array();
+        switch ($type) {
+            case 'comments':
+                $limit = 30;
+                $posts = Comments::getCommentsByPage($data, 'posts', $page, $limit);
+                $view = '/posts/_comment';
+                break;
+            default:
+                $posts = array();
+                break;
+        }
+        if (!empty($posts)) {
+            foreach ($posts as $k => $row) {
+                $longHtml.=$this->renderPartial($view, array('data' => $row, 'k' => $k, 'postInfo' => $postInfo), true);
+            }
+        }
+        $data = array(
+            'html' => $longHtml,
+            'loadMore' => (count($posts) == $limit) ? 1 : 0,
+            'formHtml' => ''
+        );
+        $this->jsonOutPut(1, $data);
+    }
+
+    public function actionDelContent() {
+        $data = zmf::val('data', 1);
+        $type = zmf::val('type', 1);
+        if (!$data || !$type) {
+            $this->jsonOutPut(0, '数据不全，请核实');
+        }
+        if (!in_array($type, array('comment', 'post'))) {
+            $this->jsonOutPut(0, '暂不允许的分类');
+        }
+        switch ($type) {
+            case 'comment':
+                $info = Comments::model()->findByPk($data);
+                if (!$info) {
+                    $this->jsonOutPut(0, '您所查看的内容不存在');
+                } elseif ($info['uid'] != $this->uid) {
+                    if ($this->checkPower('delComment', $this->uid, true)) {
+                        //我是管理员，我就可以删除
+                    } else {
+                        $this->jsonOutPut(0, '不被允许的操作');
+                    }
+                }
+                if (Comments::model()->updateByPk($data, array('status' => Posts::STATUS_DELED))) {
+                    $this->jsonOutPut(1, '已删除');
+                }
+                $this->jsonOutPut(1, '已删除');
+                break;
+            case 'post':
+                $info = Posts::model()->findByPk($data);
+                if (!$info) {
+                    $this->jsonOutPut(0, '您所查看的内容不存在');
+                } elseif ($info['uid'] != $this->uid) {
+                    if ($this->checkPower('delPost', $this->uid, true)) {
+                        //我是管理员，我就可以删除
+                    } else {
+                        $this->jsonOutPut(0, '不被允许的操作');
+                    }
+                }
+                if (Posts::model()->updateByPk($data, array('status' => Posts::STATUS_DELED))) {
+                    $this->jsonOutPut(1, '已删除');
+                }
+                $this->jsonOutPut(1, '已删除');
+                break;
+            default:
+                $this->jsonOutPut(0, '操作有误');
+                break;
+        }
+    }
+
+    public function actionSetStatus() {
+        $keyid = zmf::val('a', 2);
+        $classify = zmf::val('b', 1);
+        $_status = zmf::val('c', 1);
+        if (!$keyid) {
+            $this->jsonOutPut(0, '请选择对象');
+        }
+        if (!in_array($classify, array('posts', 'comments'))) {
+            $this->jsonOutPut(0, '不允许的类型');
+        }
+        if (!in_array($_status, array('del', 'passed'))) {
+            $this->jsonOutPut(0, '不允许的类型');
+        }
+        if ($_status == 'top') {
+            if ($classify == 'posts') {
+                $attr = array(
+                    'top' => 1,
+                    'updateTime' => zmf::now()
+                );
+            } else {
+                $attr = array(
+                    'top' => 1
+                );
+            }
+        } else if ($_status == 'canceltop') {
+            $attr = array(
+                'top' => 0,
+            );
+        } else if ($_status == 'del') {
+            $attr = array(
+                'status' => Posts::STATUS_DELED,
+            );
+        } else if ($_status == 'passed') {
+            $attr = array(
+                'status' => Posts::STATUS_PASSED,
+            );
+        }
+        $ucClassify = ucfirst($classify);
+        if (!class_exists($ucClassify)) {
+            $this->jsonOutPut(0, '不存在的类型');
+        }
+        $model = new $ucClassify;
+        if ($model->updateByPk($keyid, $attr)) {
+            $this->jsonOutPut(1, '操作成功');
+        } else {
+            $this->jsonOutPut(0, '操作失败');
         }
     }
 

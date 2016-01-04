@@ -15,7 +15,7 @@ class Comments extends CActiveRecord {
     public function rules() {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
-        return array(            
+        return array(
             array('uid, logid,content,classify, status, cTime', 'required'),
             array('status', 'numerical', 'integerOnly' => true),
             array('uid,logid,tocommentid, cTime', 'length', 'max' => 11),
@@ -56,16 +56,25 @@ class Comments extends CActiveRecord {
         );
     }
 
-
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
 
-    
-
     public static function getSimpleInfo($keyid) {
         $info = Comments::model()->findByPk($keyid);
         return $info;
+    }
+
+    public static function getCommentsByPage($id, $classify, $page = 1, $pageSize = 30, $field = "id,uid,logid,tocommentid,content,cTime") {
+        if (!$id || !$classify) {
+            return array();
+        }
+        $page = $page <= 1 ? 1 : $page;
+        $pageSize = !$pageSize ? 30 : $pageSize;
+        $limitStart = ($page - 1) * $pageSize;
+        $sql = "SELECT {$field} FROM {{comments}} WHERE logid='{$id}' AND classify='{$classify}' AND status=" . Posts::STATUS_PASSED . " ORDER BY cTime LIMIT {$limitStart},{$pageSize}";
+        $items = Yii::app()->db->createCommand($sql)->queryAll();
+        return $items;
     }
 
 }

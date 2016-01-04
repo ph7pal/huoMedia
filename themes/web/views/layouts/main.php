@@ -1,5 +1,5 @@
 <?php $this->beginContent('/layouts/common'); ?>
-<div class="navbar navbar-default" role="navigation">
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">

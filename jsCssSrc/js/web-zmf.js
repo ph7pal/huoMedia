@@ -20,28 +20,28 @@ function rebind() {
     });
     $("a[action=select-tag]").unbind('click').click(function () {
         var dom = $(this);
-        var tagid=dom.attr('action-data');
-        if(!tagid){
+        var tagid = dom.attr('action-data');
+        if (!tagid) {
             return false;
         }
-        var _pdom=dom.parent('.tag-item');
-        if(_pdom.hasClass('active')){
+        var _pdom = dom.parent('.tag-item');
+        if (_pdom.hasClass('active')) {
             _pdom.removeClass('active');
             dom.children('input').remove();
-        }else{
+        } else {
             _pdom.addClass('active');
-            var _html='<input type="hidden" name="tags[]" value="'+tagid+'"/>';
+            var _html = '<input type="hidden" name="tags[]" value="' + tagid + '"/>';
             dom.append(_html);
         }
-        
+
     });
-    $("a[action=add-comment]").click(function() {        
+    $("a[action=add-comment]").click(function () {
         var dom = $(this);
         var k = dom.attr("action-data");
         var t = dom.attr("action-type");
         addComment(dom, t, k);
     });
-    $('[data-toggle="tooltip"]').tooltip()  
+    $('[data-toggle="tooltip"]').tooltip()
     //输入框自动变大
     //textareaAutoResize();
     //意见反馈
@@ -66,12 +66,6 @@ function getContents(dom) {
     var t = dom.attr("action-type");
     var p = dom.attr("action-page");
     var targetBox = dom.attr('action-target');
-    if (dom.attr('loaded') === 1) {
-        if (t === 'comments') {
-            $('#' + targetBox + '-box').toggle();
-        }
-        return false;
-    }
     if (!checkAjax()) {
         return false;
     }
@@ -81,27 +75,11 @@ function getContents(dom) {
     if (!p) {
         p = 1;
     }
-    var loading = '';
-    if (t === 'comments' && p === 1) {
-        $('#' + targetBox + '-box').show();
-    }
-    loading += '<div class="loading-holder"><a class="btn btn-default btn-block disabled" href="javascript:;">拼命加载中...</a></div>';
-
-    if (t === 'schedule') {
-        $('#' + targetBox + '-box').children('.loading-holder').each(function () {
-            $(this).remove();
-        });
-        $('#' + targetBox + '-box').append(loading);
-    } else {
-        $('#' + targetBox).children('.loading-holder').each(function () {
-            $(this).remove();
-        });
-        if (p > 1) {
-            $('#' + targetBox).append(loading);
-        } else {
-            $('#' + targetBox).html(loading);
-        }
-    }
+    var loading = '<div class="loading-holder"><a class="btn btn-default btn-block disabled" href="javascript:;">拼命加载中...</a></div>';
+    $('#' + targetBox + '-box').children('.loading-holder').each(function () {
+        $(this).remove();
+    });
+    $('#' + targetBox + '-box').append(loading);
     $.post(zmf.contentsUrl, {type: t, page: p, data: acdata, YII_CSRF_TOKEN: zmf.csrfToken}, function (result) {
         ajaxReturn = true;
         dom.attr('loaded', '1');
@@ -122,34 +100,23 @@ function getContents(dom) {
                 pageHtml += '<div class="loading-holder"><a class="btn btn-default btn-block disabled" href="javascript:;">已全部加载</a></div>';
             }
 
-            if ((t === 'comments' && p === 1) || (t === 'schedule' && p === 1)) {
+            if (p === 1) {
                 $('#' + targetBox + '-box').append(data.formHtml);
                 $('#' + targetBox + '-box .loading-holder').each(function () {
                     $(this).remove();
                 });
-            } else if (t === 'comments' || t === 'schedule') {
+            } else {
                 $('#' + targetBox + '-box .loading-holder').each(function () {
                     $(this).remove();
                 });
-            } else {
-                $('#' + targetBox).children('.loading-holder').each(function () {
-                    $(this).remove();
-                });
             }
-            if (t === 'schedule') {
-                if (p > 1) {
-                    $('#' + targetBox).append(dataHtml);
-                } else {
-                    $('#' + targetBox).html(dataHtml);
-                }
-                $('#' + targetBox + '-box').append(pageHtml);
+            if (p > 1) {
+                $('#' + targetBox).append(dataHtml);
             } else {
-                if (p > 1) {
-                    $('#' + targetBox).append(dataHtml + pageHtml);
-                } else {
-                    $('#' + targetBox).html(dataHtml + pageHtml);
-                }
+                $('#' + targetBox).html(dataHtml);
             }
+            $('#' + targetBox + '-box').append(pageHtml);
+
             rebind();
         } else {
             dialog({msg: result.msg});
@@ -188,12 +155,12 @@ function delContent(dom) {
             if (rurl) {
                 window.location.href = rurl;
             } else if (targetBox) {
-                $('#' + targetBox).remove();
-            } else {
+                $('#' + targetBox).fadeOut(500).remove();                
+            }else {
                 alert(result.msg);
             }
         } else {
-            alert(result.msg);
+            dialog({msg: result.msg});
         }
         return false;
     });
@@ -248,7 +215,7 @@ function addComment(dom) {
     if (!checkAjax()) {
         return false;
     }
-    $.post(zmf.addCommentUrl, {k: k, t: t, c: c, to: to, YII_CSRF_TOKEN: zmf.csrfToken}, function(result) {
+    $.post(zmf.addCommentUrl, {k: k, t: t, c: c, to: to, YII_CSRF_TOKEN: zmf.csrfToken}, function (result) {
         ajaxReturn = true;
         result = eval('(' + result + ')');
         if (result['status'] == '1') {
@@ -257,6 +224,35 @@ function addComment(dom) {
             cancelReplyOne(k);
         } else if (result['status'] == '2') {
             dialog({msg: zmf.loginHtml});
+        } else {
+            dialog({msg: result['msg']});
+        }
+    });
+}
+function replyOne(id, logid, title) {
+    var longstr = "<span class='label label-success'><span class='fa fa-share'></span>回复“" + title + "”<a href='javascript:' onclick='cancelReplyOne(" + logid + ")' title='取消设置'> <span class='fa fa-remove'></span></a></span>";
+    var pos = $("#replyoneHolder-" + logid).offset().top;
+    $("html,body").animate({scrollTop: pos}, 1000);
+    $("#replyoneHolder-" + logid).attr('tocommentid', id).html(longstr);
+}
+function cancelReplyOne(logid) {
+    $("#replyoneHolder-" + logid).attr('tocommentid', '').html('');
+}
+function setStatus(a, b, c) {
+    if (!checkLogin()) {
+        dialog({msg: '请先登录'});
+        return false;
+    }
+    if (!checkAjax()) {
+        return false;
+    }
+    $.post(zmf.setStatusUrl, {a: a, b: b, c: c, YII_CSRF_TOKEN: zmf.csrfToken}, function(result) {
+        ajaxReturn = true;
+        result = eval('(' + result + ')');
+        if (result['status'] == 1) {
+            dialog({msg: result['msg'], time: 3});
+        } else if (result['status'] == 2) {
+            window.location.href = zmf.userLoginUrl + "&redirect=" + window.location.href;
         } else {
             dialog({msg: result['msg']});
         }
@@ -300,7 +296,7 @@ function myUploadify() {
         buttonClass: 'btn btn-success',
         debug: false,
         formData: {'PHPSESSID': zmf.currentSessionId, 'YII_CSRF_TOKEN': zmf.csrfToken},
-        onUploadSuccess: function(file, data, response) {
+        onUploadSuccess: function (file, data, response) {
             data = eval("(" + data + ")");
             if (data['status'] == 1) {
                 var img;
@@ -341,41 +337,41 @@ function singleUploadify(params) {
         fileSizeLimit: zmf.allowImgPerSize,
         fileTypeDesc: 'Image Files',
         uploader: params.uploadUrl,
-        buttonText: params.buttonText ? params.buttonText : (params.buttonText===null ? '' : '添加图片'),
+        buttonText: params.buttonText ? params.buttonText : (params.buttonText === null ? '' : '添加图片'),
         buttonClass: 'btn btn-default',
         debug: false,
         formData: {'PHPSESSID': zmf.currentSessionId, 'YII_CSRF_TOKEN': zmf.csrfToken},
-        onUploadStart:function(file){
+        onUploadStart: function (file) {
             if (params.type === 'posts') {
-                var _params={};
-                var myDate = new Date();            
-                var _type=file.type;
-                var _name=params.type+'/'+myDate.getFullYear()+'/'+(myDate.getMonth()+1)+'/'+myDate.getDate()+'/'+uuid()+_type;
-                _params.key=_name;
-                _params.token=params.token;
-                $("#" + params.placeHolder).uploadify('settings','formData',_params);
+                var _params = {};
+                var myDate = new Date();
+                var _type = file.type;
+                var _name = params.type + '/' + myDate.getFullYear() + '/' + (myDate.getMonth() + 1) + '/' + myDate.getDate() + '/' + uuid() + _type;
+                _params.key = _name;
+                _params.token = params.token;
+                $("#" + params.placeHolder).uploadify('settings', 'formData', _params);
             }
         },
         onUploadSuccess: function (file, data, response) {
             data = $.parseJSON(data);
             if (params.type === 'posts') {
-                if(!data.error){
+                if (!data.error) {
                     var passData = {
                         YII_CSRF_TOKEN: zmf.csrfToken,
-                        filePath:data.key,
-                        fileSize:file.size,
-                        type:params.type
+                        filePath: data.key,
+                        fileSize: file.size,
+                        type: params.type
                     };
                     $.post(zmf.saveUploadImgUrl, passData, function (reJson) {
                         reJson = $.parseJSON(reJson);
                         if (reJson.status === 1) {
                             $("#fileSuccess").append(reJson.html);
-                            $('.toggle-display').each(function(){
+                            $('.toggle-display').each(function () {
                                 $(this).removeClass('toggle-display');
                             });
-                            if($('#Posts_title').val()===''){
+                            if ($('#Posts_title').val() === '') {
                                 $('#Posts_title').focus();
-                            }               
+                            }
                             $(window).bind('beforeunload', function () {
                                 return '您输入的内容可能未保存，确定离开此页面吗？';
                             });
@@ -383,18 +379,18 @@ function singleUploadify(params) {
                             if (params.inputId) {
                                 $('#' + params.inputId).val(reJson.attachid);
                             }
-                        }else{
+                        } else {
                             alert(reJson.msg);
                             return false;
-                        }  
-                    });                    
-                }else{
+                        }
+                    });
+                } else {
                     alert(data.error);
                     return false;
-                }                
-            }else{
+                }
+            } else {
                 if (data.status === 1) {
-                    $("#fileSuccess").html(data.html);    
+                    $("#fileSuccess").html(data.html);
                     if (params.inputId) {
                         $('#' + params.inputId).val(data.attachid);
                     }
@@ -403,7 +399,7 @@ function singleUploadify(params) {
                     alert(data.msg);
                     return false;
                 }
-            }           
+            }
         }
     });
 }
@@ -432,11 +428,11 @@ function parseVideo() {
         if (data.status === 1) {
             var result = data.msg;
 //            var html = '<div class="thumbnail media-item" id="uploadVideo' + result.attachid + '"><span class="right-bar"><a action="del-content" action-type="video" action-data="' + result.attachid + '" action-confirm="1" action-target="uploadVideo' + result.attachid + '" href="javascript:;"><i class="fa fa-minus"></i></a></span><div id="' + result.holderid + '"><div class="media-cover" onclick="playVideo(\'' + result.company + '\',\'' + result.videoid + '\',\'' + result.holderid + '\')"><i class="fa fa-play-circle-o"></i><img src="' + result.faceimg + '"/></div></div><input type="hidden" name="attaches[video' + result.attachid + '][type]" value="video"/><input type="text" class="form-control" name="attaches[video' + result.attachid + '][title]" value="' + result.title + '"/><textarea class="form-control" name="attaches[video' + result.attachid + '][content]">' + result.content + '</textarea></div>';
-            $("#fileSuccess").append(data.msg);            
-            $('.toggle-display').each(function(){
+            $("#fileSuccess").append(data.msg);
+            $('.toggle-display').each(function () {
                 $(this).removeClass('toggle-display');
             });
-            if($('#Posts_title').val()===''){
+            if ($('#Posts_title').val() === '') {
                 $('#Posts_title').focus();
             }
             $(window).bind('beforeunload', function () {
@@ -536,10 +532,10 @@ function updateUserInfo(type) {
     });
 
 }
-function loginCheck(loadingHolder,rid) {
+function loginCheck(loadingHolder, rid) {
     if (loadingHolder) {
         $('#' + loadingHolder).show();
-    }    
+    }
     $.post(zmf.autoLoginCheckUrl, {rid: rid, YII_CSRF_TOKEN: zmf.csrfToken}, function (data) {
         data = $.parseJSON(data);
         if (loadingHolder) {
@@ -550,17 +546,17 @@ function loginCheck(loadingHolder,rid) {
         }
     })
 }
-function loginToggle(){    
-    var dom=$('.toggle-btn');
-    var _left=parseInt($('#login-with-qrcode').css('left')),newUrl;
-    if(_left<0){
-        $("#login-with-qrcode").animate({left: 0}); 
-        dom.html('扫码登录 <i class="fa toggle-btn fa-chevron-circle-right"></i>');    
-        newUrl=zmf.loginUrl+'#qrcode-form';
-    }else{
-        $("#login-with-qrcode").animate({left: -360}); 
-        dom.html('账号登录 <i class="fa toggle-btn fa-chevron-circle-left"></i>');      
-        newUrl=zmf.loginUrl+'#login-form';
+function loginToggle() {
+    var dom = $('.toggle-btn');
+    var _left = parseInt($('#login-with-qrcode').css('left')), newUrl;
+    if (_left < 0) {
+        $("#login-with-qrcode").animate({left: 0});
+        dom.html('扫码登录 <i class="fa toggle-btn fa-chevron-circle-right"></i>');
+        newUrl = zmf.loginUrl + '#qrcode-form';
+    } else {
+        $("#login-with-qrcode").animate({left: -360});
+        dom.html('账号登录 <i class="fa toggle-btn fa-chevron-circle-left"></i>');
+        newUrl = zmf.loginUrl + '#login-form';
     }
 }
 /*
@@ -614,8 +610,8 @@ function dialog(diaObj) {
     }
 }
 function closeDialog(a) {
-    if(!a){
-        a='myDialog';
+    if (!a) {
+        a = 'myDialog';
     }
     $('#' + a).modal('hide');
     $('#' + a).remove();

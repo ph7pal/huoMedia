@@ -2,7 +2,8 @@ body{
     font-family: "helvetica neue",arial,sans-serif;
     font-size: 14px;
     color: #444;
-    background: #fafafa
+    background: #fafafa;
+    padding-top: 95px;
     /*background: rgba(229,229,229,.95);*/
 }
 button, input, select, textarea,.form-control,.btn{
@@ -16,7 +17,10 @@ button, input, select, textarea,.form-control,.btn{
     height: 80px
 }
 .navbar-default{
-    background: #fff
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,.175);
+    -moz-box-shadow: 0 2px 10px rgba(0,0,0,.175);
+    -webkit-box-shadow: 0 2px 10px rgba(0,0,0,.175);
 }
 .navbar-nav>li>a{
     padding-top: 25px;

@@ -15,9 +15,13 @@ $this->renderPartial('_nav');
         border-bottom: 1px solid #f8f8f8
     }
 </style>
-<div class="comments-box">
+<?php if(!empty($posts)){?>
+<div class="comments-box">    
 <?php foreach ($posts as $row): ?> 
     <?php $this->renderPartial('/comments/_view', array('data' => $row)); ?>
 <?php endforeach; ?>
 </div>
 <?php $this->renderPartial('/common/pager',array('pages'=>$pages));?>
+<?php }else{?>
+<p class="help-block text-center">暂无评论</p>
+<?php } ?>

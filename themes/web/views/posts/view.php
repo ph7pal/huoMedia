@@ -29,7 +29,21 @@
         <p>相关文章</p>
     </div>
     <div class="module">
-        <p>评论</p>
+        <div id="comments-posts-<?php echo $info['id'];?>-box">
+            <div id="comments-posts-<?php echo $info['id'];?>">
+                <?php if(!empty($comments)){?>
+                <?php foreach($comments as $comment){?>
+                <?php $this->renderPartial('/posts/_comment',array('data'=>$comment));?>
+                <?php }?>
+                <?php }else{?>
+                <p class="help-block text-center">暂无评论！</p>
+                <?php }?>
+            </div>
+            <?php if($loadMore){?>
+            <div class="loading-holder"><a class="btn btn-default btn-block" action="get-contents" action-data="<?php echo $info['id'];?>" action-type="comments" action-target="comments-posts-<?php echo $info['id'];?>" href="javascript:;" action-page="2">加载更多</a></div>
+            <?php }?>
+        </div>
+        <div style="margin-top: 15px"></div>
         <?php $this->renderPartial('/posts/_addComment', array('keyid' => $info['id'], 'type' => 'posts')); ?>
     </div>
 </div>
