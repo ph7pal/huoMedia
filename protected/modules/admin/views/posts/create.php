@@ -32,7 +32,7 @@
         text-decoration: none;
         color: #333
     }
-    .tags-holder .tag-item i{
+    .tags-holder .tag-item .fa-check{
         color: #fff
     }
     .tags-holder .tag-item:hover{
@@ -51,33 +51,36 @@
         color: #fff
     }
 </style>
-<?php $uploadurl=Yii::app()->createUrl('attachments/upload',array('type'=>'posts','imgsize'=>600));?>
+<?php 
+$uploadurl=Yii::app()->createUrl('attachments/upload',array('type'=>'posts','imgsize'=>600));
+$selectedTagids=array_keys(CHtml::listData($postTags, 'id', ''));
+?>
 <div class="add-post-form">
     <?php $form=$this->beginWidget('CActiveForm', array(
             'id'=>'posts-form',
             'enableAjaxValidation'=>false,
     )); ?>
-            <?php echo $form->errorSummary($model); ?>
-            <div class="form-group">
-                <?php echo $form->textField($model,'title',array('size'=>60,'maxlength'=>255,'class'=>'form-control','placeholder'=>'文章标题')); ?>
-            </div>
-            <div class="form-group">
-                <?php $this->renderPartial('/common/editor_um', array('model' => $model,'content' => $model->content,'uploadurl'=>$uploadurl)); ?>
-                <?php //$this->renderPartial('/common/editor_medium', array('model' => $model,'content' => $model->content)); ?>                
-                <?php //$this->renderPartial('/common/editor_boot', array('model' => $model,'content' => $model->content)); ?>                
-            </div>
+    <?php echo $form->errorSummary($model); ?>
+    <div class="form-group">
+        <?php echo $form->textField($model,'title',array('size'=>60,'maxlength'=>255,'class'=>'form-control','placeholder'=>'文章标题')); ?>
+    </div>
+    <div class="form-group">
+        <?php $this->renderPartial('/common/editor_um', array('model' => $model,'content' => $model->content,'uploadurl'=>$uploadurl)); ?>            
+    </div>
     <div class="tags-holder">
-        <?php foreach ($tags as $tagid=>$tagname){?>
-        <span class="tag-item">
-            <?php echo CHtml::link($tagname.' <i class="fa fa-check"></i>','javascript:;',array('action'=>'select-tag','action-data'=>$tagid));?>
+        <?php if(!empty($tags)){?>
+        <?php foreach ($tags as $tagid=>$tagname){$_selected=in_array($tagid,$selectedTagids);?>
+        <span class="tag-item <?php echo $_selected ? 'active' : '';?>">
+            <?php echo CHtml::link($tagname.' <i class="fa fa-check"></i>'.($_selected ? '<input type="hidden" name="tags[]" value="'.$tagid.'"/>': ''),'javascript:;',array('action'=>'select-tag','action-data'=>$tagid));?>
         </span>
-        
-        
+        <?php }?>
+        <span class="tag-item"><?php echo CHtml::link('<i class="fa fa-plus"></i> 新增',array('tags/create'),array('target'=>'_blank'));?></span>
+        <?php }else{?>
+        <p class="help-block"><i class="fa fa-exclamation-circle"></i> 还没有创建任何标签，建议先<?php echo CHtml::link('创建',array('tags/create'));?>！</p>
         <?php }?>
     </div>
-            <div class="form-group">
-                    <?php echo CHtml::submitButton($model->isNewRecord ? '提交' : '更新',array('class'=>'btn btn-success pull-right','id'=>'editorSubmit')); ?>
-            </div>
-    <?php $this->endWidget(); ?>
-    
+    <div class="form-group">
+        <?php echo CHtml::submitButton($model->isNewRecord ? '提交' : '更新',array('class'=>'btn btn-success pull-right','id'=>'editorSubmit')); ?>
+    </div>
+    <?php $this->endWidget(); ?>    
 </div><!-- form -->

@@ -9,6 +9,7 @@ class Tags extends CActiveRecord {
     public function rules() {
         return array(
             array('title,classify', 'required'),
+            array('cTime', 'default', 'setOnEmpty' => true, 'value' => zmf::now()),
             array('hits,cTime,posts,length', 'length', 'max' => 11),
             array('title', 'length', 'max' => 255),
             array('name, classify', 'length', 'max' => 32),
@@ -25,7 +26,7 @@ class Tags extends CActiveRecord {
     public function attributeLabels() {
         return array(
             'id' => 'ID',
-            'title' => '标签填选',
+            'title' => '标签名',
             'name' => '拼音',
             'classify' => '分类',
             'hits' => '点击',
@@ -36,13 +37,10 @@ class Tags extends CActiveRecord {
         );
     }
 
-    public function search() {
-        $criteria = new CDbCriteria;
-        $criteria->compare('title', $this->title, true);
-        $criteria->compare('name', $this->name, true);
-        return new CActiveDataProvider($this, array(
-            'criteria' => $criteria,
-        ));
+    public function beforeSave() {
+        $this->name = zmf::pinyin($this->title);
+        $this->length = mb_strlen($this->title,'GBK');
+        return true;
     }
 
     public static function model($className = __CLASS__) {
@@ -86,7 +84,7 @@ class Tags extends CActiveRecord {
             unset(Yii::app()->session['checkHasBadword']);
             $_data = array(
                 'title' => $title,
-                'name' => tools::pinyin($title),
+                'name' => zmf::pinyin($title),
                 'classify' => $classify,
                 'status' => $status,
                 'cTime' => time(),

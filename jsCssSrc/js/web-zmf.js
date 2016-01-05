@@ -33,7 +33,11 @@ function rebind() {
             var _html = '<input type="hidden" name="tags[]" value="' + tagid + '"/>';
             dom.append(_html);
         }
-
+    });
+    $(".comment-textarea").unbind('click').click(function () {
+        $('.toggle-area').each(function(){
+            $(this).fadeIn(500);
+        });
     });
     $("a[action=add-comment]").click(function () {
         var dom = $(this);
@@ -203,27 +207,46 @@ function favorite(dom) {
 function addComment(dom) {
     var k = dom.attr("action-data");
     var t = dom.attr("action-type");
-    var to = $('#replyoneHolder-' + k).attr('tocommentid');
+    var to = parseInt($('#replyoneHolder-' + k).attr('tocommentid'));
     var c = $('#content-' + t + '-' + k).val();
+    var username=$('#username-' + t + '-' + k).val();
+    var email=$('#email-' + t + '-' + k).val();
     if (!k || !t || !c) {
         dialog({msg: '请填写内容'});
         return false;
     }
+    if (!username) {
+        username = '';
+    }
+    if (!email) {
+        email = '';
+    }
+    if(!checkLogin()){
+        if(!username){
+            dialog({msg: '请填写称呼'});
+            return false;
+        }
+        if(email!=''){
+            var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
+            if(!reg.test(email)){
+                dialog({msg: '请填写正确的邮箱地址'});
+                return false;
+            }
+        }
+    }
     if (!to) {
         to = 0;
-    }
+    }    
     if (!checkAjax()) {
         return false;
     }
-    $.post(zmf.addCommentUrl, {k: k, t: t, c: c, to: to, YII_CSRF_TOKEN: zmf.csrfToken}, function (result) {
+    $.post(zmf.addCommentUrl, {k: k, t: t, c: c, to: to,email:email,username:username, YII_CSRF_TOKEN: zmf.csrfToken}, function (result) {
         ajaxReturn = true;
         result = eval('(' + result + ')');
         if (result['status'] == '1') {
             $('#content-' + t + '-' + k).val('');
             $("#comments-" + t + "-" + k).append(result['msg']);
             cancelReplyOne(k);
-        } else if (result['status'] == '2') {
-            dialog({msg: zmf.loginHtml});
         } else {
             dialog({msg: result['msg']});
         }
@@ -462,102 +485,6 @@ function playVideo(company, videoid, targetHolder, dom) {
     }
     $('#' + targetHolder).html(html);
     $(dom).remove();
-}
-
-function setPostFaceimg(id, dom) {
-    var _cd = $(dom).children('i');
-    var has = false;
-    if (_cd.hasClass('fa-bookmark')) {
-        has = true;
-    }
-    $('.right-bar').each(function () {
-        $(this).find('.fa-bookmark').removeClass('fa-bookmark').addClass('fa-bookmark-o');
-    })
-    if (has) {
-        id = '';
-    } else if (_cd.hasClass('fa-bookmark-o')) {
-        _cd.removeClass('fa-bookmark-o').addClass('fa-bookmark');
-    } else {
-        _cd.removeClass('fa-bookmark').addClass('fa-bookmark-o');
-        id = '';
-    }
-    $('#Posts_faceimg').val(id);
-}
-function updateUserInfo(type) {
-    if (!type) {
-        return false;
-    }
-    var passData = {
-        YII_CSRF_TOKEN: zmf.csrfToken,
-        type: type
-    };
-    if (type === 'passwd') {
-        var pwd = $('#password').val(), repwd = $('#repassword').val(), oldpwd = $('#oldpassword').val();
-        if (!oldpwd) {
-            dialog({msg: '请输入原有密码'});
-            return false;
-        }
-        if (!pwd || !repwd || pwd !== repwd) {
-            dialog({msg: '两次密码不相同'});
-            return false;
-        } else if (pwd.length < 6) {
-            dialog({msg: '密码长度不能短于6位'});
-            return false;
-        }
-        passData.password = pwd;
-        passData.oldPassword = oldpwd;
-    } else if (type === 'skin') {
-        var bgImg = $('#bgImgInput').val();
-        if (!bgImg) {
-            dialog({msg: '请先上传图片'});
-            return false;
-        }
-        passData.bgImg = bgImg;
-    } else {
-        return false;
-    }
-    if (!checkAjax()) {
-        return false;
-    }
-    $.post(zmf.updateUserinfoUrl, passData, function (data) {
-        data = $.parseJSON(data);
-        ajaxReturn = true;
-        dialog({msg: data.msg});
-        if (data.status === 1 && type === 'passwd') {
-            $('input[type=password]').each(function () {
-                $(this).val('');
-            });
-        }
-        return false;
-    });
-
-}
-function loginCheck(loadingHolder, rid) {
-    if (loadingHolder) {
-        $('#' + loadingHolder).show();
-    }
-    $.post(zmf.autoLoginCheckUrl, {rid: rid, YII_CSRF_TOKEN: zmf.csrfToken}, function (data) {
-        data = $.parseJSON(data);
-        if (loadingHolder) {
-            $('#' + loadingHolder).hide();
-        }
-        if (data.status === 1) {
-            window.location.reload();
-        }
-    })
-}
-function loginToggle() {
-    var dom = $('.toggle-btn');
-    var _left = parseInt($('#login-with-qrcode').css('left')), newUrl;
-    if (_left < 0) {
-        $("#login-with-qrcode").animate({left: 0});
-        dom.html('扫码登录 <i class="fa toggle-btn fa-chevron-circle-right"></i>');
-        newUrl = zmf.loginUrl + '#qrcode-form';
-    } else {
-        $("#login-with-qrcode").animate({left: -360});
-        dom.html('账号登录 <i class="fa toggle-btn fa-chevron-circle-left"></i>');
-        newUrl = zmf.loginUrl + '#login-form';
-    }
 }
 /*
  * a:对话框id

@@ -12,6 +12,9 @@
         font-size: 32px;
         border: 1px solid #f8f8f8
     }
+    .post-comments .media{
+        border-bottom: 1px solid #f8f8f8
+    }
 </style>
 <div class="main-part">
     <div class="module">
@@ -29,7 +32,7 @@
         <p>相关文章</p>
     </div>
     <div class="module">
-        <div id="comments-posts-<?php echo $info['id'];?>-box">
+        <div id="comments-posts-<?php echo $info['id'];?>-box" class="post-comments">
             <div id="comments-posts-<?php echo $info['id'];?>">
                 <?php if(!empty($comments)){?>
                 <?php foreach($comments as $comment){?>

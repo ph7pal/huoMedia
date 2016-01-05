@@ -25,6 +25,7 @@ class TagsController extends Admin{
     }
     public function actionCreate() {
         $model = new Tags;
+        $model->classify='posts';
         if (isset($_POST['Tags'])) {
             $model->attributes = $_POST['Tags'];
             if ($model->save())

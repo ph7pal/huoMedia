@@ -15,16 +15,13 @@ class AjaxController extends Q {
         }
     }
 
-    public function actionAddComment() {
-        if (Yii::app()->user->isGuest) {
-            $this->jsonOutPut(2, Yii::t('default', 'loginfirst'));
-        } else {
-            $uid = zmf::uid();
-        }
+    public function actionAddComment() {        
         $keyid = zmf::val('k', 2);
         $to = zmf::val('to', 2);
         $type = zmf::val('t', 1);
         $content = zmf::val('c', 1);
+        $email = zmf::val('email', 1);
+        $username = zmf::val('username', 1);
         if (!isset($type) OR ! in_array($type, array('posts'))) {
             $this->jsonOutPut(0, Yii::t('default', 'forbiddenaction'));
         }
@@ -34,7 +31,22 @@ class AjaxController extends Q {
         if (!$content) {
             $this->jsonOutPut(0, '评论不能为空哦~');
         }
-        $status = Posts::STATUS_STAYCHECK;
+        if($this->uid){
+            $status=  Posts::STATUS_PASSED;
+            $uid=  $this->uid;
+        }else{
+            if(!$username){
+                $this->jsonOutPut(0, '请填写称呼');
+            }
+            if($email!=''){
+                $validator = new CEmailValidator;
+                if(!$validator->validateValue($email)){
+                    $this->jsonOutPut(0, '请填写正确的邮箱地址');
+                }
+            }
+            $status = Posts::STATUS_STAYCHECK;
+            $uid=0;
+        }
         //处理文本
         $filter = Posts::handleContent($content);
         $content = $filter['content'];
@@ -59,7 +71,9 @@ class AjaxController extends Q {
             'classify' => $type,
             'platform' => '', //$this->platform
             'tocommentid' => $to,
-            'status' => $status
+            'status' => $status,
+            'username' => $username,
+            'email' => $email,
         );
         unset(Yii::app()->session['checkHasBadword']);
         $model->attributes = $intoData;
@@ -86,7 +100,10 @@ class AjaxController extends Q {
                     );
                     Notification::add($_noticedata);
                 }
-                $html = $this->renderPartial('/posts/_comment', array('data' => $model), true);
+                if($uid){
+                    $intoData['loginUsername']=  $this->userInfo['truename'];
+                }
+                $html = $this->renderPartial('/posts/_comment', array('data' => $intoData), true);
                 $this->jsonOutPut(1, $html);
             } else {
                 $this->jsonOutPut(0, '新增评论失败');

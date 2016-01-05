@@ -23,12 +23,6 @@
 	</div>
 
 	<div class="form-group">
-		<?php echo $form->labelEx($model,'classify'); ?>
-		<?php echo $form->dropDownlist($model,'classify',  Tags::classify('admin'),array('class'=>'form-control')); ?>
-		<?php echo $form->error($model,'classify'); ?>
-	</div>
-
-	<div class="form-group">
 		<?php echo CHtml::submitButton($model->isNewRecord ? '新增' : '保存',array('class'=>'btn btn-primary')); ?>
 	</div>
 

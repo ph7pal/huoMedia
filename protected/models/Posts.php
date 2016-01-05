@@ -203,5 +203,11 @@ class Posts extends CActiveRecord {
         $com->bindValue(':limit', $pages->pageSize);
         $comLists = $com->queryAll();
     }
+    
+    public static function getTopsByTag($tagid,$limit=5){
+        $sql="SELECT p.id,p.title FROM {{posts}} p,{{tag_relation}} tr WHERE tr.tagid='{$tagid}' AND tr.classify='posts' AND tr.logid=p.id AND p.status=".self::STATUS_PASSED." ORDER BY hits DESC LIMIT {$limit}";
+        $items=  Yii::app()->db->createCommand($sql)->queryAll();
+        return $items;
+    }
 
 }

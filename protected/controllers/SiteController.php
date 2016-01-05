@@ -88,9 +88,13 @@ class SiteController extends Q {
         }
         $this->redirect($this->referer);
     }
-
-    public function actionReg() {
-        $this->actionLogin('reg');
+    
+    public function actionAbout(){
+        $this->pageTitle='关于';
+        $this->selectNav='about';
+        $this->render('about', array(
+            'model' => $model,
+        ));
     }
 
     public function actionSitemap() {

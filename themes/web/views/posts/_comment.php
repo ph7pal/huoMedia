@@ -7,17 +7,28 @@
  * @copyright Copyright©2015 阿年飞少 
  * @datetime 2016-1-4  17:16:29 
  */
+$_uname='';
+if($data['uid']){
+    $_uname=$data['loginUsername'];
+}else{
+    $_uname=$data['username'];
+}
+if(!$_uname){
+    $_uname='匿名网友';
+}
 ?>
-<?php //$_uname=Users::getUserInfo($data['uid'],'truename'); ?>
-<div class="media" id="comment_<?php echo $data['id']; ?>">   
+<div class="media" id="comment-<?php echo $data['id']; ?>">
     <div class="media-body">
-        <p><b>用户</b></p>
-        <p><?php echo $data['content']; ?></p>
+        <p><?php echo CHtml::encode($_uname);?></p>
+        <p><?php echo nl2br(CHtml::encode($data['content'])); ?></p>
         <p class="help-block">
             <?php echo zmf::formatTime($data['cTime']); ?>
             <span class="pull-right">
-                <?php echo CHtml::link('回复','javascript:;',array('onclick'=>"replyOne('".$data['id']."','".$data['logid']."','网页')"));?>                
-                <?php if($this->uid==$postInfo['uid']){echo CHtml::link('删除','javascript:;',array('onclick'=>''));}?>                
+                <?php 
+                echo CHtml::link('回复','javascript:;',array('onclick'=>"replyOne('".$data['id']."','".$data['logid']."','".$_uname."')"));
+                if($this->uid && $this->uid==$postInfo['uid']){
+                    echo CHtml::link('删除','javascript:;',array('action'=>'del-content','action-type'=>'comment','action-data'=>  $data['id'],'action-confirm'=>1,'action-target'=>'comment-'.$data['id']));                    
+                }?>                
             </span>
         </p>
     </div>

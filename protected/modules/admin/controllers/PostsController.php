@@ -106,15 +106,24 @@ class PostsController extends Admin {
                 if(!$isNew || !empty($intoTags)){
                     Posts::model()->updateByPk($model->id,array('tagids'=>join(',',$intoTags)));
                 }
-                $this->redirect(array('view', 'id' => $model->id));
+                $this->redirect(array('/posts/view', 'id' => $model->id));
             }
         }
         $tags=  Tags::getClassifyTags('posts');
+        $postTags=array();
+        if(!$isNew){
+            $postTags=  Tags::getByIds($model->tagids);                
+        }
         $this->pageTitle = '与世界分享你的旅行见闻 - ' . zmf::config('sitename');
         $this->render('create', array(
             'model' => $model,
             'tags' => $tags,
+            'postTags' => $postTags,
         ));
+    }
+    
+    public function actionUpdate($id){
+        $this->actionCreate($id);
     }
 
     public function loadModel($id) {

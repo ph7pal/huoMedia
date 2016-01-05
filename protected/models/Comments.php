@@ -19,7 +19,7 @@ class Comments extends CActiveRecord {
             array('uid, logid,content,classify, status, cTime', 'required'),
             array('status', 'numerical', 'integerOnly' => true),
             array('uid,logid,tocommentid, cTime', 'length', 'max' => 11),
-            array('content', 'length', 'max' => 255),
+            array('content,username,email', 'length', 'max' => 255),
             array('platform, classify', 'length', 'max' => 16),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
@@ -53,6 +53,8 @@ class Comments extends CActiveRecord {
             'classify' => '分类',
             'status' => '状态',
             'cTime' => '回复时间',
+            'username' => '用户名',
+            'email' => '邮箱地址',
         );
     }
 
@@ -65,7 +67,7 @@ class Comments extends CActiveRecord {
         return $info;
     }
 
-    public static function getCommentsByPage($id, $classify, $page = 1, $pageSize = 30, $field = "id,uid,logid,tocommentid,content,cTime") {
+    public static function getCommentsByPage($id, $classify, $page = 1, $pageSize = 30, $field = "id,uid,username,logid,tocommentid,content,cTime") {
         if (!$id || !$classify) {
             return array();
         }
@@ -74,6 +76,22 @@ class Comments extends CActiveRecord {
         $limitStart = ($page - 1) * $pageSize;
         $sql = "SELECT {$field} FROM {{comments}} WHERE logid='{$id}' AND classify='{$classify}' AND status=" . Posts::STATUS_PASSED . " ORDER BY cTime LIMIT {$limitStart},{$pageSize}";
         $items = Yii::app()->db->createCommand($sql)->queryAll();
+        if (!empty($items)) {
+            $uids = array_filter(array_keys(CHtml::listData($items, 'uid', '')));
+            $uidsStr = join(',', $uids);
+            if ($uidsStr != '') {
+                $usernames = Yii::app()->db->createCommand("SELECT id,truename FROM {{users}} WHERE id IN($uidsStr)")->queryAll();
+                if (!empty($usernames)) {
+                    foreach ($items as $k => $val) {
+                        foreach ($usernames as $val2){
+                            if($val['uid']>0 && $val['uid']==$val2['id']){
+                                $items[$k]['loginUsername']=$val2['truename'];
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return $items;
     }
 

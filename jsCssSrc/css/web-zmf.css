@@ -51,6 +51,9 @@ button, input, select, textarea,.form-control,.btn{
     background: #e1e8e5;
     z-index: -2
 }
+.toggle-area{
+    display: none
+}
 /*右侧------*/
 .author-avatar-box{
     width: 278px;
@@ -80,3 +83,5 @@ button, input, select, textarea,.form-control,.btn{
     margin: 200px auto 0;
 }
 /*登录页面------*/
+
+ul.yiiPager{height:26px;margin:0;padding:0}ul.yiiPager li{display:inline;margin-right: 5px;}ul.yiiPager a:link,ul.yiiPager a:visited{padding:5px 9px;border:1px solid #ccc;border-radius:3px;background:#fff;color:#777;font-weight:normal}ul.yiiPager a:hover{border-color:#449d44;box-shadow:1px 1px 1px #333;color:#035d67;text-decoration:none}ul.yiiPager .selected a{padding:6px 10px;border:0;border-radius:3px;background:#449d44;color:#fff}ul.yiiPager .hidden,ul.yiiPager .last,ul.yiiPager .first{display:none}ul.yiiPager .previous{float: left}ul.yiiPager .next{float: right;margin-right: 0}ul.yiiPager .page{float:left}

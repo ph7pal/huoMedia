@@ -45,7 +45,7 @@
     <div class="settings-side-box pull-left">
         <div class="list-group">
             <?php foreach($this->menu as $k=>$v){?>
-            <?php echo CHtml::link($k,$v['link'],array('class'=>'list-group-item'.($v['active'] ? ' active' : '')));?>
+            <?php echo CHtml::link($k,$v['link'],array('class'=>'list-group-item'.($v['active'] ? ' active' : ''),'target'=>($v['target'] ? '_blank': '')));?>
             <?php }?>
         </div>
     </div>

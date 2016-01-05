@@ -3,10 +3,10 @@
     <div class="container">
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><?php echo CHtml::link('文章', zmf::config('baseurl'));?></li>
-                <li><?php echo CHtml::link('标签', zmf::config('baseurl'));?></li>
-                <li><?php echo CHtml::link('足迹', zmf::config('baseurl'));?></li>
-                <li><?php echo CHtml::link('关于', zmf::config('baseurl'));?></li>
+                <li<?php echo $this->selectNav=='posts' ? ' class="active"' : '';?>><?php echo CHtml::link('文章', array('index/index'));?></li>
+                <li<?php echo $this->selectNav=='tags' ? ' class="active"' : '';?>><?php echo CHtml::link('标签', array('index/tags'));?></li>
+                <li<?php echo $this->selectNav=='map' ? ' class="active"' : '';?>><?php echo CHtml::link('足迹', array('index/map'));?></li>
+                <li<?php echo $this->selectNav=='about' ? ' class="active"' : '';?>><?php echo CHtml::link('关于', array('site/about'));?></li>
             </ul>
             <?php if (Yii::app()->user->isGuest) { ?>
             <ul class="nav navbar-nav navbar-right">

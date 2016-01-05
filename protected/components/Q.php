@@ -9,6 +9,7 @@ class Q extends Controller {
     public $referer;
     public $uid;
     public $userInfo;
+    public $selectNav='';
 
     function init() {
         parent::init();

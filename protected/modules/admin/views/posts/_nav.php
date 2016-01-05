@@ -17,6 +17,7 @@ $this->menu=array(
     ),
     '新增'=>array(
         'link'=>array('posts/create'),
-        'active'=>false
+        'active'=>false,
+        'target'=>true,
     ),
 );

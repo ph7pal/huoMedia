@@ -293,8 +293,6 @@ class zmf {
     public static function filterInput($str, $textonly = 0) {
         if ($textonly == 1) {
             $str = strip_tags(trim($str));
-//            $str = addslashes($str);
-            $str = preg_replace('/\r\n|\r|\n/i', '', $str);
         } elseif ($textonly == 2) {
             $str = self::myint($str);
         }

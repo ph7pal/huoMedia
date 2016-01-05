@@ -14,6 +14,9 @@ $this->renderPartial('_nav');
     .comments-box .media{
         border-bottom: 1px solid #f8f8f8
     }
+    .comment-actions a{
+        margin-left: 10px;
+    }
 </style>
 <?php if(!empty($posts)){?>
 <div class="comments-box">    
