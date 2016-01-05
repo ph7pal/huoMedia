@@ -248,5 +248,12 @@ class AjaxController extends Q {
             $this->jsonOutPut(0, '操作失败');
         }
     }
+    
+    public function actionFavorite() {
+        $data = zmf::val('data', 1);
+        $type = zmf::val('type', 1);
+        $ckinfo = Posts::favorite($data, $type, 'web');
+        $this->jsonOutPut($ckinfo['state'], $ckinfo['msg']);
+    }
 
 }

@@ -22,10 +22,16 @@
         <div class="post-content">
             <?php echo zmf::text(array(),$info['content']);?>
         </div>
+        <div class="tags-container">
+            <span><i class="fa fa-tags"></i></span>
+            <?php foreach($tags as $tag){?>
+            <span><?php echo CHtml::link($tag['title'],array('index/index','tagid'=>$tag['id']));?></span>
+            <?php }?>
+        </div>
         <div class="post-fixed-actions text-center">
-            <p><i class="fa fa-heart-o" data-toggle="tooltip" data-placement="right" title="点赞"></i></p>
-            <p><i class="fa fa-comment-o" data-toggle="tooltip" data-placement="right" title="评论"></i></p>
-            <p><i class="fa fa-qrcode" data-toggle="tooltip" data-placement="right" title="分享"></i></p>
+            <p><?php echo CHtml::link('<i class="fa '.($this->favorited ? 'fa-heart' : 'fa-heart-o').'"></i>','javascript:;',array('action'=>'favorite','action-data'=>$info['id'],'action-type'=>'post','title'=>'点赞'));?></p>
+            <p><?php echo CHtml::link('<i class="fa fa-comment-o"></i>','javascript:;',array('action'=>'scroll','action-target'=>'add-comments'));?></p>
+            <p><i class="fa fa-qrcode" title="分享"></i></p>
         </div>
     </div>
     <div class="module">
@@ -47,6 +53,8 @@
             <?php }?>
         </div>
         <div style="margin-top: 15px"></div>
+        <div id="add-comments">
         <?php $this->renderPartial('/posts/_addComment', array('keyid' => $info['id'], 'type' => 'posts')); ?>
+        </div>
     </div>
 </div>

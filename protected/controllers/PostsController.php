@@ -1,8 +1,7 @@
 <?php
 
 class PostsController extends Q {
-
-    public $favored = false;
+    
     public $favorited = false;
 
     public function actionView() {
@@ -12,12 +11,15 @@ class PostsController extends Q {
         }
         $info = $this->loadModel($id);
         $pageSize = 30;
-        $comments = Comments::getCommentsByPage($id, 'posts', 1, $pageSize);        
+        $comments = Comments::getCommentsByPage($id, 'posts', 1, $pageSize);       
+        $tags = Tags::getByIds($info['tagids']);
         $data = array(
             'info' => $info,
             'comments' => $comments,
+            'tags' => $tags,
             'loadMore' => count($comments) == $pageSize ? 1 : 0,
         );
+        $this->favorited=  Favorites::checkFavored($id, 'post');
         $this->pageTitle=$info['title'];
         $this->selectNav='posts';
         $this->render('view', $data);

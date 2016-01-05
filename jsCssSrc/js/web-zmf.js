@@ -2,6 +2,7 @@ var tipsImgOrder = 0;
 var beforeModal;
 var ajaxReturn = true;
 
+var url=window.location.href;
 
 
 function rebind() {
@@ -45,6 +46,17 @@ function rebind() {
         var t = dom.attr("action-type");
         addComment(dom, t, k);
     });
+    $("a[action=scroll]").unbind('click').click(function () {
+        var dom = $(this);
+        var to = dom.attr("action-target");
+        if(!to){
+            return false;
+        }        
+        $("body,html").animate({
+            scrollTop: $('#'+to).offset().top
+        }, 200);
+    });
+    
     $('[data-toggle="tooltip"]').tooltip()
     //输入框自动变大
     //textareaAutoResize();
@@ -170,13 +182,6 @@ function delContent(dom) {
     });
 }
 function favorite(dom) {
-    if (!checkLogin()) {
-        dialog({msg: '请先登录', 'action': 'gotoLogin', 'actionName': '前去登录'});
-        $("button[action=gotoLogin]").unbind('click').click(function () {
-            window.location.href = zmf.loginUrl;
-        });
-        return false;
-    }
     var acdata = dom.attr("action-data");
     var t = dom.attr("action-type");
     var dt = dom.text();
@@ -191,16 +196,17 @@ function favorite(dom) {
         ajaxReturn = true;
         result = $.parseJSON(result);
         if (result.status === 1) {//收藏成功
-            dom.text((num + 1) + ' 赞').removeClass('btn-default').addClass('btn-success');
+            //dom.text((num + 1) + ' 赞').removeClass('btn-default').addClass('btn-success');
         } else if (result.status === 2) {//收藏失败
-            dom.text(dt);
+            //dom.text(dt);
         } else if (result.status === 3) {//取消成功
-            dom.text((num - 1) + ' 赞').removeClass('btn-success').addClass('btn-default');
+            //dom.text((num - 1) + ' 赞').removeClass('btn-success').addClass('btn-default');
         } else if (result.status === 4) {//取消失败
-            dom.text(dt);
+            //dom.text(dt);
         } else {
-            alert(result.msg);
+            //alert(result.msg);
         }
+        alert(result.msg);
         return false;
     });
 }

@@ -145,7 +145,36 @@ class Posts extends CActiveRecord {
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
-    
+
+    public static function encode($id, $type = 'post') {
+        return zmf::jiaMi($id . '#' . $type);
+    }
+
+    public static function decode($code) {
+        $_de = zmf::jieMi($code);
+        $_arr = explode('#', $_de);
+        return array(
+            'id' => $_arr[0],
+            'type' => $_arr[1],
+        );
+    }
+
+    /**
+     * 更新查看次数
+     * @param type $keyid 对象ID
+     * @param type $type 对象类型
+     * @param type $num 更新数量
+     * @param type $field 更新字段
+     * @return boolean
+     */
+    public static function updateCount($keyid, $type, $num = 1, $field = 'hits') {
+        if (!$keyid || !$type || !in_array($type, array('Posts'))) {
+            return false;
+        }
+        $model = new $type;
+        return $model->updateCounters(array($field => $num), ':id=id', array(':id' => $keyid));
+    }
+
     /**
      * 处理内容
      * @param type $content
@@ -182,7 +211,7 @@ class Posts extends CActiveRecord {
         );
         return $data;
     }
-    
+
     public static function getAll($params, &$pages, &$comLists) {
         $sql = $params['sql'];
         if (!$sql) {
@@ -193,7 +222,7 @@ class Posts extends CActiveRecord {
         $com = Yii::app()->db->createCommand($sql)->query();
         //添加限制，最多取1000条记录
         //todo，按不同情况分不同最大条数
-        $total=$com->rowCount>1000 ? 1000 : $com->rowCount;
+        $total = $com->rowCount > 1000 ? 1000 : $com->rowCount;
         $pages = new CPagination($total);
         $criteria = new CDbCriteria();
         $pages->pageSize = $_size;
@@ -203,11 +232,69 @@ class Posts extends CActiveRecord {
         $com->bindValue(':limit', $pages->pageSize);
         $comLists = $com->queryAll();
     }
-    
-    public static function getTopsByTag($tagid,$limit=5){
-        $sql="SELECT p.id,p.title FROM {{posts}} p,{{tag_relation}} tr WHERE tr.tagid='{$tagid}' AND tr.classify='posts' AND tr.logid=p.id AND p.status=".self::STATUS_PASSED." ORDER BY hits DESC LIMIT {$limit}";
-        $items=  Yii::app()->db->createCommand($sql)->queryAll();
+
+    public static function getTopsByTag($tagid, $limit = 5) {
+        $sql = "SELECT p.id,p.title FROM {{posts}} p,{{tag_relation}} tr WHERE tr.tagid='{$tagid}' AND tr.classify='posts' AND tr.logid=p.id AND p.status=" . self::STATUS_PASSED . " ORDER BY hits DESC LIMIT {$limit}";
+        $items = Yii::app()->db->createCommand($sql)->queryAll();
         return $items;
+    }
+
+    public static function favorite($code, $type, $from = 'web', $uid = '') {
+        if (!$code || !$type) {
+            return array('status' => 0, 'msg' => '数据不全，请核实');
+        }
+        if (!in_array($type, array('post'))) {
+            return array('status' => 0, 'msg' => '暂不允许的分类');
+        }
+        if (is_numeric($code)) {
+            $id = $code;
+        } else {
+            $codeArr = Posts::decode($code);
+            if ($codeArr['type'] != $type || !is_numeric($codeArr['id']) || $codeArr['id'] < 1) {
+                $this->jsonOutPut(0, '您所查看的内容不存在');
+            }
+            $id = $codeArr['id'];
+        }
+        if ($from == 'web') {
+            if (zmf::actionLimit('favorite-' . $type, $id)) {
+                return array('status' => 0, 'msg' => '操作太频繁，请稍后再试');
+            }
+            if(!$uid){
+                $uid = zmf::uid();
+            }
+        }
+        if(!$uid){
+            return array('status' => 0, 'msg' => '请先登录');
+        }
+
+        $attr = array(
+            'uid' => $uid,
+            'logid' => $id,
+            'classify' => $type
+        );
+        $info = Favorites::model()->findByAttributes($attr);
+        if ($info) {
+            if (Favorites::model()->deleteByPk($info['id'])) {
+                if ($type == 'post') {
+                    Posts::updateCount($id, 'Posts', -1, 'favors');
+                }
+                return array('status' => 1, 'msg' => '取消收藏成功', 'state' => 3);
+            } else {
+                return array('status' => 0, 'msg' => '取消收藏失败', 'state' => 4);
+            }
+        } else {
+            $attr['cTime'] = zmf::now();
+            $model = new Favorites();
+            $model->attributes = $attr;
+            if ($model->save()) {
+                if ($type == 'post') {
+                    Posts::updateCount($id, 'Posts', 1, 'favors');
+                }
+                return array('status' => 1, 'msg' => '添加收藏成功', 'state' => 1);
+            } else {
+                return array('status' => 0, 'msg' => '添加收藏失败', 'state' => 2);
+            }
+        }
     }
 
 }
