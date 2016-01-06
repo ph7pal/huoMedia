@@ -20,7 +20,76 @@
         box-shadow: none;
         background-color: #f8f8f8;
     }
+    .float-share-holder{
+        position: absolute;
+        left: 0;
+        top: 200px;
+        background: #fff;
+        width: 360px;
+        height: 222px;
+    }
+    .float-share-content{
+        width: 340px;
+        float: left;
+        height: 200px;
+        margin: 10px 0 10px 10px;
+        border:1px solid #ccc;
+        padding: 10px 15px 0 0;
+        position: relative
+    }
+    .float-triangle{
+        margin-top: 105px;
+        float: right;
+        width: 0;
+        height: 0;
+        border-top: 5px solid transparent;
+        border-left: 10px solid #ccc;
+        border-bottom: 5px solid transparent;
+            
+    }
+    .float-close{
+        position: absolute;
+        right: 5px;
+        top: 2px;
+        cursor: pointer
+    }
+    .float-close i{
+        width: 14px;
+        height: 14px;
+    }
+    .float-close i:hover{
+        -webkit-transition: -webkit-transform 250ms;
+        transition: transform 250ms;
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+    .float-btns a{
+        margin-top: 15px;
+        margin-bottom: 6px;
+    }
 </style>
+<?php 
+$url=zmf::config('domain').Yii::app()->createUrl('posts/view',array('id'=>$info['id']));
+$qrcode=  zmf::qrcode($url, 'posts', $info['id']);
+?>
+<div class="float-share-holder">
+    <div class="float-share-content">
+        <span class="float-close"><i class="fa fa-close"></i></span>
+        <div class="row">
+            <div class="col-xs-6 text-center">
+                <img src="<?php echo $qrcode;?>" class="img-responsive"/>
+                <p class="help-block">扫码分享到微信</p>
+            </div>
+            <div class="col-xs-6 float-btns">
+                <a href="javascript:;" class="btn btn-default btn-block">分享到微博</a>
+                <a href="javascript:;" class="btn btn-default btn-block">分享到QQ</a>
+                <a href="javascript:;" class="btn btn-default btn-block">复制链接</a>
+            </div>
+        </div>
+    </div>
+    <div class="float-triangle"></div>
+</div>
 <div class="main-part">
     <div class="module">
         <h1><?php echo $info['title'];?></h1>
@@ -38,7 +107,7 @@
         <div class="post-fixed-actions text-center">
             <p><?php echo CHtml::link('<i class="fa '.($this->favorited ? 'fa-heart' : 'fa-heart-o').'"></i>','javascript:;',array('action'=>'favorite','action-data'=>$info['id'],'action-type'=>'post','title'=>'点赞'));?></p>
             <p><?php echo CHtml::link('<i class="fa fa-comment-o"></i>','javascript:;',array('action'=>'scroll','action-target'=>'add-comments'));?></p>
-            <p><i class="fa fa-qrcode" title="分享"></i></p>
+            <p><?php echo CHtml::link('<i class="fa fa-qrcode"></i>','javascript:;',array('action'=>'share','action-qrcode'=>$qrcode,'action-url'=>$url,'action-img'=>$qrcode,'action-title'=>$info['title']));?></p>
         </div>
     </div>
     <?php if($info['lat']!='' && $info['long']!='' && $info['lat']!='0' && $info['long']!='0'){?>

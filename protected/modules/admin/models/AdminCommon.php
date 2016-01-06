@@ -39,7 +39,7 @@ class AdminCommon extends CActiveRecord {
         $attr['system'] = array(
             'title' => '系统',
             'url' => Yii::app()->createUrl('admin/config/index'),
-            'active' => in_array($c, array('site','config'))
+            'active' => in_array($c, array('site','config','siteInfo'))
         );
         foreach ($attr as $k => $v) {
             if (!Controller::checkPower($k, '', true)) {

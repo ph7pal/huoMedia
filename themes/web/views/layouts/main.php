@@ -9,7 +9,7 @@
                 <li<?php echo $this->selectNav=='posts' ? ' class="active"' : '';?>><?php echo CHtml::link('文章', array('index/index'));?></li>
                 <li<?php echo $this->selectNav=='tags' ? ' class="active"' : '';?>><?php echo CHtml::link('标签', array('index/tags'));?></li>
                 <li<?php echo $this->selectNav=='map' ? ' class="active"' : '';?>><?php echo CHtml::link('足迹', array('index/map'));?></li>
-                <li<?php echo $this->selectNav=='about' ? ' class="active"' : '';?>><?php echo CHtml::link('关于', array('site/about'));?></li>
+                <li<?php echo $this->selectNav=='about' ? ' class="active"' : '';?>><?php echo CHtml::link('关于', array('site/info','code'=>'about'));?></li>
             </ul>
             <?php if (Yii::app()->user->isGuest) { ?>
             <ul class="nav navbar-nav navbar-right">

@@ -7,7 +7,7 @@ class AttachmentsController extends Q {
         $logid = zmf::filterInput($_GET['id']); //所属对象
         $reImgsize = zmf::filterInput($_GET['imgsize']); //返回图片的尺寸
         $fileholder = zmf::filterInput($_GET['fileholder'], 't', 1); //上传控件的ID
-        if (!isset($uptype) OR ! in_array($uptype, array('posts'))) {
+        if (!isset($uptype) OR ! in_array($uptype, array('posts','siteinfo'))) {
             $this->jsonOutPut(0, '请设置上传所属类型' . $uptype);
         }
         if (Yii::app()->request->getParam('PHPSESSID')) {

@@ -8,12 +8,15 @@ foreach ($items as $k => $t) {
         'active' => $k == $_GET['type']
     );
 }
+$this->menu['站点文章'] = array(
+    'link' => array('siteInfo/index')
+);
 $form = $this->beginWidget('CActiveForm', array(
     'id' => 'config-addConfigs-form',
     'action' => Yii::app()->createUrl('admin/config/add'),
     'enableAjaxValidation' => false,
         ));
 echo $content;
-echo CHtml::submitButton('提交', array('class' => 'btn btn-default', 'name' => ''));
+echo CHtml::submitButton('提交', array('class' => 'btn btn-primary', 'name' => ''));
 $this->endWidget();
 $this->endContent();

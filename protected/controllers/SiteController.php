@@ -89,12 +89,33 @@ class SiteController extends Q {
         $this->redirect($this->referer);
     }
     
-    public function actionAbout(){
-        $this->pageTitle='关于';
-        $this->selectNav='about';
-        $this->render('about', array(
-            'model' => $model,
-        ));
+    public function actionInfo(){
+        $code = zmf::val('code',1);   
+        $_title=  SiteInfo::exTypes($code);
+        if(!$_title){
+            throw new CHttpException(404, '您所查看的页面不存在');
+        }
+        $info=  SiteInfo::model()->find('code=:code', array(':code'=>$code));
+        if(!$info){
+            throw new CHttpException(404, '您所查看的页面不存在');
+        }
+        $allInfos=SiteInfo::model()->findAll(array(
+            'select'=>'code,title',
+            'condition'=>'code!=:code AND status='.Posts::STATUS_PASSED,
+            'params'=>array(
+                ':code'=>$code
+            )
+        ));       
+        //更新访问统计
+        Posts::updateCount($info['id'],'SiteInfo');
+        $data=array(
+            'info'=>$info,
+            'code'=>$code,
+            'allInfos'=>$allInfos,
+        );
+        $this->pageTitle=$info['title'].' - '.zmf::config('sitename');
+        $this->selectNav=$code;
+        $this->render('about', $data);
     }
 
     public function actionSitemap() {

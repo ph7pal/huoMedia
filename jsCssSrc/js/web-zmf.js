@@ -56,7 +56,14 @@ function rebind() {
             scrollTop: $('#'+to).offset().top
         }, 200);
     });
-    
+    $("a[action=share]").unbind('click').click(function () {
+        var dom = $(this);
+        var k = dom.attr("action-qrcode");
+        var t = dom.attr("action-url");
+        var t = dom.attr("action-img");
+        var t = dom.attr("action-title");
+        var t = dom.attr("action-desc");
+    });
     $('[data-toggle="tooltip"]').tooltip()
     //输入框自动变大
     //textareaAutoResize();
