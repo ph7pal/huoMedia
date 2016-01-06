@@ -1,4 +1,4 @@
-<div class="post-item">
+<div class="post-item" id="post-<?php echo $data['id'];?>">
     <?php if($data['faceimg']){?>
     <img src="<?php echo $data['faceimg'];?>" class="img-responsive"/>
     <?php }?>
@@ -17,10 +17,12 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="fa fa-ellipsis-h"></i></a>  
                 <ul class="dropdown-menu">
                   <li><a href="#">分享</a></li>
-                  <li><a href="#">评论</a></li>
+                  <li><?php echo CHtml::link('评论',array('posts/view','id'=>$data['id'],'#'=>'add-comments'));?></li>
+                  <?php if($this->uid && $this->uid==$data['uid']){?>
                   <li role="separator" class="divider"></li>
-                  <li><a href="#">编辑</a></li>
-                  <li><a href="#">删除</a></li>
+                  <li><?php echo CHtml::link('编辑',array('admin/posts/update','id'=>$data['id']),array('target'=>'_blank'));?></li>
+                  <li><?php echo CHtml::link('删除','javascript:;',array('action'=>'del-content','action-type'=>'post','action-data'=>$data['id'],'action-confirm'=>1,'action-target'=>'post-'.$data['id']));?></li>
+                  <?php }?>
                 </ul>
               </div>
         </div>

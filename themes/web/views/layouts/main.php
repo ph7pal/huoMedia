@@ -1,6 +1,9 @@
 <?php $this->beginContent('/layouts/common'); ?>
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
+        <div class="navbar-header">
+            <a href="<?php echo zmf::config('baseurl');?>"><div class="header-logo"></div></a>
+        </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li<?php echo $this->selectNav=='posts' ? ' class="active"' : '';?>><?php echo CHtml::link('文章', array('index/index'));?></li>
@@ -10,7 +13,7 @@
             </ul>
             <?php if (Yii::app()->user->isGuest) { ?>
             <ul class="nav navbar-nav navbar-right">
-              <li><?php echo CHtml::link(zmf::t('login'), array('site/login')); ?></li>
+                <li><?php echo CHtml::link('登录', array('site/login')); ?></li>
             </ul>
             <?php }else{ ?>
             <ul class="nav navbar-nav navbar-right">
@@ -18,7 +21,7 @@
                 <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $this->userInfo['truename'];?> <span class="caret"></span></a>               
                     <ul class="dropdown-menu">
-                        <li><?php echo CHtml::link('新增作品', array('admin/posts/create'),array('role'=>'menuitem')); ?></li>
+                        <li><?php echo CHtml::link('新增文章', array('admin/posts/create'),array('role'=>'menuitem')); ?></li>
                         <li class="divider"></li>
                         <li><?php echo CHtml::link('管理中心', array('admin/index/index'),array('role'=>'menuitem')); ?></li>
                         <li><?php echo CHtml::link('退出', array('site/logout'),array('role'=>'menuitem')); ?></li>

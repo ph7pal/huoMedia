@@ -12,8 +12,8 @@
 <style>
     .add-post-form{
         width: 640px;
-        margin: 50px auto 0;
-        padding: 0 10px
+        margin: 50px auto;
+        padding: 0 10px  100px
     }
     .tags-holder{
         background: #fff;
@@ -50,11 +50,33 @@
     .tags-holder .active:hover>a>i{
         color: #fff
     }
+    .actions-fixed{
+        position: fixed;
+        top: 15px;
+        left: 10px;
+    }
+    .map-holder{
+        border: 1px solid #f8f8f8;
+        margin-bottom: 15px;
+        display: none
+    }
+    .map-holder .input-group-addon,.map-holder .form-control,.map-holder .btn{
+        border-radius: 0
+    }
+    .add-map-tips{
+        cursor: pointer
+    }
 </style>
 <?php 
 $uploadurl=Yii::app()->createUrl('attachments/upload',array('type'=>'posts','imgsize'=>600));
 $selectedTagids=array_keys(CHtml::listData($postTags, 'id', ''));
 ?>
+<div class="actions-fixed">
+    <div class="btn-group" role="group">
+        <?php echo CHtml::link('<i class="fa fa-reply"></i> 管理中心',array('index/index'),array('class'=>'btn btn-default'));?>
+        <?php echo CHtml::link('<i class="fa fa-home"></i> 站点首页',  zmf::config('baseurl'),array('class'=>'btn btn-default'));?>
+    </div>
+</div>
 <div class="add-post-form">
     <?php $form=$this->beginWidget('CActiveForm', array(
             'id'=>'posts-form',
@@ -67,7 +89,11 @@ $selectedTagids=array_keys(CHtml::listData($postTags, 'id', ''));
     <div class="form-group">
         <?php $this->renderPartial('/common/editor_um', array('model' => $model,'content' => $model->content,'uploadurl'=>$uploadurl)); ?>            
     </div>
-    <div class="tags-holder">
+    <div class="form-group">
+        <p class="help-block add-map-tips" onclick=" $('.map-holder').slideDown();loadScript()"><i class="fa fa-map-marker"></i> 点击添加坐标信息<i class="fa fa-angle-double-down"></i></p>
+    </div>
+    <?php $this->renderPartial('/posts/addMapinfo',array('model'=>$model));?>
+    <div class="tags-holder form-group">
         <?php if(!empty($tags)){?>
         <?php foreach ($tags as $tagid=>$tagname){$_selected=in_array($tagid,$selectedTagids);?>
         <span class="tag-item <?php echo $_selected ? 'active' : '';?>">
