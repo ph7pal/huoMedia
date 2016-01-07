@@ -1,3 +1,7 @@
+<?php 
+$url=zmf::config('domain').Yii::app()->createUrl('posts/view',array('id'=>$data['id']));
+$qrcode=  zmf::qrcode($url, 'posts', $data['id']);
+?>
 <div class="post-item" id="post-<?php echo $data['id'];?>">
     <?php if($data['faceimg']){?>
     <img src="<?php echo $data['faceimg'];?>" class="img-responsive"/>
@@ -16,7 +20,7 @@
             <div class="dropdown right-actions">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="fa fa-ellipsis-h"></i></a>  
                 <ul class="dropdown-menu">
-                  <li><a href="#">分享</a></li>
+                  <li><?php echo CHtml::link('分享','javascript:;',array('action'=>'share','action-qrcode'=>$qrcode,'action-url'=>$url,'action-img'=>$qrcode,'action-title'=>$data['title']));?></li>
                   <li><?php echo CHtml::link('评论',array('posts/view','id'=>$data['id'],'#'=>'add-comments'));?></li>
                   <?php if($this->uid && $this->uid==$data['uid']){?>
                   <li role="separator" class="divider"></li>

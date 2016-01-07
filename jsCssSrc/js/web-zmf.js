@@ -58,13 +58,9 @@ function rebind() {
     });
     $("a[action=share]").unbind('click').click(function () {
         var dom = $(this);
-        var k = dom.attr("action-qrcode");
-        var t = dom.attr("action-url");
-        var t = dom.attr("action-img");
-        var t = dom.attr("action-title");
-        var t = dom.attr("action-desc");
+        share(dom);
     });
-    $('[data-toggle="tooltip"]').tooltip()
+    $('[data-toggle="tooltip"]').tooltip();
     //输入框自动变大
     //textareaAutoResize();
     //意见反馈
@@ -313,6 +309,28 @@ function feedback() {
         dialog({msg: result['msg']});
         return false;
     });
+}
+function share(dom){
+    var qr = dom.attr("action-qrcode");
+    var url = dom.attr("action-url");
+    var img = dom.attr("action-img");
+    var title = dom.attr("action-title");
+    var desc = dom.attr("action-desc");
+    
+    var html='<div class="float-share-holder"><div class="float-share-content"><span class="float-close"><i class="fa fa-close"></i></span><div class="row"><div class="col-xs-6 text-center"><img src="'+qr+'" class="img-responsive"/><p class="help-block">扫码分享到微信</p></div><div class="col-xs-6 float-btns"><a href="javascript:;" class="btn btn-default btn-block">分享到微博</a><a href="javascript:;" class="btn btn-default btn-block">分享到QQ</a><a href="javascript:;" class="btn btn-default btn-block">复制链接</a></div></div></div><div class="float-triangle"></div></div>';
+    var html='<div class="row"><div class="col-xs-8 text-center"><img src="'+qr+'" class="img-responsive"/><p class="help-block">扫码分享到微信</p></div><div class="col-xs-4 dialog-share-btns"><a href="javascript:;" class="btn btn-default btn-block">分享到微博</a><a href="javascript:;" class="btn btn-default btn-block">分享到QQ</a><a href="javascript:;" class="btn btn-default btn-block">复制链接</a></div></div>';
+    dialog({msg:html,title:'分享'});
+//    var x=dom.offset().top;
+//    var y=dom.offset().left;
+//    var w=dom.width();
+//    var h=dom.height();    
+//    var w1=360;
+//    var h1=222;
+//    var x1=(y-w1);
+//    var y1=(x+h/2-h1/2);
+//    $('body').append(html);
+//    var _dom=$('.float-share-holder');
+//    _dom.css({left:x1-5,top:y1}).fadeIn(500);
 }
 function myUploadify() {
     $("#uploadfile").uploadify({
