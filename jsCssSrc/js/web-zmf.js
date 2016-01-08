@@ -317,9 +317,9 @@ function share(dom){
     var title = dom.attr("action-title");
     var desc = dom.attr("action-desc");
     
-    var html='<div class="float-share-holder"><div class="float-share-content"><span class="float-close"><i class="fa fa-close"></i></span><div class="row"><div class="col-xs-6 text-center"><img src="'+qr+'" class="img-responsive"/><p class="help-block">扫码分享到微信</p></div><div class="col-xs-6 float-btns"><a href="javascript:;" class="btn btn-default btn-block">分享到微博</a><a href="javascript:;" class="btn btn-default btn-block">分享到QQ</a><a href="javascript:;" class="btn btn-default btn-block">复制链接</a></div></div></div><div class="float-triangle"></div></div>';
-    var html='<div class="row"><div class="col-xs-8 text-center"><img src="'+qr+'" class="img-responsive"/><p class="help-block">扫码分享到微信</p></div><div class="col-xs-4 dialog-share-btns"><a href="javascript:;" class="btn btn-default btn-block">分享到微博</a><a href="javascript:;" class="btn btn-default btn-block">分享到QQ</a><a href="javascript:;" class="btn btn-default btn-block">复制链接</a></div></div>';
-    dialog({msg:html,title:'分享'});
+    var html='<div class="float-share-holder"><div class="float-share-content"><span class="float-close"><i class="fa fa-close"></i></span><div class="row"><div class="col-xs-6 text-center"><img src="'+qr+'" class="img-responsive"/><p class="help-block">扫码分享到微信</p></div><div class="col-xs-6 float-btns"><a href="javascript:;" class="btn btn-default btn-block"><i class="fa fa-weibo"></i></a><a href="javascript:;" class="btn btn-default btn-block"><i class="fa fa-qq"></i></a><a href="javascript:;" class="btn btn-default btn-block">复制链接</a></div></div></div><div class="float-triangle"></div></div>';
+    var html='<div class="share-body"><p><img src="'+qr+'" class="img-responsive"/></p><p class="help-block">扫码分享到微信</p><div class="more-awesome"><span>或</span></div><p><a href="javascript:;" class="btn btn-default btn-block"><i class="fa fa-weibo"></i> 分享到微博</a><a href="javascript:;" class="btn btn-default btn-block"><i class="fa fa-qq"></i> 分享到空间</a><a href="javascript:;" class="btn btn-default btn-block"><i class="fa fa-copy"></i> 复制此链接</a></p></div>';
+    dialog({msg:html,title:'分享',modalSize:'modal-sm'});
 //    var x=dom.offset().top;
 //    var y=dom.offset().left;
 //    var w=dom.width();
@@ -534,6 +534,7 @@ function dialog(diaObj) {
     var ac = diaObj.action;
     var acn = diaObj.actionName;
     var time = diaObj.time;
+    var size = diaObj.modalSize;
     $('#' + beforeModal).modal('hide');
     if (typeof t === 'undefined' || t === '') {
         t = '提示';
@@ -544,8 +545,11 @@ function dialog(diaObj) {
     if (typeof ac === 'undefined') {
         ac = '';
     }
+    if (typeof size === 'undefined') {
+        size = '';
+    }
     $('#' + a).remove();
-    var longstr = '<div class="modal fade mymodal" id="' + a + '" tabindex="-1" role="dialog" aria-labelledby="' + a + 'Label" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="' + a + 'Label">' + t + '</h4></div><div class="modal-body">' + c + '</div><div class="modal-footer">';
+    var longstr = '<div class="modal fade mymodal" id="' + a + '" tabindex="-1" role="dialog" aria-labelledby="' + a + 'Label" aria-hidden="true"><div class="modal-dialog '+size+'"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="' + a + 'Label">' + t + '</h4></div><div class="modal-body">' + c + '</div><div class="modal-footer">';
     longstr += '<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>';
     if (ac !== '' && typeof ac !== 'undefined') {
         var _t;

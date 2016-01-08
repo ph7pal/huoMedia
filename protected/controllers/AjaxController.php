@@ -15,7 +15,7 @@ class AjaxController extends Q {
         }
     }
 
-    public function actionAddComment() {        
+    public function actionAddComment() {
         $keyid = zmf::val('k', 2);
         $to = zmf::val('to', 2);
         $type = zmf::val('t', 1);
@@ -80,7 +80,7 @@ class AjaxController extends Q {
         if ($model->validate()) {
             if ($model->save()) {
                 if ($type == 'posts') {
-                    $_url = CHtml::link('查看详情', array('posts/index', 'id' => $keyid, '#' => 'pid-' . $model->id));
+                    $_url = CHtml::link('查看详情', array('posts/view', 'id' => $keyid, '#' => 'pid-' . $model->id));
                     Posts::model()->updateCounters(array('comments' => 1), 'id=:id', array(':id' => $keyid));
                     $_content = '您的文章有了新的评论,' . $_url;
                 }
@@ -153,12 +153,13 @@ class AjaxController extends Q {
     }
 
     public function actionDelContent() {
+        $this->checkLogin();
         $data = zmf::val('data', 1);
         $type = zmf::val('type', 1);
         if (!$data || !$type) {
             $this->jsonOutPut(0, '数据不全，请核实');
         }
-        if (!in_array($type, array('comment', 'post'))) {
+        if (!in_array($type, array('comment', 'post','notice','tag'))) {
             $this->jsonOutPut(0, '暂不允许的分类');
         }
         switch ($type) {
@@ -190,6 +191,24 @@ class AjaxController extends Q {
                     }
                 }
                 if (Posts::model()->updateByPk($data, array('status' => Posts::STATUS_DELED))) {
+                    $this->jsonOutPut(1, '已删除');
+                }
+                $this->jsonOutPut(1, '已删除');
+                break;
+            case 'notice':
+                if(!$data || !is_numeric($data)){
+                    $this->jsonOutPut(0, '您所操作的内容不存在');
+                }
+                if (Notification::model()->deleteByPk($data)) {
+                    $this->jsonOutPut(1, '已删除');
+                }
+                $this->jsonOutPut(1, '已删除');
+                break;
+            case 'tag':
+                if(!$data || !is_numeric($data)){
+                    $this->jsonOutPut(0, '您所操作的内容不存在');
+                }
+                if (Tags::model()->updateByPk($data, array('status'=>  Posts::STATUS_DELED))) {
                     $this->jsonOutPut(1, '已删除');
                 }
                 $this->jsonOutPut(1, '已删除');

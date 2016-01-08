@@ -19,4 +19,8 @@ $this->menu=array(
         'link'=>array('index/stat'),
         'active'=>in_array($a,array('stat'))
     ),
+    '提醒'=>array(
+        'link'=>array('index/notice'),
+        'active'=>in_array($a,array('notice'))
+    ),
 );

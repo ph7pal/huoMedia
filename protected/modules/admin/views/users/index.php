@@ -8,16 +8,7 @@
  * @copyright Copyright©2015 阿年飞少 
  * @datetime 2016-1-4  12:57:20 
  */
-$this->menu=array(
-    '用户列表'=>array(
-        'link'=>array('users/index'),
-        'active'=>true
-    ),
-    '新增'=>array(
-        'link'=>array('users/create'),
-        'active'=>false
-    ),
-);
+$this->renderPartial('/users/_nav');
 ?>
 <table class="table table-hover">
     <tr>

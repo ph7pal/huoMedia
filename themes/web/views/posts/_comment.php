@@ -26,7 +26,7 @@ if(!$_uname){
             <span class="pull-right">
                 <?php 
                 echo CHtml::link('回复','javascript:;',array('onclick'=>"replyOne('".$data['id']."','".$data['logid']."','".$_uname."')"));
-                if($this->uid && $this->uid==$postInfo['uid']){
+                if(($this->uid && $this->uid==$postInfo['uid']) || $this->userInfo['isAdmin']){
                     echo CHtml::link('删除','javascript:;',array('action'=>'del-content','action-type'=>'comment','action-data'=>  $data['id'],'action-confirm'=>1,'action-target'=>'comment-'.$data['id']));                    
                 }?>                
             </span>

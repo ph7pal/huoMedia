@@ -113,13 +113,8 @@ class Notification extends CActiveRecord {
         }
     }
 
-    public function getNum($uid = '') {
-        if (Yii::app()->user->isGuest) {
-            return '0';
-        }
-        if ($uid == '') {
-            $uid = Yii::app()->user->id;
-        }
+    public function getNum() {
+        $uid=  zmf::uid();
         if (!$uid) {
             return '0';
         }

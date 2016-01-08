@@ -96,47 +96,6 @@ class Posts extends CActiveRecord {
     }
 
     /**
-     * Retrieves a list of models based on the current search/filter conditions.
-     *
-     * Typical usecase:
-     * - Initialize the model fields with values from filter form.
-     * - Execute this method to get CActiveDataProvider instance which will filter
-     * models according to data in model fields.
-     * - Pass data provider to CGridView, CListView or any similar widget.
-     *
-     * @return CActiveDataProvider the data provider that can return the models
-     * based on the search/filter conditions.
-     */
-    public function search() {
-        // @todo Please modify the following code to remove attributes that should not be searched.
-
-        $criteria = new CDbCriteria;
-
-        $criteria->compare('id', $this->id);
-        $criteria->compare('uid', $this->uid);
-        $criteria->compare('title', $this->title, true);
-        $criteria->compare('content', $this->content, true);
-        $criteria->compare('faceimg', $this->faceimg);
-        $criteria->compare('classify', $this->classify);
-        $criteria->compare('lat', $this->lat, true);
-        $criteria->compare('long', $this->long, true);
-        $criteria->compare('mapZoom', $this->mapZoom);
-        $criteria->compare('comments', $this->comments);
-        $criteria->compare('favors', $this->favors, true);
-        $criteria->compare('favorite', $this->favorite, true);
-        $criteria->compare('top', $this->top);
-        $criteria->compare('hits', $this->hits);
-        $criteria->compare('tagids', $this->tagids, true);
-        $criteria->compare('status', $this->status);
-        $criteria->compare('cTime', $this->cTime);
-        $criteria->compare('updateTime', $this->updateTime);
-
-        return new CActiveDataProvider($this, array(
-            'criteria' => $criteria,
-        ));
-    }
-
-    /**
      * Returns the static model of the specified AR class.
      * Please note that you should have this exact method in all your CActiveRecord descendants!
      * @param string $className active record class name.
@@ -276,7 +235,7 @@ class Posts extends CActiveRecord {
         if ($info) {
             if (Favorites::model()->deleteByPk($info['id'])) {
                 if ($type == 'post') {
-                    Posts::updateCount($id, 'Posts', -1, 'favors');
+                    Posts::updateCount($id, 'Posts', -1, 'favorite');
                 }
                 return array('status' => 1, 'msg' => '取消收藏成功', 'state' => 3);
             } else {
@@ -288,7 +247,7 @@ class Posts extends CActiveRecord {
             $model->attributes = $attr;
             if ($model->save()) {
                 if ($type == 'post') {
-                    Posts::updateCount($id, 'Posts', 1, 'favors');
+                    Posts::updateCount($id, 'Posts', 1, 'favorite');
                 }
                 return array('status' => 1, 'msg' => '添加收藏成功', 'state' => 1);
             } else {

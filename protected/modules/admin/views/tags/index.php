@@ -13,12 +13,15 @@ $this->renderPartial('/tags/_nav');
 <table class="table table-hover table-condensed table-striped">
     <tr>
         <th>名称</th>
-        <th>操作</th>
+        <th class="text-right" style="width:80px;">操作</th>
     </tr>
     <?php foreach ($posts as $tag){?>
-    <tr>
+    <tr id="tag-<?php echo $tag['id'];?>">
         <td><?php echo $tag['title'];?></td>
-        <td>编辑 删除</td>
+        <td class="text-right">
+            <?php echo CHtml::link('编辑',array('tags/update','id'=>$tag['id']));?>
+            <?php echo CHtml::link('删除','javascript:;',array('action'=>'del-content','action-type'=>'tag','action-data'=>  $tag['id'],'action-confirm'=>1,'action-target'=>'tag-'.$tag['id']));?>
+        </td>
     </tr>
     <?php }?>
 </table>

@@ -2,9 +2,11 @@ body{
     font-family: "helvetica neue",arial,sans-serif;
     font-size: 14px;
     color: #444;
-    background: #fafafa;
-    padding-top: 95px;
+    background: #fafafa;    
     /*background: rgba(229,229,229,.95);*/
+}
+.navbar-fixed-top ~ .main-part {
+    border-top: 95px solid transparent;
 }
 button, input, select, textarea,.form-control,.btn{
     border-radius: 0
@@ -125,61 +127,52 @@ button, input, select, textarea,.form-control,.btn{
         box-shadow: none;
         background-color: #f8f8f8;
     }
-    .float-share-holder{
-        position: fixed;
-        left: 0;
-        top: 200px;
-        background: transparent;
-        width: 360px;
-        height: 222px;
+    .share-body{
+        text-align: center
     }
-    .float-share-content{
-        width: 340px;
-        float: left;
-        height: 200px;
-        margin: 10px 0 10px 10px;
-        border:1px solid #ccc;
-        padding: 10px 15px 0 0;
-        position: relative;
-        background: #fff;
+    .share-body p{
+        margin: 0
     }
-    .float-triangle{
-        margin-top: 105px;
-        float: right;
-        width: 0;
-        height: 0;
-        border-top: 5px solid transparent;
-        border-left: 10px solid #ccc;
-        border-bottom: 5px solid transparent;
-            
+    .share-body .more-awesome{
+        margin-top: 0;
+        margin-bottom: 20px
     }
-    .float-close{
-        position: absolute;
-        right: 5px;
-        top: 2px;
-        cursor: pointer
-    }
-    .float-close i{
-        width: 14px;
-        height: 14px;
-    }
-    .float-close i:hover{
-        -webkit-transition: -webkit-transform 250ms;
-        transition: transform 250ms;
-        -webkit-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
-        transform: rotate(45deg);
-    }
-    .float-btns a{
-        margin-top: 15px;
-        margin-bottom: 6px;
-    }
-    .dialog-share-btns{
-        padding-top: 15px;
-    }
-    .dialog-share-btns a{
-        margin-top: 15px;
-        margin-bottom: 6px;
-    }
+    
+ .more-awesome {
+    color: #999;
+    font-size: 14px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+.more-awesome span {
+    position: relative;
+    top: 13px;
+    background-color: #fff;
+    padding: 0 20px;
+} 
+/*导航提醒数字*/
+.top-nav-count {
+    background: #BF1031;
+    border: 1px solid #B11331;
+    box-shadow: 0 1px 2px rgba(0,0,0,.1),inset 0 1px 0 rgba(255,255,255,.15);
+    color: #fff;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    -webkit-text-size-adjust: none;
+    padding: 0 5px;
+    height: 16px;
+    line-height: 16px;
+    border-radius: 16px;
+    text-indent: 0;
+    text-align: center;
+    text-decoration: none;
+    z-index: 12;
+    top: 20px;
+    position: absolute;
+    left: 31px;
+}
 /*文章页面------*/
 ul.yiiPager{height:26px;margin:0;padding:0}ul.yiiPager li{display:inline;margin-right: 5px;}ul.yiiPager a:link,ul.yiiPager a:visited{padding:5px 9px;border:1px solid #ccc;border-radius:3px;background:#fff;color:#777;font-weight:normal}ul.yiiPager a:hover{border-color:#449d44;box-shadow:1px 1px 1px #333;color:#035d67;text-decoration:none}ul.yiiPager .selected a{padding:6px 10px;border:0;border-radius:3px;background:#449d44;color:#fff}ul.yiiPager .hidden,ul.yiiPager .last,ul.yiiPager .first{display:none}ul.yiiPager .previous{float: left}ul.yiiPager .next{float: right;margin-right: 0}ul.yiiPager .page{float:left}
