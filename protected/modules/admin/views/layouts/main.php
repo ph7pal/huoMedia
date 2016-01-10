@@ -31,7 +31,7 @@
                         <li class="divider"></li>
                         <li><?php echo CHtml::link('站点首页',  zmf::config('baseurl'),array('role'=>'menuitem'));?></li>
                         <li class="divider"></li>
-                        <li><?php echo CHtml::link('退出',array('site/logout'),array('role'=>'menuitem'));?></li>
+                        <li><?php echo CHtml::link('退出',array('/site/logout'),array('role'=>'menuitem'));?></li>
                     </ul>
                 </li>
             </ul>
@@ -62,3 +62,17 @@
     </div>
 </div>    
 <?php $this->endContent(); ?>
+<script>
+    $(document).ready(function() {
+        setSideHeight();
+    });
+    $(window).resize(function() {
+        setSideHeight();
+    });
+    function setSideHeight(){
+        var dom=$('.settings-main-box');
+        $('.settings-side-box').css({
+            height:dom.outerHeight()
+        });
+    }
+</script>

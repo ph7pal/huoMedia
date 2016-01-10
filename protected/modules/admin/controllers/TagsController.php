@@ -10,9 +10,14 @@
  */
 class TagsController extends Admin {
 
+    public function init() {
+        parent::init();
+        $this->checkPower('tags');
+    }
+
     public function actionIndex() {
         $criteria = new CDbCriteria();
-        $criteria->addCondition('status='.Posts::STATUS_PASSED);
+        $criteria->addCondition('status=' . Posts::STATUS_PASSED);
         $criteria->order = 'cTime DESC';
         $count = Tags::model()->count($criteria);
         $pager = new CPagination($count);
@@ -29,7 +34,7 @@ class TagsController extends Admin {
     public function actionCreate($id = '') {
         if ($id) {
             $model = Tags::model()->findByPk($id);
-            if(!$model){
+            if (!$model) {
                 $this->message(0, '该标签不存在');
             }
         } else {

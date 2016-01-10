@@ -17,13 +17,13 @@
             </ul>
             <?php }else{ $noticeNum=  Notification::getNum();if($noticeNum>0){$_notice='<span class="top-nav-count">'.$noticeNum.'</span>';}else{$_notice='';}?>
             <ul class="nav navbar-nav navbar-right">
-                <li><?php echo CHtml::link('<i class="fa fa-bell-o unread-bell"></i>'.$_notice, array('admin/index/notice'),array('role'=>'menuitem')); ?></li>
+                <li><?php echo CHtml::link('<i class="fa fa-bell-o unread-bell"></i>'.$_notice, array('users/notice'),array('role'=>'menuitem')); ?></li>
                 <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo $this->userInfo['truename'];?> <span class="caret"></span></a>               
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu">                        
+                        <?php if($this->userInfo['isAdmin']){?>
                         <li><?php echo CHtml::link('新增文章', array('admin/posts/create'),array('role'=>'menuitem')); ?></li>
                         <li class="divider"></li>
-                        <?php if($this->userInfo['isAdmin']){?>
                         <li><?php echo CHtml::link('管理中心', array('admin/index/index'),array('role'=>'menuitem')); ?></li>
                         <?php }?>
                         <li><?php echo CHtml::link('退出', array('site/logout'),array('role'=>'menuitem')); ?></li>

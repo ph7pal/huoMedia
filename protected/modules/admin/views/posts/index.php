@@ -12,7 +12,6 @@ $this->renderPartial('_nav');
 ?>
 <table class="table table-hover">
     <tr>
-        <th style="width: 60px;">ID</th>
         <th>标题</th>
         <th class="text-center">点/藏</th>
         <th>时间</th>

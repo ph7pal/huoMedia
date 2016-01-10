@@ -10,6 +10,11 @@
  */
 class AttachmentsController extends Admin {
 
+    public function init() {
+        parent::init();
+        $this->checkPower('attachments');
+    }
+
     public function actionIndex() {
         $criteria = new CDbCriteria();
         $criteria->order = 'cTime DESC';
@@ -17,10 +22,10 @@ class AttachmentsController extends Admin {
         $pager = new CPagination($count);
         $pager->pageSize = 30;
         $pager->applyLimit($criteria);
-        $posts = Attachments::model()->findAll($criteria); 
-        foreach ($posts as $k=>$val){
-            $_img=  Attachments::getUrl($val, 170);
-            $posts[$k]['filePath']=$_img;
+        $posts = Attachments::model()->findAll($criteria);
+        foreach ($posts as $k => $val) {
+            $_img = Attachments::getUrl($val, 170);
+            $posts[$k]['filePath'] = $_img;
         }
         $this->render('index', array(
             'pages' => $pager,

@@ -1,8 +1,5 @@
 <tr>
     <td>
-        <?php echo CHtml::link(CHtml::encode($data->id), array('posts/view','id'=>  $data->id),array('target'=>'_blank')); ?>
-    </td>
-    <td>
         <?php echo CHtml::encode($data->title); ?>
     </td>
     <td class="text-center">

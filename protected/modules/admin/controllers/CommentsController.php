@@ -1,7 +1,10 @@
 <?php
 
 class CommentsController extends Admin {
-
+public function init() {
+        parent::init();
+        $this->checkPower('comments');
+    }
     public function actionIndex() {
         $type = zmf::val('type', 1);
         if (!$type || $type == 'staycheck') {

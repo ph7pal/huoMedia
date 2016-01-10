@@ -1,7 +1,12 @@
 <?php
 
 class PostsController extends Admin {
-    
+
+    public function init() {
+        parent::init();
+        $this->checkPower('posts');
+    }
+
     public function actionIndex() {
         $uid = zmf::val('uid', 2);
         $username = zmf::val('username', 1);
@@ -54,7 +59,7 @@ class PostsController extends Admin {
     }
 
     public function actionCreate($id = '') {
-        $this->layout='common';
+        $this->layout = 'common';
         $id = zmf::myint($id);
         if (!$this->uid) {
             $this->redirect(array('site/login'));
@@ -70,7 +75,7 @@ class PostsController extends Admin {
             echo CActiveForm::validate($model);
             Yii::app()->end();
         }
-        if (isset($_POST['Posts'])) {            
+        if (isset($_POST['Posts'])) {
             //处理文本
             $filter = Posts::handleContent($_POST['Posts']['content']);
             $_POST['Posts']['content'] = $filter['content'];
@@ -82,7 +87,7 @@ class PostsController extends Admin {
             } else {
                 $_POST['Posts']['faceimg'] = ''; //否则将封面图置为空(有可能编辑后没有图片了)
             }
-            $tagids=  array_unique(array_filter($_POST['tags']));
+            $tagids = array_unique(array_filter($_POST['tags']));
             $model->attributes = $_POST['Posts'];
             if ($model->save()) {
                 //将上传的图片置为通过
@@ -94,25 +99,25 @@ class PostsController extends Admin {
                     }
                 }
                 //处理标签
-                $intoTags=array();
-                if(!empty($tagids)){                    
-                    foreach ($tagids as $tagid){
-                        $_info=Tags::addRelation($tagid, $model->id, 'posts');
-                        if($_info){
-                            $intoTags[]=$tagid;
+                $intoTags = array();
+                if (!empty($tagids)) {
+                    foreach ($tagids as $tagid) {
+                        $_info = Tags::addRelation($tagid, $model->id, 'posts');
+                        if ($_info) {
+                            $intoTags[] = $tagid;
                         }
-                    }                    
+                    }
                 }
-                if(!$isNew || !empty($intoTags)){
-                    Posts::model()->updateByPk($model->id,array('tagids'=>join(',',$intoTags)));
+                if (!$isNew || !empty($intoTags)) {
+                    Posts::model()->updateByPk($model->id, array('tagids' => join(',', $intoTags)));
                 }
                 $this->redirect(array('/posts/view', 'id' => $model->id));
             }
         }
-        $tags=  Tags::getClassifyTags('posts');
-        $postTags=array();
-        if(!$isNew){
-            $postTags=  Tags::getByIds($model->tagids);                
+        $tags = Tags::getClassifyTags('posts');
+        $postTags = array();
+        if (!$isNew) {
+            $postTags = Tags::getByIds($model->tagids);
         }
         $this->pageTitle = '与世界分享你的旅行见闻 - ' . zmf::config('sitename');
         $this->render('create', array(
@@ -121,8 +126,8 @@ class PostsController extends Admin {
             'postTags' => $postTags,
         ));
     }
-    
-    public function actionUpdate($id){
+
+    public function actionUpdate($id) {
         $this->actionCreate($id);
     }
 

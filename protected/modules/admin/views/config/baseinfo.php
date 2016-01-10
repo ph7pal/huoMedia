@@ -5,4 +5,3 @@
 <p><label>网站根目录：</label><input class="form-control" name="baseurl" id="baseurl" value="<?php echo $c['baseurl'];?>"/></p>
 <p><label>网站关键字：</label><textarea class="form-control" name="siteKeywords"><?php echo $c['siteKeywords'];?></textarea></p>
 <p><label>网站描述：</label><textarea class="form-control" name="siteDesc" rows="5"><?php echo $c['siteDesc'];?></textarea></p>
-<p><label>网站版本：</label><input class="form-control" name="version" id="version" value="<?php echo $c['version'];?>"/></p>

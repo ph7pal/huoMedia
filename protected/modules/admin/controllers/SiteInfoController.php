@@ -2,10 +2,11 @@
 
 class SiteInfoController extends Admin {
 
-    /**
-     * Displays a particular model.
-     * @param integer $id the ID of the model to be displayed
-     */
+    public function init() {
+        parent::init();
+        $this->checkPower('siteInfo');
+    }
+
     public function actionView($id) {
         $this->render('view', array(
             'model' => $this->loadModel($id),
@@ -16,10 +17,10 @@ class SiteInfoController extends Admin {
      * Creates a new model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
-    public function actionCreate($id='') {
-        if($id){
+    public function actionCreate($id = '') {
+        if ($id) {
             $model = $this->loadModel($id);
-        }else{
+        } else {
             $model = new SiteInfo;
         }
         // Uncomment the following line if AJAX validation is needed
@@ -29,12 +30,12 @@ class SiteInfoController extends Admin {
             $_POST['SiteInfo']['content'] = $filter['content'];
             if (!empty($filter['attachids'])) {
                 $attkeys = array_filter(array_unique($filter['attachids']));
-                if(!empty($attkeys)){
-                    $_POST['SiteInfo']['faceimg']=$attkeys[0];//默认将文章中的第一张图作为封面图
+                if (!empty($attkeys)) {
+                    $_POST['SiteInfo']['faceimg'] = $attkeys[0]; //默认将文章中的第一张图作为封面图
                 }
             }
             $model->attributes = $_POST['SiteInfo'];
-            if ($model->save()){
+            if ($model->save()) {
                 //将上传的图片置为通过
                 Attachments::model()->updateAll(array('status' => Posts::STATUS_DELED), 'logid=:logid AND classify=:classify', array(':logid' => $model->id, ':classify' => 'siteinfo'));
                 if (!empty($attkeys)) {

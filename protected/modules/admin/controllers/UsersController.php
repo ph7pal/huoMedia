@@ -10,6 +10,11 @@
  */
 class UsersController extends Admin {
 
+    public function init() {
+        parent::init();
+        $this->checkPower('users');
+    }
+
     public function actionIndex() {
         $criteria = new CDbCriteria();
         $criteria->order = 'id DESC';
@@ -41,7 +46,7 @@ class UsersController extends Admin {
                 $_POST['Users']['password'] = md5($_POST['Users']['password']);
             }
             $model->attributes = $_POST['Users'];
-            if($model->save()){
+            if ($model->save()) {
                 $this->redirect(array('users/index'));
             }
         }
@@ -76,7 +81,7 @@ class UsersController extends Admin {
         if ($id) {
             $pinfos = $model->findAll('uid=:uid', array(':uid' => $id));
             $model->uid = $id;
-            if ($pinfos) {                
+            if ($pinfos) {
                 $mine = array_keys(CHtml::listData($pinfos, 'powers', ''));
             }
         }

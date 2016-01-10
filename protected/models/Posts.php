@@ -156,7 +156,7 @@ class Posts extends CActiveRecord {
                 }
             }
         }
-        $content = strip_tags($content, '<b><strong><em><span><a><p><u><i><img><br><br/>');
+        $content = strip_tags($content, '<b><strong><em><span><a><p><u><i><img><br><br/><div>');
         $replace = array(
             "/style=\"[^\"]*?\"/i"
         );

@@ -9,14 +9,25 @@ class Q extends Controller {
     public $referer;
     public $uid;
     public $userInfo;
-    public $selectNav='';
+    public $selectNav = '';
+    public $platform;
+    public $isMobile = false;
+    public $keywords;
+    public $pageDescription;
 
     function init() {
         parent::init();
-        $uid=  zmf::uid();
-        if($uid){
-            $this->uid=$uid;
-            $this->userInfo=  Users::getOne($uid);
+        Yii::app()->theme = 'web';
+        if (zmf::config('mobile')) {
+            if (zmf::checkmobile($this->platform)) {
+                Yii::app()->theme = 'mobile';
+                $this->isMobile = true;
+            }
+        }
+        $uid = zmf::uid();
+        if ($uid) {
+            $this->uid = $uid;
+            $this->userInfo = Users::getOne($uid);
         }
         self::_referer();
     }

@@ -42,6 +42,7 @@ class SiteController extends Q {
     }
 
     public function actionLogin() {
+        $this->layout = 'common';
         if (!Yii::app()->user->isGuest) {
             $this->message(0, '您已登录，请勿重复操作');
         }
@@ -59,14 +60,16 @@ class SiteController extends Q {
                 if ($model->validate() && $model->login()) {
                     $arr = array(
                         'latestLoginTime' => zmf::now(),
-                    );
-                    
+                    );                    
                     $uid = Yii::app()->user->id;
-//                    User::model()->updateByPk($uid, $arr);
-                    
+//                    User::model()->updateByPk($uid, $arr);                    
                     zmf::delCookie('checkWithCaptcha');
                     zmf::delFCache($cacheKey);
-                    $this->redirect(array('user/view', 'code' => $uid));
+                    if($this->referer){
+                        $this->redirect($this->referer);
+                    }else{
+                        $this->redirect(zmf::config('baseurl'));
+                    }
                 } else {
                     zmf::updateFCacheCounter($cacheKey, 1, 3600);
                     zmf::setCookie('checkWithCaptcha', 1, 86400);

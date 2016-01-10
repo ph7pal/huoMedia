@@ -15,7 +15,6 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/common/upload
 <textarea id="<?php echo CHtml::activeId($model,$attri);?>" name="<?php echo CHtml::activeName($model,$attri);?>" style="width:600px;height:200px;">
 <?php echo zmf::text(array('action'=>'edit','encode'=>'yes'),$content);?>
 </textarea>
-<textarea id="input_tmp" name="input_tmp" style="display: none"></textarea>
 <input id="textareaid" type="hidden" value="<?php echo CHtml::activeId($model,$attri);?>"/>
 <script>
 var tipImgUploadUrl="<?php echo $upurl;?>";

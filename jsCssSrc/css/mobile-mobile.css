@@ -1,0 +1,15 @@
+body{
+    -webkit-user-select:initial;
+    user-select:initial;
+    background-color: #fff;   
+    font-size: 14px;
+    color: #333;
+    background: #f2f2f2;
+    font-family: "Helvetica Neue",Helvetica,"Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+    word-wrap: break-word;
+}
+.module{
+    background: #fff;
+    padding: 15px 15px;
+    margin-bottom: 15px;
+}

@@ -3,6 +3,7 @@
 class Controller extends CController {
 
     public function message($status = 0, $message = '', $url = '', $time = 3, $jump = true, $render = true) {
+        $this->layout='common';
         if (empty($url)) {
             $url = Yii::app()->user->returnUrl;
         }
@@ -56,7 +57,7 @@ class Controller extends CController {
             if ($return) {
                 return false;
             } elseif (!$json AND ! Yii::app()->request->isAjaxRequest) {
-                $this->message(0, '请先登录', Yii::app()->createUrl('admin/site/login'));
+                $this->redirect(array('/site/login'));
             } else {
                 $this->jsonOutPut(0, '请先登录');
             }
@@ -67,7 +68,7 @@ class Controller extends CController {
                 if ($return) {
                     return false;
                 } elseif (!$json AND ! Yii::app()->request->isAjaxRequest) {
-                    $this->message(0, '不是管理员', Yii::app()->createUrl('admin/site/logout'));
+                    throw new CHttpException(403, '您无权该操作');
                 } else {
                     $this->jsonOutPut(0, '不是管理员');
                 }
@@ -79,7 +80,7 @@ class Controller extends CController {
             if ($return) {
                 return false;
             } elseif (!$json AND ! Yii::app()->request->isAjaxRequest) {
-                $this->message(0, '您无权该操作');
+                throw new CHttpException(403, '您无权该操作');
             } else {
                 $this->jsonOutPut(0, '您无权该操作');
             }
