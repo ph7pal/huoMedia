@@ -17,19 +17,17 @@ if(!$_uname){
     $_uname='匿名网友';
 }
 ?>
-<div class="media" id="comment-<?php echo $data['id']; ?>">
-    <div class="media-body">
-        <p><?php echo CHtml::encode($_uname);?></p>
-        <p><?php echo nl2br(CHtml::encode($data['content'])); ?></p>
-        <p class="help-block">
+<li class="ui-border-t">
+    <div class="ui-list-info">
+        <p class="comment-author"><?php echo CHtml::encode($_uname);?></p>
+        <p><?php echo CHtml::encode($data['content']); ?></p>
+        <p>
             <?php echo zmf::formatTime($data['cTime']); ?>
-            <span class="pull-right">
-                <?php 
-                echo CHtml::link('回复','javascript:;',array('onclick'=>"replyOne('".$data['id']."','".$data['logid']."','".$_uname."')"));
-                if(($this->uid && $this->uid==$postInfo['uid']) || $this->userInfo['isAdmin']){
-                    echo CHtml::link('删除','javascript:;',array('action'=>'del-content','action-type'=>'comment','action-data'=>  $data['id'],'action-confirm'=>1,'action-target'=>'comment-'.$data['id']));                    
-                }?>                
+            <?php if($this->uid){?>
+            <span class="comment-actions">
+            <?php echo CHtml::link('回复','javascript:;',array('onclick'=>"replyOne('".$data['id']."','".$data['logid']."','".$_uname."')"));?>
             </span>
+            <?php }?>
         </p>
     </div>
-</div>
+</li>

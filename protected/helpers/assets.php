@@ -77,6 +77,7 @@ class assets {
         } elseif ($type == 'mobile') {
             $cssArr = array(
                 'frozen',
+                'font-awesome',
             );
             $jsArr = array(
                 'zepto',

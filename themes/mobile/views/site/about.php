@@ -14,12 +14,12 @@
         <?php echo zmf::text(array(), $info['content']); ?>
     </div>
     <?php if(!empty($allInfos)){?>
-    <div class="module">
-        <div class="list-group">
-            <?php foreach ($allInfos as $val){?>
-            <?php echo CHtml::link($val['title'],array('site/info','code'=>$val['code']));?>
-            <?php }?>
-        </div>
-    </div>
+    <ul class="ui-list ui-list-text ui-list-link">
+    <?php foreach($allInfos as $_post){?>
+        <li data-href="<?php echo Yii::app()->createUrl('site/info',array('code'=>$_post['code']));?>" class="ui-border-b">
+            <p><?php echo $_post['title'];?></p>
+        </li>
+    <?php }?>
+    </ul>
     <?php }?>
 </div>

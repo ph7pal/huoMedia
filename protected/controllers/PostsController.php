@@ -13,10 +13,12 @@ class PostsController extends Q {
         $pageSize = 30;
         $comments = Comments::getCommentsByPage($id, 'posts', 1, $pageSize);       
         $tags = Tags::getByIds($info['tagids']);
+        $relatePosts=  Posts::getRelations($id, 5);
         $data = array(
             'info' => $info,
             'comments' => $comments,
             'tags' => $tags,
+            'relatePosts' => $relatePosts,
             'loadMore' => count($comments) == $pageSize ? 1 : 0,
         );
         $this->favorited=  Favorites::checkFavored($id, 'post');

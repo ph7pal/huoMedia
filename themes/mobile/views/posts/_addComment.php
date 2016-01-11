@@ -1,30 +1,19 @@
 <div id="replyoneHolder-<?php echo $keyid;?>" class="replyoneHolder"></div>
-<div class="form-group">    
-    <?php echo CHtml::textArea('content-'.$type.'-'.$keyid,'',array('class'=>'form-control comment-textarea','action'=>'comment','rows'=>3,'maxLength'=>255,'placeholder'=>'撰写评论'));?>
+<div class="form-group">
+    <?php echo CHtml::textArea('content-'.$type.'-'.$keyid,'',array('class'=>'form-control comment-textarea','maxLength'=>255,'placeholder'=>'撰写评论'));?>
 </div>
 <?php if(!$this->uid){?>
-<div class="form-group toggle-area">
-    <div class="row">
-        <div class="col-xs-6 col-sm-6">
-            <div class="input-group">
-                <span class="input-group-addon">称呼</span>
-                <input type="text" class="form-control" placeholder="如何称呼" id="<?php echo 'username-'.$type.'-'.$keyid;?>">
-            </div>
-            <p class="help-block">将显示为由谁评论</p>
+<div class="form-group toggle-area">    
+    <div class="ui-row-flex">
+        <div class="ui-col">
+            <input type="text" class="form-control" placeholder="如何称呼" id="<?php echo 'username-'.$type.'-'.$keyid;?>">
         </div>
-        <div class="col-xs-6 col-sm-6">
-            <div class="input-group">
-                <span class="input-group-addon">邮箱</span>
-                <input type="text" class="form-control" placeholder="Email地址（选填）" id="<?php echo 'email-'.$type.'-'.$keyid;?>">
-            </div>
-            <p class="help-block">Email不会被公布，仅用于接收评论的回复</p>
+        <div class="ui-col">
+            <input type="text" class="form-control" placeholder="Email地址（选填）" id="<?php echo 'email-'.$type.'-'.$keyid;?>">
         </div>
     </div>
 </div>
 <?php }?>
-<div class="form-group toggle-area">
-    <p>
-        <?php echo CHtml::link('评论','javascript:;',array('class'=>'btn btn-success pull-right','action'=>'add-comment','action-data'=>$keyid,'action-type'=>$type));?>
-    </p>
+<div class="ui-btn-wrap toggle-area">
+    <?php echo CHtml::link('评论','javascript:;',array('class'=>'ui-btn-lg','action'=>'add-comment','action-data'=>$keyid,'action-type'=>$type));?>    
 </div>
-<div class="clearfix"></div>

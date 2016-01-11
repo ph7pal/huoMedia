@@ -14,6 +14,15 @@ function rebind() {
         var dom = $(this);        
         addVote(dom);        
     });
+    $("a[action=add-comment]").click(function () {
+        var dom = $(this);
+        addComment(dom);
+    });
+    $(".comment-textarea").unbind('click').click(function () {
+        $('.toggle-area').each(function(){
+            $(this).fadeIn(500);
+        });        
+    });
     $("img.lazy").lazyload({
         threshold:600
     });
@@ -72,7 +81,54 @@ function checkAjax() {
     ajaxReturn = false;
     return true;
 }
-
+function addComment(dom) {
+    var k = dom.attr("action-data");
+    var t = dom.attr("action-type");
+    var to = parseInt($('#replyoneHolder-' + k).attr('tocommentid'));
+    var c = $('#content-' + t + '-' + k).val();
+    var username=$('#username-' + t + '-' + k).val();
+    var email=$('#email-' + t + '-' + k).val();
+    if (!k || !t || !c) {
+        dialog({msg: '请填写内容'});
+        return false;
+    }
+    if (!username) {
+        username = '';
+    }
+    if (!email) {
+        email = '';
+    }
+    if(!checkLogin()){
+        if(!username){
+            dialog({msg: '请填写称呼'});
+            return false;
+        }
+        if(email!=''){
+            var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
+            if(!reg.test(email)){
+                dialog({msg: '请填写正确的邮箱地址'});
+                return false;
+            }
+        }
+    }
+    if (!to) {
+        to = 0;
+    }    
+    if (!checkAjax()) {
+        return false;
+    }
+    $.post(zmf.addCommentUrl, {k: k, t: t, c: c, to: to,email:email,username:username, YII_CSRF_TOKEN: zmf.csrfToken}, function (result) {
+        ajaxReturn = true;
+        result = eval('(' + result + ')');
+        if (result['status'] == '1') {
+            $('#content-' + t + '-' + k).val('');
+            $("#comments-" + t + "-" + k).append(result['msg']);
+            cancelReplyOne(k);
+        } else {
+            dialog({msg: result['msg']});
+        }
+    });
+}
 function favorite(dom) {
     if (!checkLogin()) {
         dialog({msg: '请先登录'});
@@ -104,7 +160,15 @@ function favorite(dom) {
         return false;
     });
 }
-
+function replyOne(id, logid, title) {
+    var longstr = "<span class='reply-one'>回复“" + title + "”<a href='javascript:' onclick='cancelReplyOne(" + logid + ")' title='取消设置'> <i class='ui-icon-close-page'></i></a></span>";
+    var pos = $("#replyoneHolder-" + logid).offset().top;
+    $("html,body").animate({scrollTop: pos}, 1000);
+    $("#replyoneHolder-" + logid).attr('tocommentid', id).html(longstr);
+}
+function cancelReplyOne(logid) {
+    $("#replyoneHolder-" + logid).attr('tocommentid', '').html('');
+}
 function checkLogin() {
     if (typeof zmf.hasLogin === 'undefined') {
         return false;

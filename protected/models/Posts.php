@@ -218,11 +218,11 @@ class Posts extends CActiveRecord {
             if (zmf::actionLimit('favorite-' . $type, $id)) {
                 return array('status' => 0, 'msg' => '操作太频繁，请稍后再试');
             }
-            if(!$uid){
+            if (!$uid) {
                 $uid = zmf::uid();
             }
         }
-        if(!$uid){
+        if (!$uid) {
             return array('status' => 0, 'msg' => '请先登录');
         }
 
@@ -254,6 +254,15 @@ class Posts extends CActiveRecord {
                 return array('status' => 0, 'msg' => '添加收藏失败', 'state' => 2);
             }
         }
+    }
+
+    public static function getRelations($logid, $limit = 5) {
+        if(!$logid){
+            return array();
+        }
+        $sql = "SELECT p.id,p.title FROM {{posts}} p INNER JOIN (SELECT logid,count(logid) AS times FROM {{tag_relation}} WHERE tagid IN(SELECT tagid FROM {{tag_relation}} WHERE logid='$logid') GROUP BY logid ORDER BY times DESC) tmp ON p.id=tmp.logid WHERE p.id!='$logid' AND p.status=" . Posts::STATUS_PASSED . " LIMIT $limit";
+        $items=  Yii::app()->db->createCommand($sql)->queryAll();
+        return $items;
     }
 
 }
