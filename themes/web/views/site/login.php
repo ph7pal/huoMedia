@@ -3,8 +3,9 @@
         <?php $form=$this->beginWidget('CActiveForm', array(
             'id'=>'login-form',
             'enableAjaxValidation'=>false,
-            'enableClientValidation'=>true
+            'enableClientValidation'=>false
         )); ?>
+            <?php CHtml::$afterRequiredLabel = '';?>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'username'); ?>
                 <?php echo $form->textField($model,'username', array('class'=>'form-control','placeholder'=>'邮箱/用户名')); ?> <?php echo $form->error($model,'username'); ?>
@@ -17,12 +18,12 @@
             <div class="form-group">        
                 <?php echo $form->textField($model,'verifyCode', array('class'=>'form-control verify-code')); ?>
                 <?php echo $form->error($model,'verifyCode'); ?>
-                <?php $this->widget ( 'CCaptcha', array ('showRefreshButton' => true, 'clickableImage' => true, 'buttonType' => 'link', 'buttonLabel' => zmf::t('change_verify'), 'imageOptions' => array ('alt' => zmf::t('change_verify'), 'align'=>'absmiddle'  ) ) );?>
+                <?php $this->widget ( 'CCaptcha', array ('showRefreshButton' => true, 'clickableImage' => true, 'buttonType' => 'link', 'buttonLabel' => '换一换', 'imageOptions' => array ('alt' => zmf::t('change_verify'), 'align'=>'absmiddle'  ) ) );?>
             </div>
             <?php }?>
-            <div class="checkbox"><label><?php echo $form->checkBox($model, 'rememberMe', array('class' => 'remember')); ?> <?php echo zmf::t('remember_me');?></label></div>
+            <div class="checkbox"><label><?php echo $form->checkBox($model, 'rememberMe', array('class' => 'remember')); ?> 记住登录状态</label></div>
             <div class="form-group">
-              <input type="submit" name="login" class="btn btn-success" value="Login"/>
+              <input type="submit" name="login" class="btn btn-success" value="登录"/>
             </div>
         <?php $this->endWidget(); ?>
     </div>

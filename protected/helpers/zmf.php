@@ -72,7 +72,7 @@ class zmf {
         $string = preg_replace($replace, $to, $string);
         return $string;
     }
-    
+
     public static function subStr($string, $sublen = 20, $start = 0, $separater = '...') {
         $string = self::stripStr($string);
         $code = 'UTF-8';
@@ -861,13 +861,20 @@ class zmf {
      * 限制用户对某一操作的频率，如点赞，收藏，关注
      * 默认4次
      */
-    public static function actionLimit($type, $keyid, $num = 4, $time = 60) {
+    public static function actionLimit($type, $keyid, $num = 4, $time = 60, $fileCache = false) {
         $cacheKey = 'actionLimit-' . $type . '-' . $keyid;
         $info = (int) zmf::getCookie($cacheKey);
-        if ($info >= $num) {
+        if ($fileCache) {
+            $cacheKey.=ip2long(Yii::app()->request->userHostAddress);
+            $fileNum = (int) zmf::getFCache($cacheKey);
+        }
+        if ($info >= $num || ($fileCache && $fileNum >= $num)) {
             return true;
         } else {
             zmf::setCookie($cacheKey, $info + 1, $time);
+            if ($fileCache) {
+                zmf::setFCache($cacheKey, $info + 1, $time);
+            }
             return false;
         }
     }
@@ -923,7 +930,7 @@ class zmf {
         }
         return $str;
     }
-    
+
     /**
      * 处理语言输出
      * @param type $type

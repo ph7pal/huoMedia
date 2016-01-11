@@ -6,10 +6,10 @@
 <div class="form-group toggle-area">    
     <div class="ui-row-flex">
         <div class="ui-col">
-            <input type="text" class="form-control" placeholder="如何称呼" id="<?php echo 'username-'.$type.'-'.$keyid;?>">
+            <input type="text" class="form-control" placeholder="如何称呼" id="<?php echo 'username-'.$type.'-'.$keyid;?>" value="<?php echo zmf::getCookie('noLoginUsername');?>">
         </div>
         <div class="ui-col">
-            <input type="text" class="form-control" placeholder="Email地址（选填）" id="<?php echo 'email-'.$type.'-'.$keyid;?>">
+            <input type="text" class="form-control" placeholder="Email地址（选填）" id="<?php echo 'email-'.$type.'-'.$keyid;?>"  value="<?php echo zmf::getCookie('noLoginEmail');?>">
         </div>
     </div>
 </div>

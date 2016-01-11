@@ -214,24 +214,28 @@ class Posts extends CActiveRecord {
             }
             $id = $codeArr['id'];
         }
-        if ($from == 'web') {
+        if (!$uid) {
+            $uid = zmf::uid();
+        }
+        if ($uid) {
             if (zmf::actionLimit('favorite-' . $type, $id)) {
                 return array('status' => 0, 'msg' => '操作太频繁，请稍后再试');
             }
-            if (!$uid) {
-                $uid = zmf::uid();
+        } else {
+            //没有登录的访客点收藏时判断是否已收藏过
+            if (zmf::actionLimit('favorite-' . $type, $id, 1, 86400, true)) {
+                return array('status' => 1, 'msg' => '添加收藏成功', 'state' => 1);
             }
         }
-        if (!$uid) {
-            return array('status' => 0, 'msg' => '请先登录');
-        }
-
         $attr = array(
             'uid' => $uid,
             'logid' => $id,
             'classify' => $type
         );
-        $info = Favorites::model()->findByAttributes($attr);
+        $info=false;
+        if($uid){
+            $info = Favorites::model()->findByAttributes($attr);
+        }
         if ($info) {
             if (Favorites::model()->deleteByPk($info['id'])) {
                 if ($type == 'post') {
@@ -257,11 +261,11 @@ class Posts extends CActiveRecord {
     }
 
     public static function getRelations($logid, $limit = 5) {
-        if(!$logid){
+        if (!$logid) {
             return array();
         }
         $sql = "SELECT p.id,p.title FROM {{posts}} p INNER JOIN (SELECT logid,count(logid) AS times FROM {{tag_relation}} WHERE tagid IN(SELECT tagid FROM {{tag_relation}} WHERE logid='$logid') GROUP BY logid ORDER BY times DESC) tmp ON p.id=tmp.logid WHERE p.id!='$logid' AND p.status=" . Posts::STATUS_PASSED . " LIMIT $limit";
-        $items=  Yii::app()->db->createCommand($sql)->queryAll();
+        $items = Yii::app()->db->createCommand($sql)->queryAll();
         return $items;
     }
 

@@ -37,7 +37,7 @@ button, input, select, textarea,.form-control,.btn{
     padding-top: 25px;
     padding-bottom: 25px;
     line-height: 30px;
-    
+
 }
 .navbar-default .navbar-nav>li>a{
     color: #fff
@@ -110,36 +110,40 @@ button, input, select, textarea,.form-control,.btn{
 /*登录页面------*/
 /*文章页面------*/
 
-    .post-fixed-actions{
-        width: 48px;        
-        background: #fff;
-        top: 100px;
-        left: 50%;
-        margin-left: 325px;
-        position: fixed;
-        font-size: 32px;
-        border: 1px solid #f8f8f8
-    }
-    .post-comments .media{
-        border-bottom: 1px solid #f8f8f8
-    }
-    .comment-textarea{
-        border:1px solid #f8f8f8;
-        box-shadow: none;
-        background-color: #f8f8f8;
-    }
-    .share-body{
-        text-align: center
-    }
-    .share-body p{
-        margin: 0
-    }
-    .share-body .more-awesome{
-        margin-top: 0;
-        margin-bottom: 20px
-    }
-    
- .more-awesome {
+.post-fixed-actions{
+    width: 48px;        
+    background: #fff;
+    top: 100px;
+    left: 50%;
+    margin-left: 325px;
+    position: fixed;
+    font-size: 32px;
+    border: 1px solid #f8f8f8
+}
+.post-comments .media{
+    border-bottom: 1px solid #f8f8f8
+}
+.comment-textarea{
+    border:1px solid #f8f8f8;
+    box-shadow: none;
+    background-color: #f8f8f8;
+}
+.share-body{
+    text-align: center
+}
+.share-body p{
+    margin: 0
+}
+.share-body .more-awesome{
+    margin-top: 0;
+    margin-bottom: 20px
+}
+.post-img-map{
+    width: 600px;
+    height: 371px
+}
+/*更多*/
+.more-awesome {
     color: #999;
     font-size: 14px;
     text-align: center;

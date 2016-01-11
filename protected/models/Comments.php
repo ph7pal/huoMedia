@@ -19,11 +19,8 @@ class Comments extends CActiveRecord {
             array('uid, logid,content,classify, status, cTime', 'required'),
             array('status', 'numerical', 'integerOnly' => true),
             array('uid,logid,tocommentid, cTime', 'length', 'max' => 11),
-            array('content,username,email', 'length', 'max' => 255),
-            array('platform, classify', 'length', 'max' => 16),
-            // The following rule is used by search().
-            // @todo Please remove those attributes that should not be searched.
-            array('id, uid, logid,tocommentid, content, platform, classify, status, cTime', 'safe', 'on' => 'search'),
+            array('content,username,email,ipInfo', 'length', 'max' => 255),
+            array('platform, classify,ip', 'length', 'max' => 16),
         );
     }
 
@@ -55,7 +52,38 @@ class Comments extends CActiveRecord {
             'cTime' => '回复时间',
             'username' => '用户名',
             'email' => '邮箱地址',
+            'ip' => 'IP',
+            'ipInfo' => 'IP信息',
         );
+    }
+
+    public function beforeSave() {
+        $ip = Yii::app()->request->userHostAddress;
+        $key = 'ipInfo-' . $ip;
+        $ipData = zmf::getCookie($key);
+        if (!$ipData) {
+            $url = 'http://apis.baidu.com/apistore/iplookupservice/iplookup?ip=' . $ip;
+            // 执行HTTP请求
+            $header = array(
+                'apikey:e5882e7ac4b03c5d6f332b6de4469e81',
+            );
+            $ch = curl_init();
+            // 添加apikey到header
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_URL, $url);
+            $res = curl_exec($ch);
+            $res = CJSON::decode($res, true);
+            $retData=array();
+            if ($res['errNum'] == 0) {
+                $retData = $res['retData'];
+            }
+            $ipData = json_encode($retData);
+            zmf::setCookie($key, $ipData,2592000);
+        }
+        $this->ip = ip2long($ip);
+        $this->ipInfo = $ipData;
+        return true;
     }
 
     public static function model($className = __CLASS__) {
@@ -83,9 +111,9 @@ class Comments extends CActiveRecord {
                 $usernames = Yii::app()->db->createCommand("SELECT id,truename FROM {{users}} WHERE id IN($uidsStr)")->queryAll();
                 if (!empty($usernames)) {
                     foreach ($items as $k => $val) {
-                        foreach ($usernames as $val2){
-                            if($val['uid']>0 && $val['uid']==$val2['id']){
-                                $items[$k]['loginUsername']=$val2['truename'];
+                        foreach ($usernames as $val2) {
+                            if ($val['uid'] > 0 && $val['uid'] == $val2['id']) {
+                                $items[$k]['loginUsername'] = $val2['truename'];
                             }
                         }
                     }

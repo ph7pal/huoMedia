@@ -10,15 +10,12 @@ $qrcode=  zmf::qrcode($url, 'posts', $info['id']);
             <span><?php echo CHtml::link($tag['title'],array('index/index','tagid'=>$tag['id']));?></span>
             <?php }?>
         </div>
-        <?php }?>
-        
+        <?php }?>        
         <h1 class="post-title"><?php echo $info['title'];?></h1>
         <div class="post-content">
             <?php echo zmf::text(array(),$info['content']);?>
         </div>
-                
-    </div>
-    
+    </div>    
     <?php if($info['lat']!='' && $info['long']!='' && $info['lat']!='0' && $info['long']!='0'){?>
     <div class="module-header">
         位置

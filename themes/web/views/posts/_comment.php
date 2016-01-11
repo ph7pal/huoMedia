@@ -23,13 +23,17 @@ if(!$_uname){
         <p><?php echo nl2br(CHtml::encode($data['content'])); ?></p>
         <p class="help-block">
             <?php echo zmf::formatTime($data['cTime']); ?>
+            <?php if($this->uid){?>
             <span class="pull-right">
                 <?php 
-                echo CHtml::link('回复','javascript:;',array('onclick'=>"replyOne('".$data['id']."','".$data['logid']."','".$_uname."')"));
-                if(($this->uid && $this->uid==$postInfo['uid']) || $this->userInfo['isAdmin']){
-                    echo CHtml::link('删除','javascript:;',array('action'=>'del-content','action-type'=>'comment','action-data'=>  $data['id'],'action-confirm'=>1,'action-target'=>'comment-'.$data['id']));                    
+                if($this->uid!=$postInfo['uid']){
+                    echo CHtml::link('回复','javascript:;',array('onclick'=>"replyOne('".$data['id']."','".$data['logid']."','".$_uname."')"));
+                }
+                if($this->uid==$postInfo['uid'] || $this->userInfo['isAdmin']){
+                    echo CHtml::link('删除','javascript:;',array('action'=>'del-content','action-type'=>'comment','action-data'=>  $data['id'],'action-confirm'=>1,'action-target'=>'comment-'.$data['id']));  
                 }?>                
             </span>
+            <?php }?>
         </p>
     </div>
 </div>

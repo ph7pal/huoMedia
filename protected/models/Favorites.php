@@ -46,14 +46,33 @@ class Favorites extends CActiveRecord {
             'ipInfo' => 'ip信息',
         );
     }
-    
+
     public function beforeSave() {
-        $this->ip = ip2long(Yii::app()->request->userHostAddress);        
+        $ip = Yii::app()->request->userHostAddress;
+        $url = 'http://apis.baidu.com/apistore/iplookupservice/iplookup?ip=' . $ip;
+        // 执行HTTP请求
+        $header = array(
+            'apikey:e5882e7ac4b03c5d6f332b6de4469e81',
+        );
+        $ch = curl_init();
+        // 添加apikey到header
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $res = curl_exec($ch);
+        $res = CJSON::decode($res, true);
+        $retData = array();
+        if ($res['errNum'] == 0) {
+            $retData = $res['retData'];
+        }
+        $_info = json_encode($retData);
+        $this->ip = ip2long($ip);
+        $this->ipInfo = $_info;
         return true;
     }
 
     public static function checkFavored($logid, $type, $uid = '') {
-        if(!$uid){
+        if (!$uid) {
             $uid = zmf::uid();
         }
         if (!$uid) {

@@ -24,20 +24,20 @@ $qrcode=  zmf::qrcode($url, 'posts', $info['id']);
     </div>
     <?php if($info['lat']!='' && $info['long']!='' && $info['lat']!='0' && $info['long']!='0'){?>
     <div class="module">
-        <p>
-            <img data-original="http://ditu.google.cn/maps/api/staticmap?center=<?php echo $info['lat'];?>,<?php echo $info['long'];?>&amp;zoom=<?php echo $info['mapZoom'];?>&amp;size=600x371&amp;markers=color:red%7Clabel:A%7C<?php echo $info['lat'];?>,<?php echo $info['long'];?>&amp;sensor=false&amp;key=AIzaSyDcT5ZLTs6jrOa2zkDcERh0ijiOvMA-l5o" class="lazy" src="http://ditu.google.cn/maps/api/staticmap?center=<?php echo $info['lat'];?>,<?php echo $info['long'];?>&amp;zoom=<?php echo $info['mapZoom'];?>&amp;size=600x371&amp;markers=color:red%7Clabel:A%7C<?php echo $info['lat'];?>,<?php echo $info['long'];?>&amp;sensor=false&amp;key=AIzaSyDcT5ZLTs6jrOa2zkDcERh0ijiOvMA-l5o" alt="<?php echo $info['title'];?>">
-        </p>
+        <img data-original="http://ditu.google.cn/maps/api/staticmap?center=<?php echo $info['lat'];?>,<?php echo $info['long'];?>&amp;zoom=<?php echo $info['mapZoom'];?>&amp;size=600x371&amp;markers=color:red%7Clabel:A%7C<?php echo $info['lat'];?>,<?php echo $info['long'];?>&amp;sensor=false&amp;key=AIzaSyDcT5ZLTs6jrOa2zkDcERh0ijiOvMA-l5o" class="lazy post-img-map" src="<?php echo zmf::lazyImg();?>" alt="<?php echo $info['title'];?>">
     </div>
     <?php }?>
+    <?php if(!empty($relatePosts)){?>
     <div class="module">
-        <p>相关文章</p>
+        <p><?php foreach($relatePosts as $_post){echo CHtml::link($_post['title'],array('posts/view','id'=>$_post['id']));}?></p>
     </div>
+    <?php }?>
     <div class="module">
         <div id="comments-posts-<?php echo $info['id'];?>-box" class="post-comments">
             <div id="comments-posts-<?php echo $info['id'];?>">
                 <?php if(!empty($comments)){?>
                 <?php foreach($comments as $comment){?>
-                <?php $this->renderPartial('/posts/_comment',array('data'=>$comment));?>
+                <?php $this->renderPartial('/posts/_comment',array('data'=>$comment,'postInfo'=>$info));?>
                 <?php }?>
                 <?php }else{?>
                 <p class="help-block text-center">暂无评论！</p>

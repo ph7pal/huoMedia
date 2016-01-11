@@ -25,7 +25,7 @@ if(!$_uname){
             <?php echo zmf::formatTime($data['cTime']); ?>
             <?php if($this->uid){?>
             <span class="comment-actions">
-            <?php echo CHtml::link('回复','javascript:;',array('onclick'=>"replyOne('".$data['id']."','".$data['logid']."','".$_uname."')"));?>
+            <?php echo $this->uid!=$postInfo['uid'] ? CHtml::link('回复','javascript:;',array('onclick'=>"replyOne('".$data['id']."','".$data['logid']."','".$_uname."')")) : '';?>
             </span>
             <?php }?>
         </p>

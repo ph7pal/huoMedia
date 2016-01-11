@@ -31,21 +31,30 @@ class AjaxController extends Q {
         if (!$content) {
             $this->jsonOutPut(0, '评论不能为空哦~');
         }
-        if($this->uid){
-            $status=  Posts::STATUS_PASSED;
-            $uid=  $this->uid;
-        }else{
-            if(!$username){
+        if ($this->uid) {
+            $status = Posts::STATUS_PASSED;
+            $uid = $this->uid;
+        } else {
+            if (!$username) {
                 $this->jsonOutPut(0, '请填写称呼');
             }
-            if($email!=''){
+            zmf::setCookie('noLoginUsername', $username, 2592000);            
+            if ($email != '') {
                 $validator = new CEmailValidator;
-                if(!$validator->validateValue($email)){
+                if (!$validator->validateValue($email)) {
                     $this->jsonOutPut(0, '请填写正确的邮箱地址');
                 }
+                zmf::setCookie('noLoginEmail', $email, 2592000);
             }
             $status = Posts::STATUS_STAYCHECK;
-            $uid=0;
+            $uid = 0;
+            if (zmf::actionLimit($type, $keyid, 5, 86400, true)) {
+                $this->jsonOutPut(0, '操作太频繁，请稍后再试');
+            }
+        }
+        $postInfo = Posts::model()->findByPk($keyid);
+        if (!$postInfo || $postInfo['status'] != Posts::STATUS_PASSED) {
+            $this->jsonOutPut(0, '您所评论的内容不存在');
         }
         //处理文本
         $filter = Posts::handleContent($content);
@@ -53,13 +62,13 @@ class AjaxController extends Q {
         $model = new Comments();
         $toNotice = true;
         if ($to) {
-            $comInfo = Comments::model()->findByPk($to);            
+            $comInfo = Comments::model()->findByPk($to);
             if (!$comInfo || $comInfo['status'] != Posts::STATUS_PASSED) {
                 $to = '';
             } elseif ($comInfo['uid'] == $uid) {
                 $toNotice = false;
             } else {
-                $touid = $comInfo['uid']>0 ? $comInfo['uid'] : '';
+                $touid = $comInfo['uid'] > 0 ? $comInfo['uid'] : '';
                 $toNotice = true;
             }
         }
@@ -100,10 +109,10 @@ class AjaxController extends Q {
                     );
                     Notification::add($_noticedata);
                 }
-                if($uid){
-                    $intoData['loginUsername']=  $this->userInfo['truename'];
+                if ($uid) {
+                    $intoData['loginUsername'] = $this->userInfo['truename'];
                 }
-                $html = $this->renderPartial('/posts/_comment', array('data' => $intoData), true);
+                $html = $this->renderPartial('/posts/_comment', array('data' => $intoData, 'postInfo' => $postInfo), true);
                 $this->jsonOutPut(1, $html);
             } else {
                 $this->jsonOutPut(0, '新增评论失败');
@@ -159,7 +168,7 @@ class AjaxController extends Q {
         if (!$data || !$type) {
             $this->jsonOutPut(0, '数据不全，请核实');
         }
-        if (!in_array($type, array('comment', 'post','notice','tag'))) {
+        if (!in_array($type, array('comment', 'post', 'notice', 'tag'))) {
             $this->jsonOutPut(0, '暂不允许的分类');
         }
         switch ($type) {
@@ -196,7 +205,7 @@ class AjaxController extends Q {
                 $this->jsonOutPut(1, '已删除');
                 break;
             case 'notice':
-                if(!$data || !is_numeric($data)){
+                if (!$data || !is_numeric($data)) {
                     $this->jsonOutPut(0, '您所操作的内容不存在');
                 }
                 if (Notification::model()->deleteByPk($data)) {
@@ -205,10 +214,10 @@ class AjaxController extends Q {
                 $this->jsonOutPut(1, '已删除');
                 break;
             case 'tag':
-                if(!$data || !is_numeric($data)){
+                if (!$data || !is_numeric($data)) {
                     $this->jsonOutPut(0, '您所操作的内容不存在');
                 }
-                if (Tags::model()->updateByPk($data, array('status'=>  Posts::STATUS_DELED))) {
+                if (Tags::model()->updateByPk($data, array('status' => Posts::STATUS_DELED))) {
                     $this->jsonOutPut(1, '已删除');
                 }
                 $this->jsonOutPut(1, '已删除');
@@ -220,6 +229,7 @@ class AjaxController extends Q {
     }
 
     public function actionSetStatus() {
+        $this->checkLogin();
         $keyid = zmf::val('a', 2);
         $classify = zmf::val('b', 1);
         $_status = zmf::val('c', 1);
@@ -267,7 +277,7 @@ class AjaxController extends Q {
             $this->jsonOutPut(0, '操作失败');
         }
     }
-    
+
     public function actionFavorite() {
         $data = zmf::val('data', 1);
         $type = zmf::val('type', 1);

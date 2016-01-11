@@ -4,7 +4,7 @@ $qrcode=  zmf::qrcode($url, 'posts', $data['id']);
 ?>
 <div class="post-item" id="post-<?php echo $data['id'];?>">
     <?php if($data['faceimg']){?>
-    <img src="<?php echo $data['faceimg'];?>" class="img-responsive"/>
+    <a href="<?php echo $url;?>" title="<?php echo $data['title'];?>"><img src="<?php echo $data['faceimg'];?>" class="img-responsive"/></a>
     <?php }?>
     <div class="module">
         <p><?php echo CHtml::link($data['title'], array('posts/view', 'id' => $data['id'])); ?></p>

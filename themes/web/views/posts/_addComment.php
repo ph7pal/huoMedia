@@ -8,14 +8,14 @@
         <div class="col-xs-6 col-sm-6">
             <div class="input-group">
                 <span class="input-group-addon">称呼</span>
-                <input type="text" class="form-control" placeholder="如何称呼" id="<?php echo 'username-'.$type.'-'.$keyid;?>">
+                <input type="text" class="form-control" placeholder="如何称呼" id="<?php echo 'username-'.$type.'-'.$keyid;?>" value="<?php echo zmf::getCookie('noLoginUsername');?>">
             </div>
             <p class="help-block">将显示为由谁评论</p>
         </div>
         <div class="col-xs-6 col-sm-6">
             <div class="input-group">
                 <span class="input-group-addon">邮箱</span>
-                <input type="text" class="form-control" placeholder="Email地址（选填）" id="<?php echo 'email-'.$type.'-'.$keyid;?>">
+                <input type="text" class="form-control" placeholder="Email地址（选填）" id="<?php echo 'email-'.$type.'-'.$keyid;?>" value="<?php echo zmf::getCookie('noLoginEmail');?>">
             </div>
             <p class="help-block">Email不会被公布，仅用于接收评论的回复</p>
         </div>

@@ -12,3 +12,6 @@ CREATE TABLE `pre_favorites` (
   `cTime` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+ALTER table pre_comments add ip varchar(16) not null comment 'IP';
+ALTER table pre_comments add ipInfo varchar(255) not null comment 'IP信息';
