@@ -24,7 +24,7 @@
 	</div>
 
 	<div class="form-group">
-            <?php echo CHtml::submitButton($model->isNewRecord ? '新增' : '更新',array('class'=>'btn btn-success')); ?>
+            <?php echo CHtml::submitButton($model->isNewRecord ? '新增' : '更新',array('class'=>'btn btn-success','id'=>'add-post-btn')); ?>
 	</div>
 
 <?php $this->endWidget(); ?>

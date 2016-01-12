@@ -1,7 +1,7 @@
 //包装函数
 module.exports=function(grunt){
     var bannerContent ='/*!\n' +
-        ' * 婚礼总动员 <%= pkg.homepage %>\n' +
+        " * NEWSOUL's production <%= pkg.homepage %>\n" +
         ' * Copyright <%= grunt.template.today("yyyy") %>\n' +
         ' * Author <%= pkg.author %> <%= pkg.authorUrl %>\n' +
         ' * This is NOT a freeware, use is subject to license terms\n' +
@@ -129,6 +129,6 @@ module.exports=function(grunt){
     //告诉grunt当我们在终端输入grunt时要做什么（注意先后顺序）
     //在grunt命令执行时，要不要立即执行uglify插件？如果要，就写上，否则不写。
     //watch,jshint,csslint,watch,imagemin
-    grunt.registerTask('default',['clean','uglify','cssmin','watch']);
+    grunt.registerTask('default',['clean','uglify','cssmin','imagemin','watch']);
 
 };

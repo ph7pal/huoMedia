@@ -106,7 +106,7 @@ $selectedTagids=array_keys(CHtml::listData($postTags, 'id', ''));
         <?php }?>
     </div>
     <div class="form-group">
-        <?php echo CHtml::submitButton($model->isNewRecord ? '提交' : '更新',array('class'=>'btn btn-success pull-right','id'=>'editorSubmit')); ?>
+        <?php echo CHtml::submitButton($model->isNewRecord ? '提交' : '更新',array('class'=>'btn btn-success pull-right','id'=>'add-post-btn')); ?>
     </div>
     <?php $this->endWidget(); ?>    
 </div><!-- form -->

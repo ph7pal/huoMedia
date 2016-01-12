@@ -12,7 +12,7 @@
         $cs->registerScriptFile(Yii::app()->baseUrl . "/jsCssSrc/js/web-bootstrap.js", CClientScript::POS_HEAD);
         $cs->registerScriptFile(Yii::app()->baseUrl . "/jsCssSrc/js/web-zmf.js", CClientScript::POS_END);
         ?>  
-        <?php //assets::loadCssJs('admin');?>
+        <link rel="shortcut icon" href="<?php echo zmf::config('baseurl');?>favicon.ico" type="image/x-icon" />
         <title>管理中心</title>     
     </head>
     <body>

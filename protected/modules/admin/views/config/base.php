@@ -12,7 +12,8 @@
         <option value="1" <?php if($c['mobile']=='1'){?>selected="selected"<?php }?>>开启</option>
     </select>
 </p>
-
 <p><label>微信AK：</label><input class="form-control" type="text" name="weixin_app_id" id="weixin_app_id" value="<?php echo $c['weixin_app_id'];?>"/></p>
 <p><label>微信SK：</label><input class="form-control" type="text" name="weixin_app_key" id="weixin_app_key" value="<?php echo $c['weixin_app_key'];?>"/></p>
 <p><label>微信回调地址：</label><input class="form-control" type="text" name="weixin_app_callback" id="weixin_app_callback" value="<?php echo $c['weixin_app_callback'];?>"/></p>
+<p><label>微博网站接入APPKEY：</label><input class="form-control" type="text" name="weixin_app_id" id="weiboAppkey" value="<?php echo $c['weiboAppkey'];?>"/></p>
+<p><label>官方微博ID：</label><input class="form-control" type="text" name="weiboRalateUid" id="weiboRalateUid" value="<?php echo $c['weiboRalateUid'];?>"/></p>

@@ -14,6 +14,9 @@ class PostsController extends Q {
         $comments = Comments::getCommentsByPage($id, 'posts', 1, $pageSize);       
         $tags = Tags::getByIds($info['tagids']);
         $relatePosts=  Posts::getRelations($id, 5);
+        if (!zmf::actionLimit('visit-Posts', $id, 5, 60)) {
+            Posts::updateCount($id, 'Posts', 1, 'hits');
+        }
         $data = array(
             'info' => $info,
             'comments' => $comments,

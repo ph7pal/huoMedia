@@ -117,7 +117,7 @@ class SiteController extends Q {
             'allInfos'=>$allInfos,
         );
         $this->pageTitle=$info['title'].' - '.zmf::config('sitename');
-        $this->selectNav=$code;
+        $this->selectNav='about';
         $this->render('about', $data);
     }
 

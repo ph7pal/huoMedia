@@ -15,11 +15,9 @@
     </div>
     <?php if(!empty($allInfos)){?>
     <div class="module">
-        <div class="list-group">
-            <?php foreach ($allInfos as $val){?>
-            <?php echo CHtml::link($val['title'],array('site/info','code'=>$val['code']));?>
-            <?php }?>
-        </div>
+        <?php foreach ($allInfos as $val){?>
+        <p><?php echo CHtml::link($val['title'],array('site/info','code'=>$val['code']));?></p>
+        <?php }?>
     </div>
     <?php }?>
 </div>

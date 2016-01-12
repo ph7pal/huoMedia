@@ -19,7 +19,7 @@ if(!$_uname){
 ?>
 <div class="media" id="comment-<?php echo $data['id']; ?>">
     <div class="media-body">
-        <p><?php echo CHtml::encode($_uname);?></p>
+        <p><b><?php echo CHtml::encode($_uname);?></b></p>
         <p><?php echo nl2br(CHtml::encode($data['content'])); ?></p>
         <p class="help-block">
             <?php echo zmf::formatTime($data['cTime']); ?>

@@ -3,7 +3,20 @@
 class IndexController extends Q {
 
     public function actionIndex() {
-        $sql = 'SELECT id,uid,title,faceimg,content,tagids,comments,favorite FROM {{posts}} WHERE `status`=1 ORDER BY cTime DESC';
+        $tagid=  zmf::val('tagid',2);
+        $tagInfo=array();
+        $default=true;
+        if($tagid){
+            $tagInfo=  Tags::getByIds($tagid);
+            if($tagInfo){
+                $default=false;
+                $tagInfo=$tagInfo[0];
+                $sql="SELECT p.id,p.uid,p.title,p.faceimg,p.content,p.tagids,p.comments,p.favorite FROM {{posts}} p,{{tag_relation}} tr WHERE tr.tagid='{$tagid}' AND tr.classify='posts' AND tr.logid=p.id AND p.`status`=".Posts::STATUS_PASSED." ORDER BY p.cTime DESC";
+            }
+        }
+        if($default){
+            $sql = 'SELECT id,uid,title,faceimg,content,tagids,comments,favorite FROM {{posts}} WHERE `status`=1 ORDER BY cTime DESC';
+        }
         Posts::getAll(array('sql' => $sql), $pages, $posts);
         foreach ($posts as $k => $val) {
             if ($val['tagids'] != '') {
@@ -12,10 +25,12 @@ class IndexController extends Q {
             }
             $posts[$k]['faceimg'] = Attachments::faceImg($val, '640');
         }
-        $this->pageTitle = '文章';
+        $this->pageTitle = '文章 - '.zmf::config('sitename');
         $this->selectNav = 'posts';
         $data = array(
-            'posts' => $posts
+            'posts' => $posts,
+            'tagInfo' => $tagInfo,
+            'pages' => $pages,
         );
         $this->render('/index/index', $data);
     }
@@ -31,7 +46,7 @@ class IndexController extends Q {
             'posts' => $posts,
             'pages' => $pages,
         );
-        $this->pageTitle = '标签';
+        $this->pageTitle = '标签 - '.zmf::config('sitename');
         $this->selectNav = 'tags';
         $this->render('/index/tags', $data);
     }
@@ -46,9 +61,10 @@ class IndexController extends Q {
         }
         $posts = !empty($posts) ? $posts : array();
         $data = array(
-            'postJson' => CJSON::encode($posts)
+            'postJson' => CJSON::encode($posts),
+            'loadMap'=>  empty($posts) ? false : true
         );
-        $this->pageTitle = '足迹';
+        $this->pageTitle = '足迹 - '.zmf::config('sitename');
         $this->selectNav = 'map';
         $this->render('/index/map', $data);
     }

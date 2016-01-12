@@ -35,6 +35,7 @@ class Q extends Controller {
     function _referer() {
         $currentUrl = Yii::app()->request->url;
         $arr = array(
+             'login',
             '/site/',
             '/error/',
             '/attachments/',

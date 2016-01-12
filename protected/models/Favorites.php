@@ -76,6 +76,9 @@ class Favorites extends CActiveRecord {
             $uid = zmf::uid();
         }
         if (!$uid) {
+            if (zmf::actionLimit('favorite-' . $type, $logid, 1, 86400, true, true)) {
+                return true;
+            }
             return false;
         }
         if (!is_numeric($logid)) {

@@ -3,11 +3,11 @@ $url=zmf::config('domain').Yii::app()->createUrl('posts/view',array('id'=>$info[
 $qrcode=  zmf::qrcode($url, 'posts', $info['id']);
 ?>
 <div class="main-part">
-    <div class="module">
-        <div class="post-fixed-actions text-center">
+    <div class="module post-page">
+        <div class="post-fixed-actions">
             <p><?php echo CHtml::link('<i class="fa '.($this->favorited ? 'fa-heart' : 'fa-heart-o').'"></i>','javascript:;',array('action'=>'favorite','action-data'=>$info['id'],'action-type'=>'post','title'=>'点赞'));?></p>
-            <p><?php echo CHtml::link('<i class="fa fa-comment-o"></i>','javascript:;',array('action'=>'scroll','action-target'=>'add-comments'));?></p>
-            <p><?php echo CHtml::link('<i class="fa fa-qrcode"></i>','javascript:;',array('action'=>'share','action-qrcode'=>$qrcode,'action-url'=>$url,'action-img'=>$qrcode,'action-title'=>$info['title']));?></p>
+            <p><?php echo CHtml::link('<i class="fa fa-comment-o"></i>','javascript:;',array('action'=>'scroll','action-target'=>'add-comments','title'=>'评论'));?></p>
+            <p><?php echo CHtml::link('<i class="fa fa-qrcode"></i>','javascript:;',array('action'=>'share','action-qrcode'=>$qrcode,'action-url'=>$url,'action-img'=>$qrcode,'action-title'=>$info['title'],'title'=>'分享'));?></p>
         </div>
         <h1><?php echo $info['title'];?></h1>
         <div class="post-content">
@@ -29,7 +29,7 @@ $qrcode=  zmf::qrcode($url, 'posts', $info['id']);
     <?php }?>
     <?php if(!empty($relatePosts)){?>
     <div class="module">
-        <p><?php foreach($relatePosts as $_post){echo CHtml::link($_post['title'],array('posts/view','id'=>$_post['id']));}?></p>
+        <?php foreach($relatePosts as $_post){echo '<p>'.CHtml::link($_post['title'],array('posts/view','id'=>$_post['id'])).'</p>';}?>
     </div>
     <?php }?>
     <div class="module">

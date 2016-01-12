@@ -224,7 +224,7 @@ class Posts extends CActiveRecord {
         } else {
             //没有登录的访客点收藏时判断是否已收藏过
             if (zmf::actionLimit('favorite-' . $type, $id, 1, 86400, true)) {
-                return array('status' => 1, 'msg' => '添加收藏成功', 'state' => 1);
+                return array('status' => 1, 'msg' => '已点赞', 'state' => 1);
             }
         }
         $attr = array(
@@ -241,9 +241,9 @@ class Posts extends CActiveRecord {
                 if ($type == 'post') {
                     Posts::updateCount($id, 'Posts', -1, 'favorite');
                 }
-                return array('status' => 1, 'msg' => '取消收藏成功', 'state' => 3);
+                return array('status' => 1, 'msg' => '取消点赞', 'state' => 3);
             } else {
-                return array('status' => 0, 'msg' => '取消收藏失败', 'state' => 4);
+                return array('status' => 0, 'msg' => '取消点赞失败', 'state' => 4);
             }
         } else {
             $attr['cTime'] = zmf::now();
@@ -253,9 +253,9 @@ class Posts extends CActiveRecord {
                 if ($type == 'post') {
                     Posts::updateCount($id, 'Posts', 1, 'favorite');
                 }
-                return array('status' => 1, 'msg' => '添加收藏成功', 'state' => 1);
+                return array('status' => 1, 'msg' => '点赞成功', 'state' => 1);
             } else {
-                return array('status' => 0, 'msg' => '添加收藏失败', 'state' => 2);
+                return array('status' => 0, 'msg' => '点赞失败', 'state' => 2);
             }
         }
     }
@@ -267,6 +267,16 @@ class Posts extends CActiveRecord {
         $sql = "SELECT p.id,p.title FROM {{posts}} p INNER JOIN (SELECT logid,count(logid) AS times FROM {{tag_relation}} WHERE tagid IN(SELECT tagid FROM {{tag_relation}} WHERE logid='$logid') GROUP BY logid ORDER BY times DESC) tmp ON p.id=tmp.logid WHERE p.id!='$logid' AND p.status=" . Posts::STATUS_PASSED . " LIMIT $limit";
         $items = Yii::app()->db->createCommand($sql)->queryAll();
         return $items;
+    }
+    
+    public static function updateCommentsNum($id){
+        if(!$id){
+            return false;
+        }
+        $num=  Comments::model()->count("logid=:logid AND classify='posts' AND `status`=".Posts::STATUS_PASSED, array(
+            ':logid'=>$id
+        ));
+        return Posts::model()->updateByPk($id, array('comments'=>$num));
     }
 
 }

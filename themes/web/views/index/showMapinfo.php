@@ -1,20 +1,3 @@
-<style>
-    .map-fiexed-btns{
-        position: absolute;
-        left: 50%;
-        top: 10px;
-        z-index: 999
-    }
-    .map-mininfo{
-        width: 300px
-    }
-    .map-mininfo .map-item-title{
-        
-    }
-    .map-mininfo .left-num{
-        margin-right: 10px
-    }
-</style>
 <div class="map-fiexed-btns">
     <div class="btn-group" role="group">
         <?php echo CHtml::link('<i class="fa fa-reply"></i> 上一步','javascript:;',array('class'=>'btn btn-default','onclick'=>'history.back()'));?>

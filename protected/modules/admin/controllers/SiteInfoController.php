@@ -44,7 +44,7 @@ class SiteInfoController extends Admin {
                         Attachments::model()->updateAll(array('status' => Posts::STATUS_PASSED, 'logid' => $model->id), 'id IN(' . $attstr . ')');
                     }
                 }
-                $this->redirect(array('view', 'id' => $model->id));
+                $this->redirect(array('index', 'id' => $model->id));
             }
         }
         $this->render('create', array(

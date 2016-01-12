@@ -82,42 +82,31 @@ class Admins extends CActiveRecord {
      * @return type]
      */
     public static function getDesc($type = 'admin', $name = '') {
-        $lang['user']['desc'] = '用户相关，包括更新、删除等';
-        $lang['user']['detail'] = array(
-            'user' => '操作用户',
+        $lang['users']['desc'] = '用户相关，包括更新、删除等';
+        $lang['users']['detail'] = array(
+            'users' => '用户列表',
+            'addUser' => '新增用户',
+            'updateUser' => '更新用户',
         );
-        $lang['schedule']['desc'] = '档期相关，包括更新、删除等';
-        $lang['schedule']['detail'] = array(
-            'schedule' => '操作档期',
-        );
-        $lang['order']['desc'] = '订单相关';
-        $lang['order']['detail'] = array(
-            'order' => '操作订单',
-        );
-        $lang['group']['desc'] = '团队相关，包括增删改等';
-        $lang['group']['detail'] = array(
-            'group' => '团队相关',
-        );
-        $lang['posts']['desc'] = '作品相关，包括增删改等';
+        $lang['posts']['desc'] = '文章相关，包括增删改等';
         $lang['posts']['detail'] = array(
-            'posts' => '作品相关',
+            'posts' => '文章列表',
+            'delPost' => '删除文章',
+        );
+        $lang['comments']['desc'] = '评论相关，包括增删改等';
+        $lang['comments']['detail'] = array(
+            'comments' => '评论列表',
+            'delComment' => '删除评论',
+        );
+        $lang['tags']['desc'] = '标签相关，包括增删改等';
+        $lang['tags']['detail'] = array(
+            'tags' => '标签列表',
+            'addTag' => '新增标签',
+            'delTag' => '删除标签',
         );
         $lang['attachments']['desc'] = '图片相关';
         $lang['attachments']['detail'] = array(
-            'attachments' => '图片相关',
-        );
-
-        $lang['system']['desc'] = '系统其它功能，包括意见反馈等';
-        $lang['system']['detail'] = array(
-            'system' => '系统其它信息入口',
-        );
-        $lang['appversion']['desc'] = '软件版本控制，包括新增、更新、删除等';
-        $lang['appversion']['detail'] = array(
-            'appversion' => '软件版本控制',
-        );
-        $lang['calendar']['desc'] = '黄历相关';
-        $lang['calendar']['detail'] = array(
-            'calendar' => '黄历',
+            'attachments' => '图片列表',
         );
         $lang['feedback']['desc'] = '意见反馈';
         $lang['feedback']['detail'] = array(
@@ -126,22 +115,13 @@ class Admins extends CActiveRecord {
         $lang['admins']['desc'] = '后台管理员';
         $lang['admins']['detail'] = array(
             'admins' => '后台管理员',
-        );
-        $lang['area']['desc'] = '地区管理';
-        $lang['area']['detail'] = array(
-            'area' => '地区管理',
+            'setAdmin' => '设置管理员',
+            'delAdmin' => '删除管理员',
         );
         $lang['config']['desc'] = '系统设置';
         $lang['config']['detail'] = array(
-            'config' => '系统设置',
-        );
-        $lang['tools']['desc'] = '小工具';
-        $lang['tools']['detail'] = array(
-            'tools' => '小工具',
-        );
-        $lang['msg']['desc'] = '短信记录';
-        $lang['msg']['detail'] = array(
-            'msg' => '短信记录',
+            'config' => '系统设置列表',
+            'setConfig' => '系统设置',
         );
         if ($type === 'admin') {
             $items = array();

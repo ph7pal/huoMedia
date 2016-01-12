@@ -7,15 +7,15 @@ $qrcode=  zmf::qrcode($url, 'posts', $data['id']);
     <a href="<?php echo $url;?>" title="<?php echo $data['title'];?>"><img src="<?php echo $data['faceimg'];?>" class="img-responsive"/></a>
     <?php }?>
     <div class="module">
-        <p><?php echo CHtml::link($data['title'], array('posts/view', 'id' => $data['id'])); ?></p>
+        <h4><?php echo CHtml::link($data['title'], array('posts/view', 'id' => $data['id'])); ?></h4>
         <p><?php echo zmf::subStr($data['content'],140);?></p>
         <?php if(!empty($data['tagids'])){?>
         <p class="post-list-tags"><i class="fa fa-tags"></i><?php foreach($data['tagids'] as $_tag){echo CHtml::link($_tag['title'],array('index/index','tagid'=>$_tag['id']));}?></p>
         <?php }?>
         <div class="post-item-footer">
             <div class="left-actions">
-                <span><i class="fa fa-heart-o"></i> <?php echo $data['comments'];?></span>
-                <span><i class="fa fa-comment-o"></i> <?php echo $data['favorite'];?></span>
+                <span class="favor-num"><i class="fa fa-heart-o"></i> <?php echo $data['favorite'];?></span>
+                <span class="comment-num"><i class="fa fa-comment-o"></i> <?php echo $data['comments'];?></span>
             </div>
             <div class="dropdown right-actions">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="fa fa-ellipsis-h"></i></a>  

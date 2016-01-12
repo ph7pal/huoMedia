@@ -1,9 +1,12 @@
 body{
-    font-family: "helvetica neue",arial,sans-serif;
-    font-size: 14px;
+    font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;    
+    font-size: 13px;
     color: #444;
     background: #fafafa;    
     /*background: rgba(229,229,229,.95);*/
+}
+a{
+    color: #337ab7
 }
 .navbar-fixed-top ~ .main-part {
     border-top: 95px solid transparent;
@@ -61,7 +64,8 @@ button, input, select, textarea,.form-control,.btn{
     box-shadow: 0 1px 3px rgba(34,25,25,.4);
     margin-bottom: 16px;
     position: relative;
-    word-break: break-all
+    word-break: break-all;
+    border: 1px solid #f2f2f2
 }
 .side-part{
     width: 278px;
@@ -108,17 +112,79 @@ button, input, select, textarea,.form-control,.btn{
     margin: 200px auto 0;
 }
 /*登录页面------*/
+/*文章列表------*/
+.post-item img{
+    width: 100%;
+}
+.post-item h4{
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: 700
+}
+.post-item-footer{
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #f8f8f8;
+    padding-bottom: 25px
+}
+.post-item-footer .left-actions{
+    float: left
+}
+.post-item-footer .left-actions span{
+    margin-right: 15px
+}
+.post-item-footer .left-actions .comment-num{
+    color:#4F946E
+}
+.post-item-footer .left-actions .favor-num{
+    color:#FF677D
+}
+.post-item-footer .right-actions{
+    float: right
+}
+.post-list-tags{
+    color: #9F9F9F
+}
+.post-list-tags a{
+    margin-right: 10px;
+    color: #9F9F9F
+}
+/*文章列表------*/
 /*文章页面------*/
-
+.post-page h1{
+    font-size: 24px;
+    font-weight: 700;
+    margin-top: 5px;
+    margin-bottom: 15px
+}
+.post-content img{
+    margin: 0 auto
+}
 .post-fixed-actions{
     width: 48px;        
     background: #fff;
-    top: 100px;
+    top: 95px;
     left: 50%;
     margin-left: 325px;
     position: fixed;
     font-size: 32px;
-    border: 1px solid #f8f8f8
+    border: 1px solid #f8f8f8;
+    text-align: center
+}
+.post-fixed-actions .fa{
+    color: #808080
+}
+.post-fixed-actions .fa-qrcode:hover{
+    color: #333
+}
+.post-fixed-actions .fa-comment-o:hover{
+    color: #4F946E
+}
+.post-fixed-actions .fa-heart-o:hover{
+    color: #FF677D
+}
+.post-fixed-actions .fa-heart{
+    color: #FF677D
 }
 .post-comments .media{
     border-bottom: 1px solid #f8f8f8
@@ -180,4 +246,106 @@ button, input, select, textarea,.form-control,.btn{
     left: 31px;
 }
 /*文章页面------*/
+/*标签页面------*/
+.tags-page{
+    border-top: 1px solid #f2f2f2;
+    border-left: 1px solid #f2f2f2;
+    border-right: 1px solid #f2f2f2;
+}
+.tags-page .panel-group .panel{
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid #f2f2f2;
+    box-shadow: none;
+    margin-bottom: 0;
+    margin-top: 0
+}
+.tags-page .panel-group .panel-heading+.panel-collapse>.list-group{
+    border-top: 1px solid #ccc
+}
+.tags-page .panel-default>.panel-heading{
+    background: none;    
+}
+.tags-page .panel-title>a{
+    font-weight: 700
+}
+.tags-page .list-group-item{
+    border: 1px solid #f2f2f2;
+    font-size: 13px;
+}
+.tags-page .tags-more-posts{
+    color: #ccc
+}
+/*标签页面------*/
+/*地图页面------*/
+.map-fiexed-btns{
+    position: absolute;
+    left: 50%;
+    top: 10px;
+    z-index: 999
+}
+.map-mininfo{
+    width: 300px
+}
+.map-mininfo .map-item-title{
+
+}
+.map-mininfo .left-num{
+    margin-right: 10px
+}
+/*地图页面------*/
+/*页脚------*/
+.footer{
+    width: 100%;
+    clear: both;
+    margin-top: 30px
+}
+.footer .wrapper{
+    width: 640px;
+    margin: 0 auto;
+    padding: 20px 0;
+    color: #ccc
+}
+.footer .wrapper a{
+    color: #ccc
+}
+/*页脚------*/
+.simpleDialog{
+    background: #FF677D;
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    color: #fff;
+    z-index: 9999;
+    padding: 5px 10px;
+    box-shadow: 5px 5px 5px #333;
+    display: none
+}
+/*返回顶部*/
+.side-fixed{
+    position: fixed;
+    _position:absolute;
+    bottom:100px;
+    left:50%;
+    margin-left:330px;
+    background: #efefef;
+    width:50px;height:50px;
+}
+.side-fixed:hover{background: #337ab7}
+.side-fixed a{
+    color:#A9A9A9;
+    display: block;
+    font-size: 48px;
+    line-height: 48px;
+    text-align: center;
+}
+.side-fixed a:hover{
+    text-decoration: none;
+    color:#fff
+}
+.feedback{bottom:10px;}
+.feedback a{font-size: 24px;}
+.feedback .fa{margin-top: 10px;}
+.back-to-top{bottom:70px;display: none}
+/*意见反馈和返回顶部-------*/
 ul.yiiPager{height:26px;margin:0;padding:0}ul.yiiPager li{display:inline;margin-right: 5px;}ul.yiiPager a:link,ul.yiiPager a:visited{padding:5px 9px;border:1px solid #ccc;border-radius:3px;background:#fff;color:#777;font-weight:normal}ul.yiiPager a:hover{border-color:#449d44;box-shadow:1px 1px 1px #333;color:#035d67;text-decoration:none}ul.yiiPager .selected a{padding:6px 10px;border:0;border-radius:3px;background:#449d44;color:#fff}ul.yiiPager .hidden,ul.yiiPager .last,ul.yiiPager .first{display:none}ul.yiiPager .previous{float: left}ul.yiiPager .next{float: right;margin-right: 0}ul.yiiPager .page{float:left}

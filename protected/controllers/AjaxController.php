@@ -14,6 +14,34 @@ class AjaxController extends Q {
             $this->jsonOutPut(0, Yii::t('default', 'loginfirst'));
         }
     }
+    
+    public function actionFeedback() {
+        $content = zmf::val('content', 1);
+        if (!$content) {
+            $this->jsonOutPut(0, '内容不能为空哦~');
+        }
+        //一个小时内最多只能反馈5条
+        if (zmf::actionLimit('feedback', '', 5, 3600)) {
+            $this->jsonOutPut(0, '操作太频繁，请稍后再试');
+        }
+        $attr['uid'] = $this->uid;
+        $attr['type'] = 'web';
+        $attr['contact'] = zmf::val('email', 1);
+        $attr['appinfo'] = zmf::val('url', 1);
+        $attr['sysinfo'] = Yii::app()->request->userAgent;
+        $attr['content'] = $content;
+        $model = new Feedback();
+        $model->attributes = $attr;
+        if ($model->validate()) {
+            if ($model->save()) {
+                $this->jsonOutPut(1, '感谢您的反馈');
+            } else {
+                $this->jsonOutPut(1, '感谢您的反馈');
+            }
+        } else {
+            $this->jsonOutPut(0, '反馈失败，请重试');
+        }
+    }
 
     public function actionAddComment() {
         $keyid = zmf::val('k', 2);
@@ -38,7 +66,7 @@ class AjaxController extends Q {
             if (!$username) {
                 $this->jsonOutPut(0, '请填写称呼');
             }
-            zmf::setCookie('noLoginUsername', $username, 2592000);            
+            zmf::setCookie('noLoginUsername', $username, 2592000);
             if ($email != '') {
                 $validator = new CEmailValidator;
                 if (!$validator->validateValue($email)) {
@@ -90,7 +118,9 @@ class AjaxController extends Q {
             if ($model->save()) {
                 if ($type == 'posts') {
                     $_url = CHtml::link('查看详情', array('posts/view', 'id' => $keyid, '#' => 'pid-' . $model->id));
-                    Posts::model()->updateCounters(array('comments' => 1), 'id=:id', array(':id' => $keyid));
+                    if($status==Posts::STATUS_PASSED){
+                        Posts::updateCommentsNum($keyid);
+                    }
                     $_content = '您的文章有了新的评论,' . $_url;
                 }
                 if ($to && $_url) {
@@ -180,7 +210,7 @@ class AjaxController extends Q {
                     if ($this->checkPower('delComment', $this->uid, true)) {
                         //我是管理员，我就可以删除
                     } else {
-                        $this->jsonOutPut(0, '不被允许的操作');
+                        $this->jsonOutPut(0, '您无权操作');
                     }
                 }
                 if (Comments::model()->updateByPk($data, array('status' => Posts::STATUS_DELED))) {
@@ -196,7 +226,7 @@ class AjaxController extends Q {
                     if ($this->checkPower('delPost', $this->uid, true)) {
                         //我是管理员，我就可以删除
                     } else {
-                        $this->jsonOutPut(0, '不被允许的操作');
+                        $this->jsonOutPut(0, '您无权操作');
                     }
                 }
                 if (Posts::model()->updateByPk($data, array('status' => Posts::STATUS_DELED))) {
@@ -216,6 +246,9 @@ class AjaxController extends Q {
             case 'tag':
                 if (!$data || !is_numeric($data)) {
                     $this->jsonOutPut(0, '您所操作的内容不存在');
+                }
+                if (!$this->checkPower('delTag', $this->uid, true)) {
+                    $this->jsonOutPut(0, '您无权操作');
                 }
                 if (Tags::model()->updateByPk($data, array('status' => Posts::STATUS_DELED))) {
                     $this->jsonOutPut(1, '已删除');
@@ -272,6 +305,9 @@ class AjaxController extends Q {
         }
         $model = new $ucClassify;
         if ($model->updateByPk($keyid, $attr)) {
+            if($classify=='comments'){
+                Posts::updateCommentsNum($keyid);
+            }
             $this->jsonOutPut(1, '操作成功');
         } else {
             $this->jsonOutPut(0, '操作失败');

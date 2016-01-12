@@ -8,9 +8,6 @@ foreach ($items as $k => $t) {
         'active' => $k == $_GET['type']
     );
 }
-$this->menu['站点文章'] = array(
-    'link' => array('siteInfo/index')
-);
 $form = $this->beginWidget('CActiveForm', array(
     'id' => 'config-addConfigs-form',
     'action' => Yii::app()->createUrl('admin/config/add'),

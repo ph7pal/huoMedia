@@ -29,6 +29,8 @@ class assets {
             'allowImgTypes' => zmf::config('imgAllowTypes'),
             'allowImgPerSize' => zmf::formatBytes(zmf::config('imgMaxSize')),
             'perAddImgNum' => zmf::config('imgUploadNum'),
+            'weiboAppkey' => zmf::config('weiboAppkey'),
+            'weiboRalateUid' => zmf::config('weiboRalateUid'),
             'contentsUrl' => zmf::config('domain') . Yii::app()->createUrl('/ajax/getContents'), //获取内容
             'delContentUrl' => zmf::config('domain') . Yii::app()->createUrl('/ajax/delContent'), //删除内容
             'favoriteUrl' => zmf::config('domain') . Yii::app()->createUrl('/ajax/favorite'), //收藏内容
@@ -59,8 +61,8 @@ class assets {
         $cs = Yii::app()->clientScript;
         $c = Yii::app()->getController()->id;
         $a = Yii::app()->getController()->getAction()->id;
-        $cssDir = Yii::app()->basePath . '/../jsCssSrc/css';
-        $jsDir = Yii::app()->basePath . '/../jsCssSrc/js';
+        $cssDir = Yii::app()->basePath . '/../common/css';
+        $jsDir = Yii::app()->basePath . '/../common/js';
         $cssArr = array();
         $jsArr = array();
         if ($type == 'web') {
@@ -101,7 +103,7 @@ class assets {
         foreach ($cssArr as $cssFileName) {
             foreach ($cssDirArr as $cssfile) {
                 if (strpos($cssfile, $type . '-' . $cssFileName) !== false) {
-                    $cs->registerCssFile($staticUrl . 'jsCssSrc/css/' . $cssfile);
+                    $cs->registerCssFile($staticUrl . 'common/css/' . $cssfile);
                 }
             }
         }
@@ -113,7 +115,7 @@ class assets {
                     } else {
                         $pos = CClientScript::POS_END;
                     }
-                    $cs->registerScriptFile($staticUrl . 'jsCssSrc/js/' . $jsfile, $pos);
+                    $cs->registerScriptFile($staticUrl . 'common/js/' . $jsfile, $pos);
                 }
             }
         }

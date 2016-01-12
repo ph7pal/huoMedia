@@ -32,6 +32,7 @@ class TagsController extends Admin {
     }
 
     public function actionCreate($id = '') {
+        $this->checkPower('addTag');
         if ($id) {
             $model = Tags::model()->findByPk($id);
             if (!$model) {

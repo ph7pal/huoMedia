@@ -861,19 +861,21 @@ class zmf {
      * 限制用户对某一操作的频率，如点赞，收藏，关注
      * 默认4次
      */
-    public static function actionLimit($type, $keyid, $num = 4, $time = 60, $fileCache = false) {
+    public static function actionLimit($type, $keyid, $num = 4, $time = 60, $fileCache = false, $isCheck = false) {
         $cacheKey = 'actionLimit-' . $type . '-' . $keyid;
-        $info = (int) zmf::getCookie($cacheKey);
+        $info = zmf::getCookie($cacheKey);
         if ($fileCache) {
             $cacheKey.=ip2long(Yii::app()->request->userHostAddress);
-            $fileNum = (int) zmf::getFCache($cacheKey);
+            $fileNum = zmf::getFCache($cacheKey);
         }
         if ($info >= $num || ($fileCache && $fileNum >= $num)) {
             return true;
         } else {
-            zmf::setCookie($cacheKey, $info + 1, $time);
-            if ($fileCache) {
-                zmf::setFCache($cacheKey, $info + 1, $time);
+            if (!$isCheck) {
+                zmf::setCookie($cacheKey, $info + 1, $time);
+                if ($fileCache) {
+                    zmf::setFCache($cacheKey, $info + 1, $time);
+                }
             }
             return false;
         }

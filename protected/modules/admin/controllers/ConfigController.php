@@ -24,6 +24,7 @@ class ConfigController extends Admin {
     }
 
     public function actionAdd() {
+        $this->checkPower('setConfig');
         $type = zmf::filterInput($_POST['type'], 't', 1);
         if ($type == '' OR ! in_array($type, array('baseinfo', 'upload', 'base', 'email'))) {
             $type = 'baseinfo';
