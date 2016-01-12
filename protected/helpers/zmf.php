@@ -37,7 +37,45 @@ class zmf {
         if ($type == 'authorCode') {
             return 'zhangmaofei@2015';
         }
-        return stripcslashes(Yii::app()->params['c'][$type]);
+        if (empty(Yii::app()->params['c'])) {
+            $_c = Config::model()->findAll();
+            $configs = CHtml::listData($_c, 'name', 'value');
+            self::writeSet($configs);
+            return stripcslashes($configs[$type]);
+        } else {
+            return stripcslashes(Yii::app()->params['c'][$type]);
+        }
+    }
+    
+    /**
+     * 将配置写入缓存
+     * @param type $array
+     * @param type $classify
+     * @return boolean
+     */
+    public static function writeSet($array) {
+        $dir = Yii::app()->basePath . "/runtime/config/";
+        zmf::createUploadDir($dir);
+        $dir = $dir . 'zmfconfig.php';
+        $values = array_values($array);
+        $keys = array_keys($array);
+        $len = count($keys);
+        $config = "<?php\n";
+        $config .= "return array(\n";
+        for ($i = 0; $i < $len; $i++) {
+            $config .= "'" . $keys[$i] . "'=> '" . addslashes($values[$i]) . "',\n";
+        }
+        $config .= ");\n";
+        $config .= "?>";
+        $fp = fopen($dir, 'w');
+        $fw = fwrite($fp, $config);
+        if (!$fw) {
+            fclose($fp);
+            return false;
+        } else {
+            fclose($fp);
+            return true;
+        }
     }
 
     public static function readTxt($file, $mode = 'r') {

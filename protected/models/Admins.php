@@ -112,6 +112,12 @@ class Admins extends CActiveRecord {
         $lang['feedback']['detail'] = array(
             'feedback' => '意见反馈',
         );
+        $lang['siteInfo']['desc'] = '站点文章';
+        $lang['siteInfo']['detail'] = array(
+            'siteInfo' => '站点文章',
+            'addSiteInfo' => '新增站点文章',
+            'updateSiteInfo' => '更新站点文章',
+        );
         $lang['admins']['desc'] = '后台管理员';
         $lang['admins']['detail'] = array(
             'admins' => '后台管理员',

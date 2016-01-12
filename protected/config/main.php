@@ -71,7 +71,7 @@ return array(
         ),
     ),
     'params' => array(
-        'c' => require(dirname(__FILE__) . '/../runtime/config/config.php'),
+        'c' => require(dirname(__FILE__) . '/../runtime/config/zmfconfig.php'),
         'author' => '@阿年飞少',
         'copyrightInfo' => 'COPYRIGHT&copy;2015-2016 blog.newsoul.cn BY 阿年飞少.',
     )
