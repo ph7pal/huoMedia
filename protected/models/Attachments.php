@@ -62,7 +62,7 @@ class Attachments extends CActiveRecord {
      * @param type $size
      * @return string
      */
-    public static function faceImg($poiInfo, $size = '170') {
+    public static function faceImg($poiInfo, $size = '170',$type='posts') {
         $url = '';
         if ($poiInfo['faceimg']) {
             $info = Attachments::getOne($poiInfo['faceimg']);
@@ -70,6 +70,10 @@ class Attachments extends CActiveRecord {
                 $url = zmf::uploadDirs($info['cTime'], 'site', $info['classify']) . $info['filePath'];
             }
         }
+        if(!$url){
+            return '';
+        }
+        $reurl=  zmf::getThumbnailUrl($url, $size, $type);
         return $url;
     }
     

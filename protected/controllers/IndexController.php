@@ -18,12 +18,16 @@ class IndexController extends Q {
             $sql = 'SELECT id,uid,title,faceimg,content,tagids,comments,favorite FROM {{posts}} WHERE `status`=1 ORDER BY cTime DESC';
         }
         Posts::getAll(array('sql' => $sql), $pages, $posts);
+        $size=640;
+        if($this->isMobile){
+            $size=240;
+        }
         foreach ($posts as $k => $val) {
             if ($val['tagids'] != '') {
                 $_tags = Tags::getByIds($val['tagids']);
                 $posts[$k]['tagids'] = $_tags;
             }
-            $posts[$k]['faceimg'] = Attachments::faceImg($val, '640');
+            $posts[$k]['faceimg'] = Attachments::faceImg($val, $size);
         }
         $this->pageTitle = '文章 - '.zmf::config('sitename');
         $this->selectNav = 'posts';
