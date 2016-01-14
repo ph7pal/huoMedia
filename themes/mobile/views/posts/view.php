@@ -13,7 +13,7 @@ $qrcode=  zmf::qrcode($url, 'posts', $info['id']);
         <?php }?>        
         <h1 class="post-title"><?php echo $info['title'];?></h1>
         <div class="post-content">
-            <?php echo zmf::text(array(),$info['content']);?>
+            <?php echo $info['content'];?>
         </div>
     </div>    
     <?php if($info['lat']!='' && $info['long']!='' && $info['lat']!='0' && $info['long']!='0'){?>
