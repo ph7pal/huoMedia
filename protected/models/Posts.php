@@ -226,14 +226,19 @@ class Posts extends CActiveRecord {
             if (zmf::actionLimit('favorite-' . $type, $id, 1, 86400, true)) {
                 return array('status' => 1, 'msg' => '已点赞', 'state' => 1);
             }
+            $uid=0;
         }
+        $postInfo=  Posts::model()->findByPk($id);
+        if(!$postInfo || $postInfo['status']!=Posts::STATUS_PASSED){
+            return array('status' => 0, 'msg' => '文章不存在');
+        }        
         $attr = array(
             'uid' => $uid,
             'logid' => $id,
             'classify' => $type
         );
-        $info=false;
-        if($uid){
+        $info = false;
+        if ($uid) {
             $info = Favorites::model()->findByAttributes($attr);
         }
         if ($info) {
@@ -253,6 +258,18 @@ class Posts extends CActiveRecord {
                 if ($type == 'post') {
                     Posts::updateCount($id, 'Posts', 1, 'favorite');
                 }
+                //点赞后给对方发提醒
+                $_noticedata = array(
+                    'uid' => $postInfo['uid'],
+                    'authorid' => $uid,
+                    'content' => "您的文章【{$postInfo['title']}】有了新的赞",
+                    'new' => 1,
+                    'type' => 'favorite',
+                    'cTime' => zmf::now(),
+                    'from_id' => $model->id,
+                    'from_num' => 1
+                );
+                Notification::add($_noticedata);
                 return array('status' => 1, 'msg' => '点赞成功', 'state' => 1);
             } else {
                 return array('status' => 0, 'msg' => '点赞失败', 'state' => 2);
@@ -268,15 +285,15 @@ class Posts extends CActiveRecord {
         $items = Yii::app()->db->createCommand($sql)->queryAll();
         return $items;
     }
-    
-    public static function updateCommentsNum($id){
-        if(!$id){
+
+    public static function updateCommentsNum($id) {
+        if (!$id) {
             return false;
         }
-        $num=  Comments::model()->count("logid=:logid AND classify='posts' AND `status`=".Posts::STATUS_PASSED, array(
-            ':logid'=>$id
+        $num = Comments::model()->count("logid=:logid AND classify='posts' AND `status`=" . Posts::STATUS_PASSED, array(
+            ':logid' => $id
         ));
-        return Posts::model()->updateByPk($id, array('comments'=>$num));
+        return Posts::model()->updateByPk($id, array('comments' => $num));
     }
 
 }

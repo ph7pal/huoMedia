@@ -89,6 +89,7 @@ class AjaxController extends Q {
         $content = $filter['content'];
         $model = new Comments();
         $toNotice = true;
+        $touid=$postInfo['uid'];
         if ($to) {
             $comInfo = Comments::model()->findByPk($to);
             if (!$comInfo || $comInfo['status'] != Posts::STATUS_PASSED) {

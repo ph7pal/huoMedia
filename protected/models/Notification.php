@@ -19,9 +19,6 @@ class Notification extends CActiveRecord {
             array('author', 'length', 'max' => 15),
             array('cTime', 'length', 'max' => 10),
             array('content', 'safe'),
-            // The following rule is used by search().
-            // Please remove those attributes that should not be searched.
-            array('id, uid, type, new, authorid, author, content, cTime, from_id, from_idtype, from_num', 'safe', 'on' => 'search'),
         );
     }
 
@@ -54,34 +51,10 @@ class Notification extends CActiveRecord {
         );
     }
 
-    /**
-     * Retrieves a list of models based on the current search/filter conditions.
-     * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-     */
-    public function search() {
-        $criteria = new CDbCriteria;
-        $criteria->compare('id', $this->id);
-        $criteria->compare('uid', $this->uid);
-        $criteria->compare('type', $this->type, true);
-        $criteria->compare('new', $this->new);
-        $criteria->compare('authorid', $this->authorid);
-        $criteria->compare('author', $this->author, true);
-        $criteria->compare('content', $this->content, true);
-        $criteria->compare('cTime', $this->cTime, true);
-        $criteria->compare('from_id', $this->from_id);
-        $criteria->compare('from_idtype', $this->from_idtype, true);
-        $criteria->compare('from_num', $this->from_num);
-
-        return new CActiveDataProvider($this, array(
-            'criteria' => $criteria,
-        ));
-    }
-
     public static function add($params = array()) {
-        $uid = zmf::uid();
         $data = array(
             'uid' => $params['uid'],
-            'authorid' => $uid,
+            'authorid' => $params['authorid'],
             'content' => $params['content'],
             'new' => 1,
             'type' => $params['type'],
@@ -90,31 +63,17 @@ class Notification extends CActiveRecord {
             'from_idtype' => $params['from_idtype'],
             'from_num' => 1
         );
-        if ($uid == $params['uid']) {
+        if ($params['uid'] == $params['authorid']) {
             return false;
         }
         $model = new Notification();
-        $info = $model->find("uid=:uid AND authorid=:authorid AND from_id=:from AND type=:type", array(':uid' => $params['uid'], ':authorid' => $uid, ':from' => $params['from_id'], ':type' => $params['type']));
-        if ($info) {
-            //存在则更新最新操作时间
-            if ($model->updateByPk($info['id'], array('cTime' => time(), 'new' => 1, 'from_num' => ($info['from_num'] + 1)))) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            //不存在则新增
-            $model->attributes = $data;
-            if ($model->save()) {
-                return true;
-            } else {
-                return false;
-            }
-        }
+        //2016修改为不计条数            
+        $model->attributes = $data;
+        return $model->save();
     }
 
     public function getNum() {
-        $uid=  zmf::uid();
+        $uid = zmf::uid();
         if (!$uid) {
             return '0';
         }
