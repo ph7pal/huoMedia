@@ -23,9 +23,10 @@
     function showMap(){
         var w=$(window).width();
         var h=$(window).height();
+        var dpi = window.devicePixelRatio;//获取屏幕分辨率
         $('#map-canvas').css({
-            width:w,
-            height:h
+            width:w/ dpi,
+            height:h/ dpi
         });
     }
 </script>

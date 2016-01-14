@@ -1,16 +1,15 @@
 <style>
     .map-fiexed-btns{
         position: absolute;
-        left: 50%;
+        right: 0;
         top: 10px;
         z-index: 999;
-        margin-left: -76px;
     }
     .map-fiexed-btns .btn-group{
         background: #fff;
     }
     .map-fiexed-btns .btn{
-        padding: 10px;
+        padding: 8px 10px;
         display: inline-block;
         border-left: 1px solid #f2f2f2
     }
@@ -19,6 +18,9 @@
     }    
     .map-mininfo .left-num{
         margin-right: 10px
+    }
+    .map-canvas{
+        width: 100%;
     }
 </style>
 <div class="map-fiexed-btns">
