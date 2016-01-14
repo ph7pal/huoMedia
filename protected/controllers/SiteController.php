@@ -42,6 +42,7 @@ class SiteController extends Q {
     }
 
     public function actionLogin() {
+        $this->onlyOnPc();
         $this->layout = 'common';
         if (!Yii::app()->user->isGuest) {
             $this->message(0, '您已登录，请勿重复操作');
@@ -76,6 +77,7 @@ class SiteController extends Q {
                 }
             }
         }
+        $this->pageTitle='登录';
         $this->render('login', array(
             'model' => $model,
         ));

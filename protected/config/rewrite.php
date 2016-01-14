@@ -11,7 +11,7 @@ return array(
         'tag/<tagid:\d+>' => 'index/index',
         'login' => 'site/login',
         'logout' => 'site/logout',
-        'site/<code:\w+>' => 'site/info',
+        'siteInfo/<code:\w+>' => 'site/info',
         'posts' => 'index/index',
         '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
         '<module:\w+>/<controller:\w+>/<action:\w+>' => '<module>/<controller>/<action>',        

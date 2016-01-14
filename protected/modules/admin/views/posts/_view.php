@@ -1,6 +1,6 @@
 <tr>
     <td>
-        <?php echo CHtml::encode($data->title); ?>
+        <?php echo CHtml::encode($data->title); ?><?php if($data->status==Posts::STATUS_NOTPASSED){?><span style="color: red">[草稿]</span><?php }?>
     </td>
     <td class="text-center">
         <?php echo CHtml::encode($data->hits); ?> | <?php echo CHtml::encode($data->favors); ?>

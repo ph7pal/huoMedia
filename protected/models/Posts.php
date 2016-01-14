@@ -105,6 +105,17 @@ class Posts extends CActiveRecord {
         return parent::model($className);
     }
 
+    public static function exStatus($type) {
+        $arr = array(
+            self::STATUS_NOTPASSED => '存草稿',
+            self::STATUS_PASSED => '正式发布',
+        );
+        if ($type == 'admin') {
+            return $arr;
+        }
+        return $arr[$type];
+    }
+
     public static function encode($id, $type = 'post') {
         return zmf::jiaMi($id . '#' . $type);
     }
@@ -226,12 +237,12 @@ class Posts extends CActiveRecord {
             if (zmf::actionLimit('favorite-' . $type, $id, 1, 86400, true)) {
                 return array('status' => 1, 'msg' => '已点赞', 'state' => 1);
             }
-            $uid=0;
+            $uid = 0;
         }
-        $postInfo=  Posts::model()->findByPk($id);
-        if(!$postInfo || $postInfo['status']!=Posts::STATUS_PASSED){
+        $postInfo = Posts::model()->findByPk($id);
+        if (!$postInfo || $postInfo['status'] != Posts::STATUS_PASSED) {
             return array('status' => 0, 'msg' => '文章不存在');
-        }        
+        }
         $attr = array(
             'uid' => $uid,
             'logid' => $id,

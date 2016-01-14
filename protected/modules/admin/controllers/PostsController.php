@@ -13,10 +13,8 @@ class PostsController extends Admin {
         $start = zmf::val('start', 1);
         $end = zmf::val('end', 1);
         $orderBy = zmf::val('orderBy', 1);
-
-
-        $criteria = new CDbCriteria();
-        $criteria->addCondition('`status`=' . Posts::STATUS_PASSED);
+        $criteria = new CDbCriteria();        
+        $criteria->addInCondition('status', array(Posts::STATUS_NOTPASSED,  Posts::STATUS_PASSED));
         if ($username) {
             $uinfo = Users::model()->find("username LIKE '%{$username}%'");
             if ($uinfo) {
@@ -111,7 +109,11 @@ class PostsController extends Admin {
                 if (!$isNew || !empty($intoTags)) {
                     Posts::model()->updateByPk($model->id, array('tagids' => join(',', $intoTags)));
                 }
-                $this->redirect(array('/posts/view', 'id' => $model->id));
+                if($model->status==Posts::STATUS_NOTPASSED){
+                    $this->redirect(array('posts/index'));
+                }else{
+                    $this->redirect(array('/posts/view', 'id' => $model->id));
+                }
             }
         }
         $tags = Tags::getClassifyTags('posts');

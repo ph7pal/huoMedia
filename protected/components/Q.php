@@ -66,5 +66,13 @@ class Q extends Controller {
             $this->referer = $referer;
         }
     }
+    
+    public function onlyOnPc(){
+        if($this->isMobile){
+            $this->layout='common';
+            $this->render('//common/onlyOnPc');
+            Yii::app()->end();
+        }
+    }
 
 }
