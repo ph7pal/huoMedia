@@ -17,6 +17,11 @@ class PostsController extends Q {
         if (!zmf::actionLimit('visit-Posts', $id, 5, 60)) {
             Posts::updateCount($id, 'Posts', 1, 'hits');
         }
+        $size='600';
+        if($this->isMobile){
+            $size='640';
+        }
+        $info['content']=zmf::text(array(),$info['content'],true,$size);
         $data = array(
             'info' => $info,
             'comments' => $comments,

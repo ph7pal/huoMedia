@@ -11,7 +11,7 @@ $qrcode=  zmf::qrcode($url, 'posts', $info['id']);
         </div>
         <h1><?php echo $info['title'];?></h1>
         <div class="post-content">
-            <?php echo zmf::text(array(),$info['content']);?>
+            <?php echo $info['content'];?>
         </div>
         <?php if(!empty($tags)){?>
         <div class="tags-container">

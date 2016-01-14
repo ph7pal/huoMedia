@@ -24,7 +24,7 @@ class AttachmentsController extends Admin {
         $pager->applyLimit($criteria);
         $posts = Attachments::model()->findAll($criteria);
         foreach ($posts as $k => $val) {
-            $_img = Attachments::getUrl($val, 170);
+            $_img = Attachments::getUrl($val, 240);
             $posts[$k]['filePath'] = $_img;
         }
         $this->render('index', array(

@@ -3,14 +3,20 @@
         position: absolute;
         left: 50%;
         top: 10px;
-        z-index: 999
+        z-index: 999;
+        margin-left: -76px;
+    }
+    .map-fiexed-btns .btn-group{
+        background: #fff;
+    }
+    .map-fiexed-btns .btn{
+        padding: 10px;
+        display: inline-block;
+        border-left: 1px solid #f2f2f2
     }
     .map-mininfo{
         width: 300px
-    }
-    .map-mininfo .map-item-title{
-        
-    }
+    }    
     .map-mininfo .left-num{
         margin-right: 10px
     }

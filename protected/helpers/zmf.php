@@ -855,15 +855,17 @@ class zmf {
                     $thekey = $match[0][$key];
                     $src = Attachments::getOne($val);
                     if ($src) {
-                        $_imgurl = self::uploadDirs($src['cTime'], 'site', $src['classify'], $size) . $src['filePath'];
-                        $imgurl = self::uploadDirs($src['cTime'], 'app', $src['classify'], $size) . $src['filePath'];
+                        $_imgurl = Attachments::getUrl($src, $size);                        
                         if ($lazyload) {
-                            $filesize = getimagesize($imgurl);
-                            if (empty($filesize)) {
-                                $content = str_ireplace("{$thekey}", '', $content);
-                                continue;
+                            $_width = $_height = 0;
+                            if ($src['width'] <= $width) {
+                                $_width = $src['width'];
+                                $_height = $src['height'];
+                            } else {
+                                $_width = $width;
                             }
-                            $imgurl = "<img src='" . self::lazyImg() . "' width='" . $src['width'] . "px' height='" . $src['height'] . "' class='lazy img-responsive' data-original='{$_imgurl}' " . ($action == 'edit' ? 'data="' . $val . '"' : '') . "/>";
+                            $_extra = " width='" . $_width . "px'";                                
+                            $imgurl = "<img src='" . self::lazyImg() . "' class='lazy img-responsive' data-original='{$_imgurl}' " . ($action == 'edit' ? 'data="' . $val . '"' : '') . $_extra ."/>";
                         } else {
                             $imgurl = "<img src='{$_imgurl}' class='img-responsive' " . ($action == 'edit' ? 'data="' . $val . '"' : '') . "/>";
                         }

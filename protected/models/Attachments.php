@@ -51,9 +51,14 @@ class Attachments extends CActiveRecord {
      * @param type $data
      * @return string
      */
-    public function getUrl($data, $size = '170') {
-        $_imgurl = zmf::uploadDirs($data['cTime'], 'site', $data['classify']) . $data['filePath'];
-        return $_imgurl;
+    public static function getUrl($data, $size = '170') {
+        if($data['remote']!=''){
+            $_imgurl=$data['remote'];
+        }else{
+            $_imgurl = zmf::uploadDirs($data['cTime'], 'site', $data['classify']) . $data['filePath'];
+        }
+        $reurl=  zmf::getThumbnailUrl($_imgurl, $size, $data['classify']);
+        return $reurl;
     }
 
     /**
@@ -67,14 +72,18 @@ class Attachments extends CActiveRecord {
         if ($poiInfo['faceimg']) {
             $info = Attachments::getOne($poiInfo['faceimg']);
             if ($info) {
-                $url = zmf::uploadDirs($info['cTime'], 'site', $info['classify']) . $info['filePath'];
+                if($info['remote']!=''){
+                    $url=$info['remote'];
+                }else{
+                    $url = zmf::uploadDirs($info['cTime'], 'site', $info['classify']) . $info['filePath'];
+                }
             }
         }
         if(!$url){
             return '';
         }
         $reurl=  zmf::getThumbnailUrl($url, $size, $type);
-        return $url;
+        return $reurl;
     }
     
     /**
