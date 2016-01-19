@@ -85,6 +85,10 @@ class PostsController extends Admin {
             } else {
                 $_POST['Posts']['faceimg'] = ''; //否则将封面图置为空(有可能编辑后没有图片了)
             }
+            if(!$_POST['Posts']['mapZoom']){
+                //没有缩放级别则认为用户只是点开看了一下
+                $_POST['Posts']['lat']=$_POST['Posts']['long']='';
+            }
             $tagids = array_unique(array_filter($_POST['tags']));
             $model->attributes = $_POST['Posts'];
             if ($model->save()) {

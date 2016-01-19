@@ -24,7 +24,7 @@ $qrcode=  zmf::qrcode($url, 'posts', $info['id']);
     </div>
     <?php if($info['lat']!='' && $info['long']!='' && $info['lat']!='0' && $info['long']!='0'){?>
     <div class="module">
-        <img data-original="http://ditu.google.cn/maps/api/staticmap?center=<?php echo $info['lat'];?>,<?php echo $info['long'];?>&amp;zoom=<?php echo $info['mapZoom'];?>&amp;size=600x371&amp;markers=color:red%7Clabel:A%7C<?php echo $info['lat'];?>,<?php echo $info['long'];?>&amp;sensor=false&amp;key=AIzaSyDcT5ZLTs6jrOa2zkDcERh0ijiOvMA-l5o" class="lazy post-img-map" src="<?php echo zmf::lazyImg();?>" alt="<?php echo $info['title'];?>">
+        <img data-original="http://ditu.google.cn/maps/api/staticmap?center=<?php echo $info['lat'];?>,<?php echo $info['long'];?>&amp;zoom=<?php echo $info['mapZoom']?$info['mapZoom']:'13';?>&amp;size=600x371&amp;markers=color:red%7Clabel:A%7C<?php echo $info['lat'];?>,<?php echo $info['long'];?>&amp;sensor=false&amp;key=AIzaSyDcT5ZLTs6jrOa2zkDcERh0ijiOvMA-l5o" class="lazy post-img-map" src="<?php echo zmf::lazyImg();?>" alt="<?php echo $info['title'];?>">
     </div>
     <?php }?>
     <?php if(!empty($relatePosts)){?>
