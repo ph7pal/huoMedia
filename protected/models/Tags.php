@@ -10,7 +10,7 @@ class Tags extends CActiveRecord {
         return array(
             array('title,classify', 'required'),
             array('cTime', 'default', 'setOnEmpty' => true, 'value' => zmf::now()),
-            array('hits,cTime,posts,length', 'length', 'max' => 11),
+            array('hits,cTime,posts,length,pid', 'length', 'max' => 10),
             array('title', 'length', 'max' => 255),
             array('name, classify', 'length', 'max' => 32),
             array('status', 'numerical', 'integerOnly' => true),
@@ -26,20 +26,21 @@ class Tags extends CActiveRecord {
     public function attributeLabels() {
         return array(
             'id' => 'ID',
-            'title' => '标签名',
+            'title' => '名称',
             'name' => '拼音',
             'classify' => '分类',
             'hits' => '点击',
             'cTime' => '创建时间',
             'status' => '状态',
             'posts' => '文章数量',
-            'length' => '标签长度'
+            'length' => '名称长度',
+            'pid' => '所属标签',
         );
     }
 
     public function beforeSave() {
         $this->name = zmf::pinyin($this->title);
-        $this->length = mb_strlen($this->title,'GBK');
+        $this->length = mb_strlen($this->title, 'GBK');
         return true;
     }
 
@@ -62,7 +63,6 @@ class Tags extends CActiveRecord {
 
         return $items;
     }
-
 
     public static function getSimpleInfo($keyid) {
         $info = Tags::model()->findByPk($keyid);
@@ -117,7 +117,16 @@ class Tags extends CActiveRecord {
 
     public static function classify($return = '') {
         $arr = array(
-            'posts' => '文章',
+            //'posts' => '文章',
+            'forumClassify' => '社区类别',
+            'forumForum' => '社区',
+            'forumType' => '社区板块',
+            'blogType' => '博客归属',
+            'blogClassify' => '博客类型',
+            'mediaClassify' => '媒体类型',
+            'videoType' => '视频网站',
+            'videoClassify' => '视频类别',
+            'videoPosition' => '视频位置',
         );
         if ($return != 'admin') {
             return $arr[$return];
@@ -125,7 +134,6 @@ class Tags extends CActiveRecord {
             return $arr;
         }
     }
-
 
     public static function addRelation($tagid, $logid, $classify) {
         if (!$tagid || !$logid || !$classify) {
@@ -145,25 +153,25 @@ class Tags extends CActiveRecord {
         }
         return true;
     }
-    
-    public static function getClassifyTags($classify){
-        $items=  Tags::model()->findAll(array(
-            'condition'=>'classify=:class',
-            'params'=>array(
-                ':class'=>$classify
+
+    public static function getClassifyTags($classify) {
+        $items = Tags::model()->findAll(array(
+            'condition' => 'classify=:class',
+            'params' => array(
+                ':class' => $classify
             ),
-            'select'=>'id,title',
-            'limit'=>'50'
+            'select' => 'id,title',
+            'limit' => '50'
         ));
-        return CHtml::listData($items,'id','title');
+        return CHtml::listData($items, 'id', 'title');
     }
-    
-    public static function getByIds($ids){
-        if(!$ids){
+
+    public static function getByIds($ids) {
+        if (!$ids) {
             return false;
         }
-        $sql="SELECT id,title FROM {{tags}} WHERE id IN($ids) ORDER BY FIELD(id,$ids)";
-        $items=Yii::app()->db->createCommand($sql)->queryAll();
+        $sql = "SELECT id,title FROM {{tags}} WHERE id IN($ids) ORDER BY FIELD(id,$ids)";
+        $items = Yii::app()->db->createCommand($sql)->queryAll();
         return $items;
     }
 

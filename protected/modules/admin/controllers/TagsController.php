@@ -33,14 +33,23 @@ class TagsController extends Admin {
 
     public function actionCreate($id = '') {
         $this->checkPower('addTag');
+        $classify=  zmf::val('classify',1);        
         if ($id) {
             $model = Tags::model()->findByPk($id);
             if (!$model) {
                 $this->message(0, '该标签不存在');
             }
         } else {
+            if(!$classify){
+                throw new CHttpException(404, '请选择类别.');
+            }else{
+                $_label=Tags::classify($classify);
+                if(!$_label){
+                    throw new CHttpException(404, '请选择类别.');
+                }
+            }
             $model = new Tags;
-            $model->classify = 'posts';
+            $model->classify = $classify;
         }
         if (isset($_POST['Tags'])) {
             $model->attributes = $_POST['Tags'];

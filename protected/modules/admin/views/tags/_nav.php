@@ -10,13 +10,14 @@
  */
 $c = Yii::app()->getController()->id;
 $a = Yii::app()->getController()->getAction()->id;
-$this->menu=array(
-    '标签'=>array(
-        'link'=>array('tags/index'),
-        'active'=>in_array($a,array('index'))
-    ),
-    '新增'=>array(
-        'link'=>array('tags/create'),
-        'active'=>in_array($a,array('create'))
-    ),
+$this->menu['列表'] = array(
+    'link' => array('tags/index'),
+    'active' => in_array($a, array('index'))
 );
+$arr = Tags::classify('admin');
+foreach ($arr as $_classify => $_label) {
+    $this->menu['新增【' . $_label . '】'] = array(
+        'link' => array('tags/create','classify'=>$_classify),
+        'active' => $_classify==$_GET['classify']
+    );
+}
