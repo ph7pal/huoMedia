@@ -226,4 +226,3 @@ protected/extensions
 !/protected/extensions/
 !/protected/modules/admin/views/attachments/
 !/protected/views/attachments/
-node_modules
