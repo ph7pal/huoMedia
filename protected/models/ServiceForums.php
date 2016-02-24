@@ -54,6 +54,9 @@ class ServiceForums extends CActiveRecord {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
+            'typeInfo' => array(self::BELONGS_TO, 'Tags', 'type'),
+            'classifyInfo' => array(self::BELONGS_TO, 'Tags', 'classify'),
+            'forumInfo' => array(self::BELONGS_TO, 'Tags', 'forum'),
         );
     }
 

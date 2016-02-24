@@ -43,155 +43,6 @@ class AjaxController extends Q {
         }
     }
 
-    public function actionAddComment() {
-        $keyid = zmf::val('k', 2);
-        $to = zmf::val('to', 2);
-        $type = zmf::val('t', 1);
-        $content = zmf::val('c', 1);
-        $email = zmf::val('email', 1);
-        $username = zmf::val('username', 1);
-        if (!isset($type) OR ! in_array($type, array('posts'))) {
-            $this->jsonOutPut(0, Yii::t('default', 'forbiddenaction'));
-        }
-        if (!isset($keyid) OR ! is_numeric($keyid)) {
-            $this->jsonOutPut(0, Yii::t('default', 'pagenotexists'));
-        }
-        if (!$content) {
-            $this->jsonOutPut(0, '评论不能为空哦~');
-        }
-        if ($this->uid) {
-            $status = Posts::STATUS_PASSED;
-            $uid = $this->uid;
-        } else {
-            if (!$username) {
-                $this->jsonOutPut(0, '请填写称呼');
-            }
-            zmf::setCookie('noLoginUsername', $username, 2592000);
-            if ($email != '') {
-                $validator = new CEmailValidator;
-                if (!$validator->validateValue($email)) {
-                    $this->jsonOutPut(0, '请填写正确的邮箱地址');
-                }
-                zmf::setCookie('noLoginEmail', $email, 2592000);
-            }
-            $status = Posts::STATUS_STAYCHECK;
-            $uid = 0;
-            if (zmf::actionLimit($type, $keyid, 5, 86400, true)) {
-                $this->jsonOutPut(0, '操作太频繁，请稍后再试');
-            }
-        }
-        $postInfo = Posts::model()->findByPk($keyid);
-        if (!$postInfo || $postInfo['status'] != Posts::STATUS_PASSED) {
-            $this->jsonOutPut(0, '您所评论的内容不存在');
-        }
-        //处理文本
-        $filter = Posts::handleContent($content);
-        $content = $filter['content'];
-        $model = new Comments();
-        $toNotice = true;
-        $touid=$postInfo['uid'];
-        if ($to) {
-            $comInfo = Comments::model()->findByPk($to);
-            if (!$comInfo || $comInfo['status'] != Posts::STATUS_PASSED) {
-                $to = '';
-            } elseif ($comInfo['uid'] == $uid) {
-                $toNotice = false;
-            } else {
-                $touid = $comInfo['uid'] > 0 ? $comInfo['uid'] : '';
-                $toNotice = true;
-            }
-        }
-        $intoData = array(
-            'logid' => $keyid,
-            'uid' => $uid,
-            'content' => $content,
-            'cTime' => zmf::now(),
-            'classify' => $type,
-            'platform' => '', //$this->platform
-            'tocommentid' => $to,
-            'status' => $status,
-            'username' => $username,
-            'email' => $email,
-        );
-        unset(Yii::app()->session['checkHasBadword']);
-        $model->attributes = $intoData;
-        if ($model->validate()) {
-            if ($model->save()) {
-                if ($type == 'posts') {
-                    $_url = CHtml::link('查看详情', array('posts/view', 'id' => $keyid, '#' => 'pid-' . $model->id));
-                    if($status==Posts::STATUS_PASSED){
-                        Posts::updateCommentsNum($keyid);
-                    }
-                    $_content = '您的文章有了新的评论,' . $_url;
-                }
-                if ($to && $_url) {
-                    $_content = '您的评论有了新的回复,' . $_url;
-                }
-                if ($toNotice) {
-                    $_noticedata = array(
-                        'uid' => $touid,
-                        'authorid' => $uid,
-                        'content' => $_content,
-                        'new' => 1,
-                        'type' => 'comment',
-                        'cTime' => zmf::now(),
-                        'from_id' => $model->id,
-                        'from_num' => 1
-                    );
-                    Notification::add($_noticedata);
-                }
-                if ($uid) {
-                    $intoData['loginUsername'] = $this->userInfo['truename'];
-                }
-                $html = $this->renderPartial('/posts/_comment', array('data' => $intoData, 'postInfo' => $postInfo), true);
-                $this->jsonOutPut(1, $html);
-            } else {
-                $this->jsonOutPut(0, '新增评论失败');
-            }
-        } else {
-            $this->jsonOutPut(0, '新增评论失败');
-        }
-    }
-
-    public function actionGetContents() {
-        $data = zmf::filterInput($_POST['data']);
-        $page = zmf::filterInput($_POST['page']);
-        $type = zmf::filterInput($_POST['type'], 't', 1);
-        if (!$data || !$type) {
-            $this->jsonOutPut(0, '数据不全，请核实');
-        }
-        if (!in_array($type, array('comments'))) {
-            $this->jsonOutPut(0, '暂不允许的分类');
-        }
-        if ($page < 1 || !is_numeric($page)) {
-            $page = 1;
-        }
-        $limit = 30;
-        $longHtml = '';
-        $postInfo = array();
-        switch ($type) {
-            case 'comments':
-                $limit = 30;
-                $posts = Comments::getCommentsByPage($data, 'posts', $page, $limit);
-                $view = '/posts/_comment';
-                break;
-            default:
-                $posts = array();
-                break;
-        }
-        if (!empty($posts)) {
-            foreach ($posts as $k => $row) {
-                $longHtml.=$this->renderPartial($view, array('data' => $row, 'k' => $k, 'postInfo' => $postInfo), true);
-            }
-        }
-        $data = array(
-            'html' => $longHtml,
-            'loadMore' => (count($posts) == $limit) ? 1 : 0,
-            'formHtml' => ''
-        );
-        $this->jsonOutPut(1, $data);
-    }
-
     public function actionDelContent() {
         $this->checkLogin();
         $data = zmf::val('data', 1);
@@ -315,11 +166,29 @@ class AjaxController extends Q {
         }
     }
 
-    public function actionFavorite() {
-        $data = zmf::val('data', 1);
-        $type = zmf::val('type', 1);
-        $ckinfo = Posts::favorite($data, $type, 'web');
-        $this->jsonOutPut($ckinfo['state'], $ckinfo['msg']);
+    public function actionAreaChildren(){
+        $id=  zmf::val('areaid', 2);
+        $type=  zmf::val('type', 1);
+        if(!$id){
+            $this->jsonOutPut(0, '请选择地区');
+        }
+        if($type=='area'){
+            $name='areaFirst';
+        }elseif($type=='areaFirst'){
+            $name='areaSecond';
+        }
+        $areas=  Area::model()->findAll(array(
+            'condition'=>'pid=:id',
+            'order'=>'`order` ASC',
+            'select'=>'area_id,title',
+            'params'=>array(
+                ':id'=>$id
+            )
+        ));
+        if(empty($areas)){
+            $this->jsonOutPut(1, '');
+        }
+        $this->jsonOutPut(1, CHtml::dropDownList($name, '', CHtml::listData($areas, 'area_id', 'title'), array('class'=>'form-control','empty'=>'--请选择--','onclick'=>'getAreaChildren("'.$name.'");')));
     }
 
 }

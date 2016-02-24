@@ -33,12 +33,14 @@ class TagsController extends Admin {
 
     public function actionCreate($id = '') {
         $this->checkPower('addTag');
-        $classify=  zmf::val('classify',1);        
+        $classify=  zmf::val('classify',1);
+        
         if ($id) {
             $model = Tags::model()->findByPk($id);
             if (!$model) {
                 $this->message(0, '该标签不存在');
             }
+            $classifyLabel=Tags::classify($model->classify);
         } else {
             if(!$classify){
                 throw new CHttpException(404, '请选择类别.');
@@ -47,6 +49,7 @@ class TagsController extends Admin {
                 if(!$_label){
                     throw new CHttpException(404, '请选择类别.');
                 }
+                $classifyLabel=$_label;
             }
             $model = new Tags;
             $model->classify = $classify;
@@ -59,6 +62,7 @@ class TagsController extends Admin {
 
         $this->render('create', array(
             'model' => $model,
+            'classifyLabel' => $classifyLabel,
         ));
     }
 

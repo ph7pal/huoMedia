@@ -35,10 +35,10 @@ class ServiceBlogs extends CActiveRecord {
             array('uid', 'default', 'setOnEmpty' => true, 'value' => zmf::uid()),
             array('cTime', 'default', 'setOnEmpty' => true, 'value' => zmf::now()),
             array('status', 'default', 'setOnEmpty' => true, 'value' => Posts::STATUS_PASSED),
-            array('uid, type, classify, level, area, url, hits, price', 'required'),
+            array('uid', 'required'),
             array('status', 'numerical', 'integerOnly' => true),
             array('uid, type, classify, level, area, cTime', 'length', 'max' => 10),
-            array('url, hits, price', 'length', 'max' => 255),
+            array('url, hits, price,location,nickname', 'length', 'max' => 255),
         );
     }
 
@@ -49,6 +49,8 @@ class ServiceBlogs extends CActiveRecord {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
+            'typeInfo' => array(self::BELONGS_TO, 'Tags', 'type'),
+            'classifyInfo' => array(self::BELONGS_TO, 'Tags', 'classify'),
         );
     }
 
@@ -62,7 +64,9 @@ class ServiceBlogs extends CActiveRecord {
             'type' => '博客归属',
             'classify' => '类型',
             'level' => '级别',
+            'nickname' => '昵称',
             'area' => '地区',
+            'location' => '地区',
             'url' => '主页地址',
             'hits' => '点击量',
             'price' => '价格',
@@ -81,13 +85,18 @@ class ServiceBlogs extends CActiveRecord {
         return parent::model($className);
     }
     
+    public function beforeSave() {
+        $this->location = Area::getBelongInfo($this->area);
+        return true;
+    }
+    
     public static function level($return = '') {
         $arr = array(
-            '十万' => '十万',
-            '百万' => '百万',
-            '千万' => '千万',
-            '亿' => '亿',
-            '十亿' => '十亿',
+            '1000' => '十万',
+            '1001' => '百万',
+            '1002' => '千万',
+            '1003' => '亿',
+            '1004' => '十亿',
         );
         if ($return != 'admin') {
             return $arr[$return];

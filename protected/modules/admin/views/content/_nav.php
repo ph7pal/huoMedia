@@ -10,16 +10,28 @@
  */
 $c = Yii::app()->getController()->id;
 $a = Yii::app()->getController()->getAction()->id;
-$arr=array(
-    'serviceForums'=>array('label'=>'社区'),
-    'serviceBlogs'=>array('label'=>'博客'),
-    'serviceMedias'=>array('label'=>'媒体'),
-    'serviceWebsites'=>array('label'=>'网站'),
-    'serviceVideos'=>array('label'=>'视频网站'),
+$arr = array(
+    'serviceForums' => array('label' => '社区'),
+    'serviceBlogs' => array('label' => '博客'),
+    'serviceMedias' => array('label' => '媒体'),
+    'serviceVideos' => array('label' => '视频网站'),
+    'serviceWebsites' => array(
+        'label' => '主页',
+        'children' => ServiceWebsites::types('admin')
+    ),
 );
-foreach($arr as $k=>$v){
-    $this->menu[$v['label']]=array(
-        'link'=>array($k.'/index'),
-        'active'=>$c==$k
-    );
+foreach ($arr as $k => $v) {
+    if(!empty($v['children'])){
+        foreach ($v['children'] as $_type=>$_sitename){
+            $this->menu[$_sitename.$v['label']] = array(
+                'link' => array($k . '/index','type'=>$_type),
+                'active' => ($c == $k && $_GET['type']==$_type)
+            );
+        }
+    }else{
+        $this->menu[$v['label']] = array(
+            'link' => array($k . '/index'),
+            'active' => $c == $k
+        );
+    }
 }

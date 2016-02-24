@@ -52,19 +52,21 @@ class ServiceWebsitesController extends Admin {
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
     public function actionCreate() {
+        $type=  zmf::val('type',1);
+        if(!$type){
+            $this->redirect(array('create', 'type' => 1000));
+        }
+        $typeLabel=ServiceWebsites::types($type);        
         $model = new ServiceWebsites;
-
-        // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
-
+        $model->type=$type;
         if (isset($_POST['ServiceWebsites'])) {
             $model->attributes = $_POST['ServiceWebsites'];
             if ($model->save())
                 $this->redirect(array('view', 'id' => $model->id));
         }
-
         $this->render('create', array(
             'model' => $model,
+            'typeLabel' => $typeLabel,
         ));
     }
 
@@ -107,8 +109,13 @@ class ServiceWebsitesController extends Admin {
      * Lists all models.
      */
     public function actionIndex() {
+        $type=  zmf::val('type',2);
+        if(!$type){
+            $this->redirect(array('index', 'type' => 1000));
+        }        
         $criteria = new CDbCriteria();
         $criteria->addCondition('status=' . Posts::STATUS_PASSED);
+        $criteria->addCondition('type=' . $type);
         $criteria->order = 'cTime DESC';
         $count = ServiceWebsites::model()->count($criteria);
         $pager = new CPagination($count);

@@ -49,6 +49,7 @@ class ServiceMedias extends CActiveRecord {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
+            'classifyInfo' => array(self::BELONGS_TO, 'Tags', 'classify'),
         );
     }
 
@@ -83,10 +84,10 @@ class ServiceMedias extends CActiveRecord {
     
     public static function isSource($return = '') {
         $arr = array(
-            '百度新闻源' => '百度新闻源',
-            '网易新闻源' => '网易新闻源',
-            '搜狐新闻源' => '搜狐新闻源',
-            '新浪新闻源' => '新浪新闻源',
+            '1000' => '百度新闻源',
+            '1001' => '网易新闻源',
+            '1002' => '搜狐新闻源',
+            '1003' => '新浪新闻源',
         );
         if ($return != 'admin') {
             return $arr[$return];
@@ -97,9 +98,9 @@ class ServiceMedias extends CActiveRecord {
     
     public static function hasLink($return = '') {
         $arr = array(
-            '不能带网址' => '不能带网址',
-            '可带网址' => '可带网址',
-            '可做关键词超链' => '可做关键词超链',
+            '1' => '不能带网址',
+            '2' => '可带网址',
+            '3' => '可做关键词超链',
         );
         if ($return != 'admin') {
             return $arr[$return];

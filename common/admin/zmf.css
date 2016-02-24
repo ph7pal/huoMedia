@@ -68,7 +68,7 @@ body{
 }
 /*设置页面---*/
 .settings-container{
-    width: 960px;
+    width: 1200px;
     display: table;
     margin: 0 auto 50px;
     background: #fff;
@@ -113,27 +113,12 @@ body{
     border-color: #FFF0F0;
 }
 .settings-main-box{
-    width: 700px;
+    width: 940px;
     padding: 10px;
 }
 .settings-main-box h2{
     padding: 0 8px 20px;
     border-bottom: 1px solid #f2f2f2
-}
-.settings-main-box .table>tbody>tr>td{
-    border: none
-}
-.settings-main-box table .colname{
-    width: 80px;
-    height: 38px;
-    line-height: 20px;
-    font-weight: bold;
-}
-.settings-main-box .passwd-form{
-    padding-left: 8px;
-}
-.settings-main-box .passwd-form label{
-    font-weight: normal
 }
 /**
 *重写分页样式

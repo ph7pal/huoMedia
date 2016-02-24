@@ -15,12 +15,6 @@
 	'enableAjaxValidation'=>false,
 )); ?>
 	<?php echo $form->errorSummary($model); ?>
-
-	<div class="form-group">
-		<?php echo $form->labelEx($model,'title'); ?>
-		<?php echo $form->textField($model,'title',array('size'=>60,'maxlength'=>255,'class'=>'form-control')); ?>
-		<?php echo $form->error($model,'title'); ?>
-	</div>
         <?php if(!$model->classify){?>
 	<div class="form-group">
 		<?php echo $form->labelEx($model,'classify'); ?>
@@ -33,6 +27,11 @@
 		<?php echo $form->textField($model,'pid',array('class'=>'form-control')); ?>
 		<?php echo $form->error($model,'pid'); ?>
 	</div>
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'title'); ?>
+		<?php echo $form->textField($model,'title',array('size'=>60,'maxlength'=>255,'class'=>'form-control')); ?>
+		<?php echo $form->error($model,'title'); ?>
+	</div>        
 	<div class="form-group">
 		<?php echo CHtml::submitButton($model->isNewRecord ? '新增' : '保存',array('class'=>'btn btn-primary')); ?>
 	</div>

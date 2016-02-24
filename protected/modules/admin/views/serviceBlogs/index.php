@@ -4,14 +4,26 @@
 </div>
 
 <?php if(!empty($posts)){?>
-<table class="table table-hover">
+<table class="table table-hover table-bordered table-striped">
+    <thead>
     <tr>
-        <th>标题</th>
+        <th>序号</th>
+        <th>博客归属</th>
+        <th>主页地址</th>
+        <th>昵称</th>
+        <th>点击量</th>
+        <th>类型</th>
+        <th>级别</th>
+        <th>地区</th>
+        <th>价格</th>
         <th style="width: 110px;">操作</th>
     </tr>
+    </thead>
+    <tbody>
     <?php foreach ($posts as $row): ?> 
         <?php $this->renderPartial('_view', array('data' => $row)); ?>
     <?php endforeach; ?>
+    </tbody>
 </table>
 <?php $this->renderPartial('/common/pager',array('pages'=>$pages));?>
 <?php }else{?>

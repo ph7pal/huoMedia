@@ -127,6 +127,7 @@ class Tags extends CActiveRecord {
             'videoType' => '视频网站',
             'videoClassify' => '视频类别',
             'videoPosition' => '视频位置',
+            'websiteClassify' => '主页类型',
         );
         if ($return != 'admin') {
             return $arr[$return];

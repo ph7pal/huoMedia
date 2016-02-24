@@ -38,10 +38,10 @@ class ServiceWebsites extends CActiveRecord {
             array('uid', 'default', 'setOnEmpty' => true, 'value' => zmf::uid()),
             array('cTime', 'default', 'setOnEmpty' => true, 'value' => zmf::now()),
             array('status', 'default', 'setOnEmpty' => true, 'value' => Posts::STATUS_PASSED),
-            array('uid, type, classify, nickname, sex, area, url, favors, vipInfo, price', 'required'),
+            array('uid,type', 'required'),
             array('sex, status', 'numerical', 'integerOnly' => true),
             array('uid, type, classify, area, cTime', 'length', 'max' => 10),
-            array('nickname, url, favors, vipInfo, price, postscript', 'length', 'max' => 255),
+            array('nickname, url, favors, vipInfo, price, postscript,location', 'length', 'max' => 255),
         );
     }
 
@@ -52,6 +52,7 @@ class ServiceWebsites extends CActiveRecord {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
+            'classifyInfo' => array(self::BELONGS_TO, 'Tags', 'classify'),
         );
     }
 
@@ -67,8 +68,9 @@ class ServiceWebsites extends CActiveRecord {
             'nickname' => '昵称',
             'sex' => '性别',
             'area' => '地区',
+            'location' => '地区',
             'url' => '链接',
-            'favors' => '好友数量',
+            'favors' => '好友/粉丝数量',
             'vipInfo' => '会员',
             'price' => '价格',
             'postscript' => '备注',
@@ -85,6 +87,25 @@ class ServiceWebsites extends CActiveRecord {
      */
     public static function model($className = __CLASS__) {
         return parent::model($className);
+    }
+    
+    public function beforeSave() {
+        $this->location = Area::getBelongInfo($this->area);
+        return true;
+    }
+    
+    public static function types($return = '') {
+        $arr = array(
+            '1000' => '美丽说',
+            '1001' => '蘑菇街',
+            '1002' => '人人',
+            '1003' => '豆瓣',
+        );
+        if ($return != 'admin') {
+            return $arr[$return];
+        } else {
+            return $arr;
+        }
     }
 
 }
