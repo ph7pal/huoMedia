@@ -117,5 +117,25 @@ class ServiceWebsites extends CActiveRecord {
         );
         return $arr[$type] ? $arr[$type] : '0';
     }
+    
+    public static function getTags(){
+        $tags=  Tags::model()->findAll(array(
+            'condition'=>"(classify='websiteClassify')",
+            'select'=>'id,title,classify'
+        ));
+        if(empty($tags)){
+            return array();
+        }
+        $posts=array();
+        foreach($tags as $tag){
+            $_label=  Tags::classify($tag['classify']);
+            $posts[$tag['classify']]['label']=$_label;
+            $posts[$tag['classify']]['items'][]=array(
+                'id'=>$tag['id'],
+                'title'=>$tag['title'],
+            );
+        }
+        return $posts;
+    }
 
 }

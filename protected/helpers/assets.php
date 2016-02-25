@@ -75,31 +75,13 @@ class assets {
             $coreJsArr=array(
                 'jquery'=>array('pos'=>'head'),
                 'bootstrap'=>array('pos'=>'end'),
-                'pjax'=>array('pos'=>'end'),
             );
             $cssArr = array(
                 'web-zmf',
             );
             $jsArr = array(
-                'pjax',
                 'zmf',
             );            
-        } elseif ($type == 'magazine') {
-            $coreCssArr=array(
-                'bootstrap'=>array('pos'=>'head'),
-                'font-awesome'=>array('pos'=>'head'),
-            );
-            $coreJsArr=array(
-                'jquery'=>array('pos'=>'head'),
-                'bootstrap'=>array('pos'=>'end'),
-                'pjax'=>array('pos'=>'end'),
-            );
-            $cssArr = array(
-                'magazine',
-            );
-            $jsArr = array(
-                'mobile',
-            );
         } elseif ($type == 'mobile') {
             $coreCssArr=array(
                 'frozen'=>array('pos'=>'head'),
