@@ -107,5 +107,15 @@ class ServiceWebsites extends CActiveRecord {
             return $arr;
         }
     }
+    
+    public static function getTypeCode($type){
+        $arr = array(
+            'meilishuo' => '1000',
+            'mogu' => '1001',
+            'renren' => '1002',
+            'douban' => '1003',
+        );
+        return $arr[$type] ? $arr[$type] : '0';
+    }
 
 }

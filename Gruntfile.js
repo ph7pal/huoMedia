@@ -27,11 +27,18 @@ module.exports=function(grunt){
                         ext: '.<%= grunt.template.today("yyyymmddHHMM") %>.js'
                     }
                 ]
+            },
+            build:{
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'jsCssSrc/coreJs/',
+                        src: ['*.js'],
+                        dest: 'common/coreJs/',
+                        ext: '.<%= grunt.template.today("yyyymmddHHMM") %>.js'
+                    }
+                ]
             }
-            //build:{
-            //    src:"jsCssSrc/js/*.js",
-            //    dest:"common/js/*.min.js"
-            //}
         },
         //js语法提示
         jshint:{
@@ -68,6 +75,15 @@ module.exports=function(grunt){
                     dest: 'common/css/',
                     ext: '.<%= grunt.template.today("yyyymmddHHMM") %>.css'
                 }]
+            },
+            build: {
+                files: [{
+                    expand: true,
+                    cwd: 'jsCssSrc/coreCss/',
+                    src: ['*.css'],
+                    dest: 'common/coreCss/',
+                    ext: '.<%= grunt.template.today("yyyymmddHHMM") %>.css'
+                }]
             }
         },
         //合并js文件
@@ -101,13 +117,14 @@ module.exports=function(grunt){
             }
         },
         clean:{
-          release:['common/css','common/js']//每次重建时删除之前生成的文件
+          release:['common/css','common/js'],//每次重建时删除之前生成的文件
+          build:['common/coreCss','common/coreJs']
         },
 
         watch:{
             build:{
                 files:['jsCssSrc/js/*.js','jsCssSrc/css/*.css'],//../jsCssSrc/images/*.{png,jpg,gif}
-                tasks:['clean','uglify','cssmin'],//jshint,csslint
+                tasks:['clean:release','uglify:main','cssmin:target'],//jshint,csslint
                 options:{
                     spawn:false
                 }
@@ -129,6 +146,7 @@ module.exports=function(grunt){
     //告诉grunt当我们在终端输入grunt时要做什么（注意先后顺序）
     //在grunt命令执行时，要不要立即执行uglify插件？如果要，就写上，否则不写。
     //watch,jshint,csslint,watch,imagemin
-    grunt.registerTask('default',['clean','uglify','cssmin','imagemin','watch']);
+    grunt.registerTask('default',['clean:release','uglify:main','cssmin:target','watch']);
+    grunt.registerTask('build',['clean:build','uglify:build','cssmin:build']);
 
 };

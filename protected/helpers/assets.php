@@ -25,7 +25,7 @@ class assets {
             'addCommentUrl' => zmf::config('domain') . Yii::app()->createUrl('/ajax/addComment'),
         );
         $arr['web'] = array(
-            'editor'=>'',
+            'editor' => '',
             'allowImgTypes' => zmf::config('imgAllowTypes'),
             'allowImgPerSize' => zmf::formatBytes(zmf::config('imgMaxSize')),
             'perAddImgNum' => zmf::config('imgUploadNum'),
@@ -36,6 +36,7 @@ class assets {
             'favoriteUrl' => zmf::config('domain') . Yii::app()->createUrl('/ajax/favorite'), //收藏内容
             'feedbackUrl' => zmf::config('domain') . Yii::app()->createUrl('/ajax/feedback'), //意见反馈
             'setStatusUrl' => zmf::config('domain') . Yii::app()->createUrl('/ajax/setStatus'),
+            'parseVideoUrl' => zmf::config('domain') . Yii::app()->createUrl('/ajax/parseVideo'),
         );
         $arr['mobile'] = array(
             'contentsUrl' => zmf::config('domain') . Yii::app()->createUrl('/ajax/getContents'), //获取内容
@@ -52,9 +53,9 @@ class assets {
     }
 
     public function loadCssJs($type = 'web', $action = '') {
-        if(YII_DEBUG){
-            $staticUrl = Yii::app()->baseUrl.'/';
-        }else{
+        if (YII_DEBUG) {
+            $staticUrl = Yii::app()->baseUrl . '/';
+        } else {
             $_staticUrl = zmf::config('cssJsStaticUrl');
             $staticUrl = $_staticUrl ? $_staticUrl : zmf::config('baseurl');
         }
@@ -63,31 +64,58 @@ class assets {
         $a = Yii::app()->getController()->getAction()->id;
         $cssDir = Yii::app()->basePath . '/../common/css';
         $jsDir = Yii::app()->basePath . '/../common/js';
-        $cssArr = array();
-        $jsArr = array();
+        $coreCssDir = Yii::app()->basePath . '/../common/coreCss';
+        $coreJsDir = Yii::app()->basePath . '/../common/coreJs';
+        $cssArr = $jsArr = $coreCssArr = $coreJsArr =array();
         if ($type == 'web') {
+            $coreCssArr=array(
+                'bootstrap'=>array('pos'=>'head'),
+                'font-awesome'=>array('pos'=>'head'),
+            );
+            $coreJsArr=array(
+                'jquery'=>array('pos'=>'head'),
+                'bootstrap'=>array('pos'=>'end'),
+                'pjax'=>array('pos'=>'end'),
+            );
             $cssArr = array(
-                'bootstrap',
-                'font-awesome',
+                'web-zmf',
+            );
+            $jsArr = array(
+                'pjax',
                 'zmf',
+            );            
+        } elseif ($type == 'magazine') {
+            $coreCssArr=array(
+                'bootstrap'=>array('pos'=>'head'),
+                'font-awesome'=>array('pos'=>'head'),
             );
-            $jsArr = array(
-                'bootstrap',
-                'zmf',                
+            $coreJsArr=array(
+                'jquery'=>array('pos'=>'head'),
+                'bootstrap'=>array('pos'=>'end'),
+                'pjax'=>array('pos'=>'end'),
             );
-            $cs->registerCoreScript('jquery');
-        } elseif ($type == 'mobile') {
             $cssArr = array(
-                'frozen',
-                'font-awesome',
+                'magazine',
             );
             $jsArr = array(
-                'zepto',
-                'frozen',
+                'mobile',
             );
-            $cssArr[] = 'mobile';
-            $jsArr[] = 'mobile';
-        }elseif ($type == 'admin') {
+        } elseif ($type == 'mobile') {
+            $coreCssArr=array(
+                'frozen'=>array('pos'=>'head'),
+                'font-awesome'=>array('pos'=>'head'),
+            );
+            $coreJsArr=array(
+                'zepto'=>array('pos'=>'head'),
+                'frozen'=>array('pos'=>'end'),
+            );
+            $cssArr = array(
+                'mobile',
+            );
+            $jsArr = array(
+                'mobile',
+            );    
+        } elseif ($type == 'admin') {
             $cssArr = array(
                 'frozen',
             );
@@ -98,18 +126,43 @@ class assets {
             $cssArr[] = 'mobile';
             $jsArr[] = 'mobile';
         }
+        $coreCssDirArr = zmf::readDir($coreCssDir, false);
+        $coreJsDirArr = zmf::readDir($coreJsDir, false);
         $cssDirArr = zmf::readDir($cssDir, false);
         $jsDirArr = zmf::readDir($jsDir, false);
+        foreach ($coreCssDirArr as $coreFileName) {
+            foreach ($coreCssArr as $coreCssfile=>$fileParams) {                
+                if (strpos($coreFileName,$coreCssfile) !== false) {
+                    $cs->registerCssFile($staticUrl . 'common/coreCss/' . $coreFileName);
+                }
+            }
+        }
         foreach ($cssArr as $cssFileName) {
             foreach ($cssDirArr as $cssfile) {
-                if (strpos($cssfile, $type . '-' . $cssFileName) !== false) {
+                if (strpos($cssfile, $cssFileName) !== false) {
                     $cs->registerCssFile($staticUrl . 'common/css/' . $cssfile);
+                }
+            }
+        }
+        foreach ($coreJsDirArr as $jsFileName) {
+            foreach ($coreJsArr as $jsfile=>$jsParams) {                
+                if($jsfile=='jquery'){
+                    $cs->registerCoreScript('jquery');
+                    continue;
+                }
+                if (strpos($jsFileName,$jsfile) !== false) {
+                    if ($jsParams['pos']=='head') {
+                        $pos = CClientScript::POS_HEAD;
+                    } else {
+                        $pos = CClientScript::POS_END;
+                    }
+                    $cs->registerScriptFile($staticUrl . 'common/coreJs/' . $jsFileName, $pos);
                 }
             }
         }
         foreach ($jsArr as $jsFileName) {
             foreach ($jsDirArr as $jsfile) {
-                if (strpos($jsfile, $type . '-' . $jsFileName) !== false) {
+                if (strpos($jsfile, $jsFileName) !== false) {
                     if (strpos($jsfile, 'head') !== false) {
                         $pos = CClientScript::POS_HEAD;
                     } else {
