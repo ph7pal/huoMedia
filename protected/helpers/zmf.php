@@ -46,7 +46,7 @@ class zmf {
             return stripcslashes(Yii::app()->params['c'][$type]);
         }
     }
-    
+
     /**
      * 将配置写入缓存
      * @param type $array
@@ -267,11 +267,17 @@ class zmf {
      * @param type $expire
      */
     public static function setFCache($key, $value, $expire = '60') {
-        Yii::app()->filecache->set($key, $value, $expire);
+        if (zmf::config('fileCache')) {
+            Yii::app()->filecache->set($key, $value, $expire);
+        }
     }
 
     public static function getFCache($key) {
-        return Yii::app()->filecache->get($key);
+        if (zmf::config('fileCache')) {
+            return Yii::app()->filecache->get($key);
+        } else {
+            return false;
+        }
     }
 
     public static function updateFCacheCounter($key, $value, $expire = 3600) {
@@ -855,7 +861,7 @@ class zmf {
                     $thekey = $match[0][$key];
                     $src = Attachments::getOne($val);
                     if ($src) {
-                        $_imgurl = Attachments::getUrl($src, $size);                        
+                        $_imgurl = Attachments::getUrl($src, $size);
                         if ($lazyload) {
                             $_width = $_height = 0;
                             if ($src['width'] <= $width) {
@@ -864,8 +870,8 @@ class zmf {
                             } else {
                                 $_width = $width;
                             }
-                            $_extra = " width='" . $_width . "px'";                                
-                            $imgurl = "<img src='" . self::lazyImg() . "' class='lazy img-responsive' data-original='{$_imgurl}' " . ($action == 'edit' ? 'data="' . $val . '"' : '') . $_extra ."/>";
+                            $_extra = " width='" . $_width . "px'";
+                            $imgurl = "<img src='" . self::lazyImg() . "' class='lazy img-responsive' data-original='{$_imgurl}' " . ($action == 'edit' ? 'data="' . $val . '"' : '') . $_extra . "/>";
                         } else {
                             $imgurl = "<img src='{$_imgurl}' class='img-responsive' " . ($action == 'edit' ? 'data="' . $val . '"' : '') . "/>";
                         }

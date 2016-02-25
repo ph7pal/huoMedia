@@ -39,6 +39,7 @@ class ServiceBlogs extends CActiveRecord {
             array('status', 'numerical', 'integerOnly' => true),
             array('uid, type, classify, level, area, cTime', 'length', 'max' => 10),
             array('url, hits, price,location,nickname', 'length', 'max' => 255),
+            array('nickname', 'safe', 'on' => 'search'),
         );
     }
 
@@ -75,6 +76,14 @@ class ServiceBlogs extends CActiveRecord {
         );
     }
 
+    public function search() {
+        $criteria = new CDbCriteria;
+        $criteria->compare('nickname', $this->nickname, true);
+        return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+        ));
+    }
+
     /**
      * Returns the static model of the specified AR class.
      * Please note that you should have this exact method in all your CActiveRecord descendants!
@@ -84,12 +93,12 @@ class ServiceBlogs extends CActiveRecord {
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
-    
+
     public function beforeSave() {
         $this->location = Area::getBelongInfo($this->area);
         return true;
     }
-    
+
     public static function level($return = '') {
         $arr = array(
             '1000' => '十万',
@@ -98,29 +107,48 @@ class ServiceBlogs extends CActiveRecord {
             '1003' => '亿',
             '1004' => '十亿',
         );
-        if ($return != 'admin') {
+        if ($return == 'returnArr') {
+            $returnArr = array();
+            foreach ($arr as $k => $v) {
+                $returnArr[] = array(
+                    'id' => $k,
+                    'title' => $v,
+                );
+            }
+            return $returnArr;
+        } elseif ($return != 'admin') {
             return $arr[$return];
         } else {
             return $arr;
         }
     }
-    
-    public static function getTags(){
-        $tags=  Tags::model()->findAll(array(
-            'condition'=>"(classify='blogType' OR classify='blogClassify')",
-            'select'=>'id,title,classify'
-        ));
-        if(empty($tags)){
-            return array();
-        }
-        $posts=array();
-        foreach($tags as $tag){
-            $_label=  Tags::classify($tag['classify']);
-            $posts[$tag['classify']]['label']=$_label;
-            $posts[$tag['classify']]['items'][]=array(
-                'id'=>$tag['id'],
-                'title'=>$tag['title'],
+
+    public static function getTags() {
+        $cacheKey = Posts::cacheKeys('blogTags');
+        $expire=  Posts::CACHEEXPIRE;
+        $posts = zmf::getFCache($cacheKey);
+        if (!$posts) {
+            $tags = Tags::model()->findAll(array(
+                'condition' => "(classify='blogType' OR classify='blogClassify')",
+                'select' => 'id,title,classify'
+            ));
+            if (empty($tags)) {
+                return array();
+            }
+            $posts = array();
+            foreach ($tags as $tag) {
+                $_label = Tags::classify($tag['classify']);
+                $posts[$tag['classify']]['label'] = $_label;
+                $posts[$tag['classify']]['items'][] = array(
+                    'id' => $tag['id'],
+                    'title' => $tag['title'],
+                );
+            }
+            $posts['level'] = array(
+                'label' => '级别',
+                'items' => self::level('returnArr'),
             );
+            zmf::setFCache($cacheKey, $posts, $expire);
         }
         return $posts;
     }

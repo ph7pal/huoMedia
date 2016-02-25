@@ -93,23 +93,29 @@ class ServiceForums extends CActiveRecord {
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
-    
-    public static function getTags(){
-        $tags=  Tags::model()->findAll(array(
-            'condition'=>"(classify='forumClassify' OR classify='forumForum')",
-            'select'=>'id,title,classify'
-        ));
-        if(empty($tags)){
-            return array();
-        }
-        $posts=array();
-        foreach($tags as $tag){
-            $_label=  Tags::classify($tag['classify']);
-            $posts[$tag['classify']]['label']=$_label;
-            $posts[$tag['classify']]['items'][]=array(
-                'id'=>$tag['id'],
-                'title'=>$tag['title'],
-            );
+
+    public static function getTags() {
+        $cacheKey = Posts::cacheKeys('blogTags');
+        $expire = Posts::CACHEEXPIRE;
+        $posts = zmf::getFCache($cacheKey);
+        if (!$posts) {
+            $tags = Tags::model()->findAll(array(
+                'condition' => "(classify='forumClassify' OR classify='forumForum')",
+                'select' => 'id,title,classify'
+            ));
+            if (empty($tags)) {
+                return array();
+            }
+            $posts = array();
+            foreach ($tags as $tag) {
+                $_label = Tags::classify($tag['classify']);
+                $posts[$tag['classify']]['label'] = $_label;
+                $posts[$tag['classify']]['items'][] = array(
+                    'id' => $tag['id'],
+                    'title' => $tag['title'],
+                );
+            }
+            zmf::setFCache($cacheKey, $posts, $expire);
         }
         return $posts;
     }

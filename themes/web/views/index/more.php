@@ -52,12 +52,16 @@
                     <h3 class="panel-title"><?php echo $title;?></h3>
                 </div>
                 <div class="col-sm-3">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search for...">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="button">Go!</button>
-                        </span>
-                    </div>
+                    <?php if(!in_array($table,array('forum','video'))){?>
+                    <form method="GET" action="<?php echo Posts::url('btn','search');?>">
+                        <div class="input-group">
+                            <input type="text" name="keyword" class="form-control" placeholder="请输入关键词">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit">搜索</button>
+                            </span>
+                        </div>
+                    </form>
+                    <?php }?>
                 </div>
             </div>
         </div>
@@ -66,9 +70,9 @@
             <div class="con-type-item">
                 <span class="con-type-title"><?php echo $arr['label'];?></span>
                 <ul class="con-type-box">
-                    <li class="<?php echo !$_GET[$_key] ? 'active' : '';?>"><?php echo CHtml::link('不限',array('index/more','table'=>$table));?></li>
+                    <li class="<?php echo !$_GET[$_key] ? 'active' : '';?>"><?php echo CHtml::link('不限',  Posts::url($_key,''));?></li>
                     <?php foreach($arr['items'] as $_tag){?>
-                    <li class="<?php echo $_GET[$_key]==$_tag['id'] ? 'active' : '';?>"><?php echo CHtml::link($_tag['title'],array('index/more','table'=>$table,$_key=>$_tag['id']));?></li>
+                    <li class="<?php echo $_GET[$_key]==$_tag['id'] ? 'active' : '';?>"><?php echo CHtml::link($_tag['title'],Posts::url($_key,$_tag['id']));?></li>
                     <?php }?>
                 </ul>
             </div>

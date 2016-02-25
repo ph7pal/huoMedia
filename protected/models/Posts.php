@@ -29,6 +29,7 @@ class Posts extends CActiveRecord {
     const STATUS_PASSED = 1;
     const STATUS_STAYCHECK = 2;
     const STATUS_DELED = 3;
+    const CACHEEXPIRE=86400;
 
     /**
      * @return string the associated database table name
@@ -203,108 +204,29 @@ class Posts extends CActiveRecord {
         $comLists = $com->queryAll();
     }
 
-    public static function getTopsByTag($tagid, $limit = 5) {
-        $sql = "SELECT p.id,p.title FROM {{posts}} p,{{tag_relation}} tr WHERE tr.tagid='{$tagid}' AND tr.classify='posts' AND tr.logid=p.id AND p.status=" . self::STATUS_PASSED . " ORDER BY hits DESC LIMIT {$limit}";
-        $items = Yii::app()->db->createCommand($sql)->queryAll();
-        return $items;
+    public static function url($key,$value='') {
+        $url=Yii::app()->request->url;
+        $url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&');
+        $url = substr($url, 0, -1);
+        if (strpos($url, '?') === false) {
+            return ($url . '?' . $key . '=' . $value);
+        } else {
+            return ($url . '&' . $key . '=' . $value);
+        }
     }
-
-    public static function favorite($code, $type, $from = 'web', $uid = '') {
-        if (!$code || !$type) {
-            return array('status' => 0, 'msg' => '数据不全，请核实');
-        }
-        if (!in_array($type, array('post'))) {
-            return array('status' => 0, 'msg' => '暂不允许的分类');
-        }
-        if (is_numeric($code)) {
-            $id = $code;
-        } else {
-            $codeArr = Posts::decode($code);
-            if ($codeArr['type'] != $type || !is_numeric($codeArr['id']) || $codeArr['id'] < 1) {
-                $this->jsonOutPut(0, '您所查看的内容不存在');
-            }
-            $id = $codeArr['id'];
-        }
-        if (!$uid) {
-            $uid = zmf::uid();
-        }
-        if ($uid) {
-            if (zmf::actionLimit('favorite-' . $type, $id)) {
-                return array('status' => 0, 'msg' => '操作太频繁，请稍后再试');
-            }
-        } else {
-            //没有登录的访客点收藏时判断是否已收藏过
-            if (zmf::actionLimit('favorite-' . $type, $id, 1, 86400, true)) {
-                return array('status' => 1, 'msg' => '已点赞', 'state' => 1);
-            }
-            $uid = 0;
-        }
-        $postInfo = Posts::model()->findByPk($id);
-        if (!$postInfo || $postInfo['status'] != Posts::STATUS_PASSED) {
-            return array('status' => 0, 'msg' => '文章不存在');
-        }
-        $attr = array(
-            'uid' => $uid,
-            'logid' => $id,
-            'classify' => $type
+    
+    public static function cacheKeys($return){
+        $arr = array(
+            'blogTags' => 'serviceBlogsTags',
+            'forumTags' => 'serviceForumTags',
+            'mediaTags' => 'serviceMediaTags',
+            'videoTags' => 'serviceVideoTags',
+            'siteTags' => 'serviceWebsiteTags',
+            'indexPage' => 'indexPageNews',
         );
-        $info = false;
-        if ($uid) {
-            $info = Favorites::model()->findByAttributes($attr);
+        if($return!='admin'){
+            return $arr[$return];
         }
-        if ($info) {
-            if (Favorites::model()->deleteByPk($info['id'])) {
-                if ($type == 'post') {
-                    Posts::updateCount($id, 'Posts', -1, 'favorite');
-                }
-                return array('status' => 1, 'msg' => '取消点赞', 'state' => 3);
-            } else {
-                return array('status' => 0, 'msg' => '取消点赞失败', 'state' => 4);
-            }
-        } else {
-            $attr['cTime'] = zmf::now();
-            $model = new Favorites();
-            $model->attributes = $attr;
-            if ($model->save()) {
-                if ($type == 'post') {
-                    Posts::updateCount($id, 'Posts', 1, 'favorite');
-                }
-                //点赞后给对方发提醒
-                $_noticedata = array(
-                    'uid' => $postInfo['uid'],
-                    'authorid' => $uid,
-                    'content' => "您的文章【{$postInfo['title']}】有了新的赞",
-                    'new' => 1,
-                    'type' => 'favorite',
-                    'cTime' => zmf::now(),
-                    'from_id' => $model->id,
-                    'from_num' => 1
-                );
-                Notification::add($_noticedata);
-                return array('status' => 1, 'msg' => '点赞成功', 'state' => 1);
-            } else {
-                return array('status' => 0, 'msg' => '点赞失败', 'state' => 2);
-            }
-        }
+        return $arr;
     }
-
-    public static function getRelations($logid, $limit = 5) {
-        if (!$logid) {
-            return array();
-        }
-        $sql = "SELECT p.id,p.title FROM {{posts}} p INNER JOIN (SELECT logid,count(logid) AS times FROM {{tag_relation}} WHERE tagid IN(SELECT tagid FROM {{tag_relation}} WHERE logid='$logid') GROUP BY logid ORDER BY times DESC) tmp ON p.id=tmp.logid WHERE p.id!='$logid' AND p.status=" . Posts::STATUS_PASSED . " LIMIT $limit";
-        $items = Yii::app()->db->createCommand($sql)->queryAll();
-        return $items;
-    }
-
-    public static function updateCommentsNum($id) {
-        if (!$id) {
-            return false;
-        }
-        $num = Comments::model()->count("logid=:logid AND classify='posts' AND `status`=" . Posts::STATUS_PASSED, array(
-            ':logid' => $id
-        ));
-        return Posts::model()->updateByPk($id, array('comments' => $num));
-    }
-
 }

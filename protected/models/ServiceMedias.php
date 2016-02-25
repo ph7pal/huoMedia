@@ -39,6 +39,7 @@ class ServiceMedias extends CActiveRecord {
             array('status', 'numerical', 'integerOnly' => true),
             array('uid, classify, isSource, hasLink, cTime', 'length', 'max' => 10),
             array('title, url, price, postscript', 'length', 'max' => 255),
+            array('title', 'safe', 'on' => 'search'),
         );
     }
 
@@ -72,6 +73,14 @@ class ServiceMedias extends CActiveRecord {
         );
     }
 
+    public function search() {
+        $criteria = new CDbCriteria;
+        $criteria->compare('title', $this->title, true);
+        return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+        ));
+    }
+
     /**
      * Returns the static model of the specified AR class.
      * Please note that you should have this exact method in all your CActiveRecord descendants!
@@ -81,7 +90,7 @@ class ServiceMedias extends CActiveRecord {
     public static function model($className = __CLASS__) {
         return parent::model($className);
     }
-    
+
     public static function isSource($return = '') {
         $arr = array(
             '1000' => '百度新闻源',
@@ -89,42 +98,66 @@ class ServiceMedias extends CActiveRecord {
             '1002' => '搜狐新闻源',
             '1003' => '新浪新闻源',
         );
-        if ($return != 'admin') {
+        if ($return == 'returnArr') {
+            $returnArr = array();
+            foreach ($arr as $k => $v) {
+                $returnArr[] = array(
+                    'id' => $k,
+                    'title' => $v,
+                );
+            }
+            return $returnArr;
+        } elseif ($return != 'admin') {
             return $arr[$return];
         } else {
             return $arr;
         }
     }
-    
+
     public static function hasLink($return = '') {
         $arr = array(
             '1' => '不能带网址',
             '2' => '可带网址',
             '3' => '可做关键词超链',
         );
-        if ($return != 'admin') {
+        if ($return == 'returnArr') {
+            $returnArr = array();
+            foreach ($arr as $k => $v) {
+                $returnArr[] = array(
+                    'id' => $k,
+                    'title' => $v,
+                );
+            }
+            return $returnArr;
+        } elseif ($return != 'admin') {
             return $arr[$return];
         } else {
             return $arr;
         }
     }
-    
-    public static function getTags(){
-        $tags=  Tags::model()->findAll(array(
-            'condition'=>"(classify='mediaClassify')",
-            'select'=>'id,title,classify'
-        ));
-        if(empty($tags)){
-            return array();
-        }
-        $posts=array();
-        foreach($tags as $tag){
-            $_label=  Tags::classify($tag['classify']);
-            $posts[$tag['classify']]['label']=$_label;
-            $posts[$tag['classify']]['items'][]=array(
-                'id'=>$tag['id'],
-                'title'=>$tag['title'],
-            );
+
+    public static function getTags() {
+        $cacheKey = Posts::cacheKeys('blogTags');
+        $expire = Posts::CACHEEXPIRE;
+        $posts = zmf::getFCache($cacheKey);
+        if (!$posts) {
+            $tags = Tags::model()->findAll(array(
+                'condition' => "(classify='mediaClassify')",
+                'select' => 'id,title,classify'
+            ));
+            if (empty($tags)) {
+                return array();
+            }
+            $posts = array();
+            foreach ($tags as $tag) {
+                $_label = Tags::classify($tag['classify']);
+                $posts[$tag['classify']]['label'] = $_label;
+                $posts[$tag['classify']]['items'][] = array(
+                    'id' => $tag['id'],
+                    'title' => $tag['title'],
+                );
+            }
+            zmf::setFCache($cacheKey, $posts, $expire);
         }
         return $posts;
     }
