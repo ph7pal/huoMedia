@@ -80,6 +80,15 @@ class ServiceMedias extends CActiveRecord {
             'criteria' => $criteria,
         ));
     }
+    
+    public function beforeSave() {
+        if($this->url!=''){
+            if (stripos($this->url, 'http://') === false && stripos($this->url, 'https://') === false){
+                $this->url='http://'.$this->url;
+            }
+        }
+        return true;
+    }
 
     /**
      * Returns the static model of the specified AR class.

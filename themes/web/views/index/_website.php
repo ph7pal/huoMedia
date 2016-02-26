@@ -12,7 +12,9 @@
 <table class="table table-hover">
     <thead>
     <tr>
-        <th>序号</th>
+        <?php if($from=='detail'){?>
+        <th>选择</th>
+        <?php }?>
         <th>网站</th>
         <th>分类</th>
         <th>昵称</th>
@@ -24,11 +26,13 @@
     <tbody>
     <?php foreach ($posts as $data): ?> 
         <tr>
-            <th><?php echo $data->id;?></th>
+            <?php if($from=='detail'){?>
+            <th><input type="checkbox" name="selected[]" value="<?php echo $data->id;?>"></th>
+            <?php }?>
             <td><?php echo ServiceWebsites::types($data->type);?></td>    
             <td><?php echo $data->classifyInfo->title;?></td>    
             <td><?php echo $data->nickname;?></td>    
-            <td><?php echo zmf::subStr($data->url);?></td>    
+            <td><?php echo $data->url!='' ? CHtml::link(zmf::subStr($data->url),$data->url,array('target'=>'_blank')) : '';?></td>    
             <td><?php echo $data->favors;?></td>
             <td><?php echo $data->price;?></td>
         </tr>

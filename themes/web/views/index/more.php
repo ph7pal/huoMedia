@@ -43,9 +43,15 @@
 .con-type-box .active a {
     color: #FF3201;
 }
+.content .table{
+    border-bottom: 1px solid #f2f2f2
+}
+.content-pager{
+    padding: 0 15px 15px;
+}
 </style>
 <div class="container">
-    <div class="panel panel-default">
+    <div class="panel panel-default content">
         <div class="panel-heading">
             <div class="row">
                 <div class="col-sm-9">
@@ -78,7 +84,35 @@
             </div>
             <?php }}?>
         </div>
-        
-        <?php $this->renderPartial($view, array('posts' => $posts)); ?>
+        <?php $form=$this->beginWidget('CActiveForm', array(
+                'id'=>'download-form',
+                'action'=>  Yii::app()->createUrl('index/download'),
+        )); ?>
+        <input type="hidden" name="table" value="<?php echo $table;?>"/>
+        <input type="hidden" name="download" value="<?php echo $downloadCode;?>"/>
+        <?php $this->renderPartial($view, array('posts' => $posts,'from'=>'detail')); ?>
+        <div class="row content-pager">
+            <div class="col-xs-8">
+                <?php $this->renderPartial('/common/pager',array('pages'=>$pages));?>
+            </div>
+            <div class="col-xs-4">
+                <div class="btn-group pull-right" role="group">
+                    <input id="allcheck" type="button" value="全选" class="btn btn-default btn-sm" onclick="selectAll('selected[]','allcheck');">
+                    <button type="submit" class="btn btn-default btn-sm">导出选中到Excel</button>
+                </div>
+            </div>
+        </div>
+        <?php $this->endWidget(); ?>
     </div>
 </div>
+<script>
+    function selectAll(divc,inputs){
+	if($("#"+inputs).attr('value') == '全选'){
+		$("input[name='"+divc+"']").attr('checked',true);
+		$("#"+inputs).attr('value','取消全选');
+	}else{
+		$("input[name='"+divc+"']").attr('checked',false);
+		$("#"+inputs).attr('value','全选');
+	}
+}
+</script>

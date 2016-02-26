@@ -1,7 +1,9 @@
 <table class="table table-hover">
     <thead>
     <tr>
-        <th>序号</th>
+        <?php if($from=='detail'){?>
+        <th>选择</th>
+        <?php }?>
         <th>类别</th>
         <th>社区</th>
         <th>板块</th>
@@ -19,12 +21,13 @@
     <tbody>
     <?php foreach ($posts as $data): ?> 
         <tr>
-            <th><?php echo $data->id;?></th>
+            <?php if($from=='detail'){?>
+            <th><input type="checkbox" name="selected[]" value="<?php echo $data->id;?>"></th>
+            <?php }?>
             <td><?php echo $data->classifyInfo->title;?></td>
             <td><?php echo $data->forumInfo->title;?></td>
             <td><?php echo $data->typeInfo->title;?></td>    
-            <td><?php echo zmf::subStr($data->url);?></td>
-
+            <td><?php echo $data->url!='' ? CHtml::link(zmf::subStr($data->url),$data->url,array('target'=>'_blank')) : '';?></td>
             <td><?php echo $data->forDigest;?></td>
             <td><?php echo $data->forDay;?></td>
             <td><?php echo $data->forWeek;?></td>

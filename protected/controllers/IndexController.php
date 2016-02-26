@@ -2,6 +2,22 @@
 
 class IndexController extends Q {
 
+    private $download = false;
+    private $downloadCode = '';
+
+    public function init() {
+        parent::init();
+        $downloadCode = zmf::val('download', 1);
+        $str = zmf::jieMi($downloadCode);
+        $arr = explode('#', $str);
+        //zmf#download#ctime
+        $ctime = zmf::now();
+        if (count($arr) == 3 && $arr[0] == 'zmf' && $arr[1] == 'download' && ($ctime - $arr[2] < 86400)) {
+            $this->download = true;
+            $this->downloadCode = $downloadCode;
+        }
+    }
+
     public function actionIndex() {
         $cacheKey = Posts::cacheKeys('indexPage');
         $expire = Posts::CACHEEXPIRE;
@@ -227,7 +243,10 @@ class IndexController extends Q {
             $title = '视频网站';
             $tags = ServiceVideos::getTags();
         }
-
+        $this->pageTitle = $title . ' - ' . zmf::config('sitename');
+        $now = zmf::now();
+        $downloadCode = zmf::jiaMi('zmf#download#' . $now);
+        Yii::app()->session[$table . 'DownloadCode'] = $downloadCode;
         $this->render('more', array(
             'pages' => $pager,
             'posts' => $posts,
@@ -236,7 +255,136 @@ class IndexController extends Q {
             'view' => $view,
             'title' => $title,
             'tags' => $tags,
+            'downloadCode' => $downloadCode,
         ));
+    }
+
+    public function actionDownload() {
+        if (!$this->download || !Yii::app()->request->isPostRequest) {
+            throw new CHttpException(404, '链接已失效.');
+        }
+        $table = zmf::val('table', 1);
+        $codeFromSession = Yii::app()->session[$table . 'DownloadCode'];
+        if ($codeFromSession != $this->downloadCode) {
+            throw new CHttpException(404, '请勿重复刷新页面.');
+        }
+        if (!$table || !in_array($table, array('forum', 'blog', 'media', 'site', 'video'))) {
+            throw new CHttpException(404, '不允许的分类.');
+        }
+        $selected = $_POST['selected'];
+        $idsArr = array_unique(array_filter($selected));
+        if (empty($idsArr)) {
+            throw new CHttpException(404, '请选择想要导出的数据.');
+        }
+        $idsStr = join(',', $idsArr);
+        if (!$idsStr) {
+            throw new CHttpException(404, '请选择想要导出的数据.');
+        }
+
+        $sitename = zmf::config('sitename');
+        $filename = $sitename . '-' . uniqid();
+        Yii::import('application.vendors.phpexcel.*');
+        require_once 'PHPExcel.php';
+        $objPHPExcel = new PHPExcel();
+        // Set document properties
+        $objPHPExcel->getProperties()->setCreator($sitename)
+                ->setLastModifiedBy($sitename)
+                ->setTitle($sitename);
+        $charterArr = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+
+        if ($table == 'forum') {
+            $selectAttr = 'classify,forum,type,url,forDigest,forDay,forWeek,forTwoWeek,forMonth,forQuarter,forHalfYear,forYear';
+            $model = new ServiceForums();
+            $posts = $model->findAll(array(
+                'condition' => "id IN ({$idsStr})",
+                'select' => $selectAttr
+            ));
+        } elseif ($table == 'blog') {
+            $selectAttr = 'type,url,nickname,hits,classify,level,location,price';
+            $model = new ServiceBlogs();
+            $posts = $model->findAll(array(
+                'condition' => "id IN ({$idsStr})",
+                'select' => $selectAttr
+            ));
+        } elseif ($table == 'media') {
+            $selectAttr = 'classify,title,url,isSource,hasLink,price';
+            $model = new ServiceMedias();
+            $posts = $model->findAll(array(
+                'condition' => "id IN ({$idsStr})",
+                'select' => $selectAttr
+            ));
+        } elseif ($table == 'site') {
+            $selectAttr = 'type,classify,nickname,url,favors,price';
+            $model = new ServiceWebsites();
+            $posts = $model->findAll(array(
+                'condition' => "id IN ({$idsStr})",
+                'select' => $selectAttr
+            ));
+        } elseif ($table == 'video') {
+            $selectAttr = 'type,classify,position,url,stayTime,price';
+            $model = new ServiceVideos();
+            $posts = $model->findAll(array(
+                'condition' => "id IN ({$idsStr})",
+                'select' => $selectAttr
+            ));
+        }
+        if (empty($posts)) {
+            throw new CHttpException(404, '没有数据需要导出.');
+        }
+        $attrKeys = explode(',', $selectAttr);
+        $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', '序号');
+        foreach ($attrKeys as $k => $_attr) {
+            $_char = $charterArr[$k + 1];
+            $_extra='';
+            if(in_array($_attr,array('price','forDigest','forDay','forWeek','forTwoWeek','forMonth','forQuarter','forHalfYear','forYear'))){
+                $_extra='（元）';
+            }
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($_char . '1', $model->getAttributeLabel($_attr).$_extra);
+        }
+        foreach ($posts as $pk => $pv) {
+            foreach ($attrKeys as $k => $_attr) {
+                if ($k == 0) {
+                    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . ($pk + 2), $pk + 1);
+                }
+                $_char = $charterArr[$k + 1];
+                if (in_array($_attr, array('type', 'classify', 'forum','position'))) {
+                    $_battr = $_attr . 'Info';
+                    $_value = $pv->$_battr->title;
+                } else {
+                    $_value = $pv[$_attr];
+                }
+                if($_attr=='level'){
+                    $_value=  ServiceBlogs::level($_value);
+                }elseif($_attr=='isSource'){
+                    $_value= ServiceMedias::isSource($_value);
+                }elseif($_attr=='hasLink'){
+                    $_value=  ServiceMedias::hasLink($_value);
+                }
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue($_char . ($pk + 2), $_value);
+            }
+        }
+        // Rename worksheet
+        $objPHPExcel->getActiveSheet()->setTitle('Simple');
+        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $objPHPExcel->setActiveSheetIndex(0);
+        // Redirect output to a client’s web browser (Excel2007)
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+
+        // If you're serving to IE over SSL, then the following may be needed
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header('Pragma: public'); // HTTP/1.0
+
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        //unset(Yii::app()->session[$table . 'DownloadCode']);
+        //$this->redirect($this->referer);
+        exit;
     }
 
 }

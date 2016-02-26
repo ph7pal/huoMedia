@@ -100,6 +100,11 @@ class ServiceWebsites extends CActiveRecord {
 
     public function beforeSave() {
         $this->location = Area::getBelongInfo($this->area);
+        if($this->url!=''){
+            if (stripos($this->url, 'http://') === false && stripos($this->url, 'https://') === false){
+                $this->url='http://'.$this->url;
+            }
+        }
         return true;
     }
 

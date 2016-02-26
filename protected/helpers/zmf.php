@@ -35,7 +35,7 @@ class zmf {
 
     public static function config($type) {
         if ($type == 'authorCode') {
-            return 'zhangmaofei@2015';
+            return 'ZhangMaoFei@2015';
         }
         if (empty(Yii::app()->params['c'])) {
             $_c = Config::model()->findAll();
@@ -789,13 +789,13 @@ class zmf {
 
     public static function randMykeys($length, $type = 1) {
         if ($type == 2) {
-            $pattern = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLOMNOPQRSTUVWXYZ';    //字符池,可任意修改
+            $pattern = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';    //字符池,可任意修改
             $len = 51;
         } elseif ($type == 3) {
             $pattern = '1234567890';
             $len = 9;
         } else {
-            $pattern = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLOMNOPQRSTUVWXYZ';    //字符池,可任意修改
+            $pattern = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';    //字符池,可任意修改
             $len = 61;
         }
         for ($i = 0; $i < $length; $i++) {
