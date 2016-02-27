@@ -8,6 +8,7 @@ class Tags extends CActiveRecord {
 
     public function rules() {
         return array(
+            array('status', 'default', 'setOnEmpty' => true, 'value' => Posts::STATUS_PASSED),
             array('title,classify', 'required'),
             array('cTime', 'default', 'setOnEmpty' => true, 'value' => zmf::now()),
             array('hits,cTime,posts,length,pid', 'length', 'max' => 10),
@@ -34,7 +35,7 @@ class Tags extends CActiveRecord {
             'status' => '状态',
             'posts' => '文章数量',
             'length' => '名称长度',
-            'pid' => '所属标签',
+            'pid' => '所属分类',
         );
     }
 

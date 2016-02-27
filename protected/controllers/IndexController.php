@@ -335,11 +335,11 @@ class IndexController extends Q {
         $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', '序号');
         foreach ($attrKeys as $k => $_attr) {
             $_char = $charterArr[$k + 1];
-            $_extra='';
-            if(in_array($_attr,array('price','forDigest','forDay','forWeek','forTwoWeek','forMonth','forQuarter','forHalfYear','forYear'))){
-                $_extra='（元）';
+            $_extra = '';
+            if (in_array($_attr, array('price', 'forDigest', 'forDay', 'forWeek', 'forTwoWeek', 'forMonth', 'forQuarter', 'forHalfYear', 'forYear'))) {
+                $_extra = '（元）';
             }
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($_char . '1', $model->getAttributeLabel($_attr).$_extra);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($_char . '1', $model->getAttributeLabel($_attr) . $_extra);
         }
         foreach ($posts as $pk => $pv) {
             foreach ($attrKeys as $k => $_attr) {
@@ -347,18 +347,18 @@ class IndexController extends Q {
                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . ($pk + 2), $pk + 1);
                 }
                 $_char = $charterArr[$k + 1];
-                if (in_array($_attr, array('type', 'classify', 'forum','position'))) {
+                if (in_array($_attr, array('type', 'classify', 'forum', 'position'))) {
                     $_battr = $_attr . 'Info';
                     $_value = $pv->$_battr->title;
                 } else {
                     $_value = $pv[$_attr];
                 }
-                if($_attr=='level'){
-                    $_value=  ServiceBlogs::level($_value);
-                }elseif($_attr=='isSource'){
-                    $_value= ServiceMedias::isSource($_value);
-                }elseif($_attr=='hasLink'){
-                    $_value=  ServiceMedias::hasLink($_value);
+                if ($_attr == 'level') {
+                    $_value = ServiceBlogs::level($_value);
+                } elseif ($_attr == 'isSource') {
+                    $_value = ServiceMedias::isSource($_value);
+                } elseif ($_attr == 'hasLink') {
+                    $_value = ServiceMedias::hasLink($_value);
                 }
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($_char . ($pk + 2), $_value);
             }
@@ -385,6 +385,34 @@ class IndexController extends Q {
         //unset(Yii::app()->session[$table . 'DownloadCode']);
         //$this->redirect($this->referer);
         exit;
+    }
+
+    public function actionIntoTags() {
+        $page=  zmf::val('page',2);
+        $page=$page>1 ? $page : 1;
+        $limit=30;
+        $classify='videoPosition';
+        $dir = Yii::app()->basePath . '/runtime/tags';
+        $filename = $dir . '/tags.txt';
+        $items = file($filename);
+        $items=array_map('self::trimall', $items);
+        $items = array_unique(array_filter($items));
+        foreach ($items as $_tag){
+            $_data = array(
+                'title' => $_tag,
+                'classify' => $classify,
+            );
+            $modelB = new Tags;
+            $modelB->attributes = $_data;
+            $modelB->save();            
+        }
+        echo 'well done!!';
+    }
+
+    function trimall($str) {//删除空格
+        $qian = array(" ", "　", "\t", "\n", "\r");
+        $hou = array("", "", "", "", "");
+        return str_replace($qian, $hou, $str);
     }
 
 }

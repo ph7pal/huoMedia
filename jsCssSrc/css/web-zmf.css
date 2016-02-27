@@ -30,7 +30,21 @@ a{
     background-color: #F2F3F8;
     color: #9AA6C5
 }
-
+.module{
+    background: #fff;
+    padding: 16px 20px;
+    box-shadow: 0 1px 3px rgba(34,25,25,.4);
+    margin-bottom: 16px;
+    position: relative;
+    word-break: break-all;
+    border: 1px solid #f2f2f2
+}
+/*登录页面------*/
+.login-form{
+    width: 378px;
+    margin: 200px auto 0;
+}
+/*登录页面------*/
 /*返回顶部*/
 .side-fixed{
     position: fixed;

@@ -21,12 +21,13 @@
 		<?php echo $form->dropDownList($model,'classify',  Tags::classify('admin'),array('class'=>'form-control','empty'=>'--请选择--')); ?>
 		<?php echo $form->error($model,'classify'); ?>
 	</div>
-        <?php }?>
+        <?php }if($model->classify=='forumType'){?>
         <div class="form-group">
 		<?php echo $form->labelEx($model,'pid'); ?>
-		<?php echo $form->textField($model,'pid',array('class'=>'form-control')); ?>
+		<?php echo $form->dropDownList($model,'pid',$belongTags,array('class'=>'form-control','empty'=>'--请选择--')); ?>
 		<?php echo $form->error($model,'pid'); ?>
 	</div>
+        <?php }?>
 	<div class="form-group">
 		<?php echo $form->labelEx($model,'title'); ?>
 		<?php echo $form->textField($model,'title',array('size'=>60,'maxlength'=>255,'class'=>'form-control')); ?>

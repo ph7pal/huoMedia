@@ -33,36 +33,48 @@ class TagsController extends Admin {
 
     public function actionCreate($id = '') {
         $this->checkPower('addTag');
-        $classify=  zmf::val('classify',1);
-        
+        $classify = zmf::val('classify', 1);
+
         if ($id) {
             $model = Tags::model()->findByPk($id);
             if (!$model) {
                 $this->message(0, '该标签不存在');
             }
-            $classifyLabel=Tags::classify($model->classify);
+            $classifyLabel = Tags::classify($model->classify);
         } else {
-            if(!$classify){
+            if (!$classify) {
                 throw new CHttpException(404, '请选择类别.');
-            }else{
-                $_label=Tags::classify($classify);
-                if(!$_label){
+            } else {
+                $_label = Tags::classify($classify);
+                if (!$_label) {
                     throw new CHttpException(404, '请选择类别.');
                 }
-                $classifyLabel=$_label;
+                $classifyLabel = $_label;
             }
             $model = new Tags;
             $model->classify = $classify;
         }
         if (isset($_POST['Tags'])) {
-            $model->attributes = $_POST['Tags'];
-            if ($model->save())
-                $this->redirect(array('index'));
+            if (!$_POST['Tags']['classify']) {
+                $model->addError('title', '请选择类别');
+            } elseif ($_POST['Tags']['classify'] == 'forumType' && !$_POST['Tags']['pid']) {
+                $model->addError('title', '请选择所属类别');
+            } else {
+                $model->attributes = $_POST['Tags'];
+                if ($model->save()) {
+                    $this->redirect(array('create', 'classify' => $classify));
+                }
+            }
+        }
+        $belongTags = array();
+        if ($classify == 'forumType') {
+            $belongTags = Tags::getClassifyTags('forumForum');
         }
 
         $this->render('create', array(
             'model' => $model,
             'classifyLabel' => $classifyLabel,
+            'belongTags' => $belongTags,
         ));
     }
 
