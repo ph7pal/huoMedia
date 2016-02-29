@@ -9,47 +9,6 @@
  * @datetime 2016-2-25  13:42:44 
  */
 ?>
-<style>
-.conditions {
-    background: #ECEEF4;
-    padding: 0 15px;
-    border-bottom: 1px solid #DBDFEA;
-    line-height: 24px;
-    font-size: 12px;
-    color: #666;
-}
-.con-type-item{
-    margin-top: 0
-}
-.con-type-title{
-    padding: 4px;
-    float: left;
-    font-weight: 700
-}
-.con-type-box{
-    border-bottom: 1px dashed #f2f2f2;
-    padding-left: 50px;
-    margin-bottom: 0
-}
-.con-type-box li{
-    display: inline-block;
-    padding: 4px;
-    list-style-type: none;
-    margin-bottom: 0
-}
-.con-type-box li a {
-    color: #3299FE;
-}
-.con-type-box .active a {
-    color: #FF3201;
-}
-.content .table{
-    border-bottom: 1px solid #f2f2f2
-}
-.content-pager{
-    padding: 0 15px 15px;
-}
-</style>
 <div class="container">
     <div class="panel panel-default content">
         <div class="panel-heading">
@@ -90,7 +49,7 @@
         )); ?>
         <input type="hidden" name="table" value="<?php echo $table;?>"/>
         <input type="hidden" name="download" value="<?php echo $downloadCode;?>"/>
-        <?php $this->renderPartial($view, array('posts' => $posts,'from'=>'detail')); ?>
+        <?php $this->renderPartial($view, array('posts' => $posts,'from'=>'detail','type'=>$type)); ?>
         <div class="row content-pager">
             <div class="col-xs-8">
                 <?php $this->renderPartial('/common/pager',array('pages'=>$pages));?>

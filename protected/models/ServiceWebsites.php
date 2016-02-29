@@ -100,9 +100,9 @@ class ServiceWebsites extends CActiveRecord {
 
     public function beforeSave() {
         $this->location = Area::getBelongInfo($this->area);
-        if($this->url!=''){
-            if (stripos($this->url, 'http://') === false && stripos($this->url, 'https://') === false){
-                $this->url='http://'.$this->url;
+        if ($this->url != '') {
+            if (stripos($this->url, 'http://') === false && stripos($this->url, 'https://') === false) {
+                $this->url = 'http://' . $this->url;
             }
         }
         return true;
@@ -138,7 +138,24 @@ class ServiceWebsites extends CActiveRecord {
             'renren' => '1002',
             'douban' => '1003',
         );
-        return $arr[$type] ? $arr[$type] : '0';
+        if ($type != 'admin') {
+            return $arr[$type] ? $arr[$type] : '0';
+        } else {
+            return $arr;
+        }
+    }
+
+    public static function getTypeArr($type) {
+        $arr = self::getTypeCode('admin');
+        $types = self::types('admin');
+        $returnArr = array();
+        foreach ($arr as $k => $v) {
+            $returnArr[] = array(
+                'id' => $k,
+                'title' => $types[$v],
+            );
+        }
+        return $returnArr;
     }
 
     public static function getTags() {
@@ -156,7 +173,7 @@ class ServiceWebsites extends CActiveRecord {
             $posts = array();
             $posts['type'] = array(
                 'label' => '网站',
-                'items' => self::types('returnArr'),
+                'items' => self::getTypeArr(),
             );
             foreach ($tags as $tag) {
                 $_label = Tags::classify($tag['classify']);
@@ -169,6 +186,20 @@ class ServiceWebsites extends CActiveRecord {
             zmf::setFCache($cacheKey, $posts, $expire);
         }
         return $posts;
+    }
+    
+    public static function formatFavors($num){
+        if(!$num){
+            return '';
+        }
+        if($num<10000){
+            return $num;
+        }
+        $de=0;
+        if($num%10000>0){
+            $de=2;
+        }
+        return number_format($num/10000, $de, '.', '').'万';
     }
 
 }

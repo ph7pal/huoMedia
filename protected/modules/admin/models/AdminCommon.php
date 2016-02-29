@@ -18,19 +18,19 @@ class AdminCommon extends CActiveRecord {
         
         $attr['posts'] = array(
             'title' => '项目',
-            'url' => Yii::app()->createUrl('admin/content/index'),
-            'active' => in_array($c, array('content'))
+            'url' => Yii::app()->createUrl('admin/serviceForums/index'),
+            'active' => in_array($c, array('serviceForums','serviceBlogs','serviceMedias','serviceVideos','serviceWebsites'))
         );        
         $attr['group'] = array(
             'title' => '分类',
             'url' => Yii::app()->createUrl('admin/tags/index'),
             'active' => in_array($c, array('tags'))
         );
-        $attr['feedback'] = array(
-            'title' => '反馈',
-            'url' => Yii::app()->createUrl('admin/feedback/index'),
-            'active' => in_array($c, array('feedback'))
-        );
+//        $attr['feedback'] = array(
+//            'title' => '反馈',
+//            'url' => Yii::app()->createUrl('admin/feedback/index'),
+//            'active' => in_array($c, array('feedback'))
+//        );
         $attr['user'] = array(
             'title' => '用户',
             'url' => Yii::app()->createUrl('admin/users/index'),
@@ -41,11 +41,11 @@ class AdminCommon extends CActiveRecord {
 //            'url' => Yii::app()->createUrl('admin/attachments/index'),
 //            'active' => in_array($c, array('attachments'))
 //        );
-        $attr['siteInfo'] = array(
-            'title' => '站点',
-            'url' => Yii::app()->createUrl('admin/siteInfo/index'),
-            'active' => in_array($c, array('siteInfo'))
-        );
+//        $attr['siteInfo'] = array(
+//            'title' => '站点',
+//            'url' => Yii::app()->createUrl('admin/siteInfo/index'),
+//            'active' => in_array($c, array('siteInfo'))
+//        );
         $attr['system'] = array(
             'title' => '系统',
             'url' => Yii::app()->createUrl('admin/config/index'),

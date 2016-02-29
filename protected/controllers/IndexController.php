@@ -135,6 +135,7 @@ class IndexController extends Q {
         } elseif ($table == 'blog') {
             $blogType = zmf::val('blogType', 2);
             $blogClassify = zmf::val('blogClassify', 2);
+            $level = zmf::val('level', 2);
             $criteria = new CDbCriteria();
             if ($blogType) {
                 $criteria->addCondition('type=:type');
@@ -146,6 +147,10 @@ class IndexController extends Q {
             }
             if ($keyword) {
                 $criteria->addSearchCondition('nickname', $keyword);
+            }
+            if($level){
+                $criteria->addCondition('level=:level');
+                $criteria->params[':level'] = $level;
             }
             $criteria->addCondition('status=' . Posts::STATUS_PASSED);
             $criteria->order = 'cTime DESC';
@@ -183,6 +188,7 @@ class IndexController extends Q {
             $forumClassify = zmf::val('forumClassify', 2);
             $forumForum = zmf::val('forumForum', 2);
             $type = zmf::val('type', 1);
+            $websiteClassify = zmf::val('websiteClassify', 2);
             if (!$type) {
                 throw new CHttpException(404, '您所查看的列表不存在.');
             }
@@ -198,6 +204,10 @@ class IndexController extends Q {
             if ($forumForum) {
                 $criteria->addCondition('forum=:forum');
                 $criteria->params[':forum'] = $forumForum;
+            }
+            if ($websiteClassify) {
+                $criteria->addCondition('classify=:classify');
+                $criteria->params[':classify'] = $websiteClassify;
             }
             if ($typeCode) {
                 $criteria->addCondition('type=:type');
@@ -388,23 +398,128 @@ class IndexController extends Q {
     }
 
     public function actionIntoTags() {
-        $page=  zmf::val('page',2);
-        $page=$page>1 ? $page : 1;
-        $limit=30;
-        $classify='videoPosition';
+        $page = zmf::val('page', 2);
+        $page = $page > 1 ? $page : 1;
+        $limit = 30;
+        $classify = 'websiteClassify';
         $dir = Yii::app()->basePath . '/runtime/tags';
         $filename = $dir . '/tags.txt';
         $items = file($filename);
-        $items=array_map('self::trimall', $items);
+        $items = array_map('self::trimall', $items);
         $items = array_unique(array_filter($items));
-        foreach ($items as $_tag){
+        foreach ($items as $_tag) {
             $_data = array(
                 'title' => $_tag,
                 'classify' => $classify,
             );
             $modelB = new Tags;
             $modelB->attributes = $_data;
-            $modelB->save();            
+            $modelB->save();
+        }
+        echo 'well done!!';
+    }
+
+    public function actionInto() {
+        $classify = 'douban';
+        $dir = Yii::app()->basePath . '/runtime/tags';
+        $filename = $dir . '/' . $classify . '.txt';
+        $items = file($filename);
+        $items = array_map('self::trimall', $items);
+        $items = array_unique(array_filter($items));
+        foreach ($items as $_tag) {
+            $_arr = explode('@', $_tag);
+            if ($classify == 'video') {
+                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'videoType'));
+                if (!$_info1) {
+                    continue;
+                }
+                $_info2 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[1], ':classify' => 'videoClassify'));
+                if (!$_info2) {
+                    continue;
+                }
+                $_info3 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[2], ':classify' => 'videoPosition'));
+                if (!$_info3) {
+                    continue;
+                }
+                $_data = array(
+                    'uid' => 1,
+                    'type' => $_info1['id'],
+                    'classify' => $_info2['id'],
+                    'position' => $_info3['id'],
+                    'url' => $_arr[3],
+                    'stayTime' => $_arr[4],
+                    'price' => zmf::myint($_arr[5]),
+                );
+                $modelB = new ServiceVideos;
+                $modelB->attributes = $_data;
+                $modelB->save();
+            } elseif ($classify == 'meilishuo') {
+                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[1], ':classify' => 'websiteClassify'));
+                if (!$_info1) {
+                    continue;
+                }
+                $_data = array(
+                    'uid' => 1,
+                    'type' => 'meilishuo',
+                    'classify' => $_info1['id'],
+                    'nickname' => $_arr[2],
+                    'url' => $_arr[3],
+                    'favors' => zmf::myint($_arr[4]) * 10000,
+                    'price' => zmf::myint($_arr[5]),
+                );
+                $modelB = new ServiceWebsites;
+                $modelB->attributes = $_data;
+                $modelB->save();
+            } elseif ($classify == 'mogu') {
+                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'websiteClassify'));
+                if (!$_info1) {
+                    continue;
+                }
+                $_data = array(
+                    'uid' => 1,
+                    'type' => '1001',
+                    'classify' => $_info1['id'],
+                    'nickname' => $_arr[1],
+                    'url' => $_arr[2],
+                    'favors' => zmf::myint($_arr[3]) * 10000,
+                    'price' => zmf::myint($_arr[4]),
+                );
+                $modelB = new ServiceWebsites;
+                $modelB->attributes = $_data;
+                $modelB->save();
+            } elseif ($classify == 'renren') {                
+                $_info1 = Area::model()->find("title LIKE '%{$_arr[2]}%'");
+                $_data = array(
+                    'uid' => 1,
+                    'type' => '1002',
+                    'nickname' => $_arr[0],
+                    'url' => $_arr[3],
+                    'favors' => zmf::myint($_arr[3]),
+                    'price' => zmf::myint($_arr[6]),                    
+                    'vipInfo' => $_arr[5],
+                    'sex' => $_arr[1]=='女' ? 2 : ($_arr[1]=='男' ? 1 : ''),
+                    'area' => $_info1['area_id'],
+                    'location' => $_arr[2],
+                );
+                $modelB = new ServiceWebsites;
+                $modelB->attributes = $_data;
+                $modelB->save();
+            } elseif ($classify == 'douban') {      
+                $_info1 = Area::model()->find("title LIKE '%{$_arr[4]}%'");
+                $_data = array(
+                    'uid' => 1,
+                    'type' => '1003',
+                    'nickname' => $_arr[0],
+                    'url' => $_arr[2],
+                    'favors' => zmf::myint($_arr[1])*10000,
+                    'price' => zmf::myint($_arr[3]),                    
+                    'area' => $_info1['area_id'],
+                    'location' => Area::getBelongInfo($_info1['area_id']),
+                );
+                $modelB = new ServiceWebsites;
+                $modelB->attributes = $_data;
+                $modelB->save();
+            }
         }
         echo 'well done!!';
     }

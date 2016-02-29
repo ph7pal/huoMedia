@@ -10,6 +10,10 @@ class ConfigController extends Admin {
 
     public function actionIndex() {
         $type = zmf::filterInput($_GET['type'], 't', 1);
+        if($type=='clearCache'){
+            $this->clearCache();
+            Yii::app()->end();
+        }
         if ($type == '' OR ! in_array($type, array('baseinfo', 'upload', 'base', 'email'))) {
             $type = 'baseinfo';
         }
@@ -70,6 +74,14 @@ class ConfigController extends Admin {
         $configs = CHtml::listData($_c, 'name', 'value');
         zmf::writeSet($configs);
         $this->redirect(array('config/index', 'type' => $type));
+    }
+    
+    public function clearCache(){
+        $arr=  Posts::cacheKeys('admin');
+        foreach($arr as $_cacheKey){
+            zmf::delFCache($_cacheKey);
+        }
+        $this->message(1, '已更新',  Yii::app()->createUrl('admin/config/index'));
     }
 
 }

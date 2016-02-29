@@ -13,31 +13,31 @@
     <thead>
     <tr>
         <?php if($from=='detail'){?>
-        <th>选择</th>
+        <th class="hidden-xs">选择</th>
         <?php }?>
         <th>博客归属</th>
-        <th>主页地址</th>
+        <th class="hidden-xs">主页地址</th>
         <th>昵称</th>
-        <th>点击量</th>
+        <th class="hidden-xs">点击量</th>
         <th>类型</th>
         <th>级别</th>
-        <th>地区</th>
-        <th>价格</th>
+        <th class="hidden-xs">地区</th>
+        <th>价格（元）</th>
     </tr>
     </thead>
     <tbody>
     <?php foreach ($posts as $data): ?> 
         <tr>
             <?php if($from=='detail'){?>
-            <th><input type="checkbox" name="selected[]" value="<?php echo $data->id;?>"></th>
+            <th class="hidden-xs"><input type="checkbox" name="selected[]" value="<?php echo $data->id;?>"></th>
             <?php }?>
             <td><?php echo $data->typeInfo->title;?></td>
-            <td><?php echo $data->url!='' ? CHtml::link(zmf::subStr($data->url),$data->url,array('target'=>'_blank')) : '';?></td>
+            <td class="hidden-xs"><?php echo $data->url!='' ? CHtml::link(zmf::subStr($data->url),$data->url,array('target'=>'_blank')) : '';?></td>
             <td><?php echo $data->nickname;?></td>
-            <td><?php echo $data->hits;?></td>    
+            <td class="hidden-xs"><?php echo $data->hits;?></td>    
             <td><?php echo $data->classifyInfo->title;?></td>
             <td><?php echo ServiceBlogs::level($data->level);?></td>    
-            <td><?php echo $data->location;?></td>
+            <td class="hidden-xs"><?php echo $data->location;?></td>
             <td><?php echo $data->price;?></td>
         </tr>
     <?php endforeach; ?>

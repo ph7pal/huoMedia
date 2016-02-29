@@ -15,8 +15,4 @@ $this->menu=array(
         'link'=>array('index/index'),
         'active'=>in_array($a,array('index'))
     ),
-    '基本统计'=>array(
-        'link'=>array('index/stat'),
-        'active'=>in_array($a,array('stat'))
-    ),
 );

@@ -39,6 +39,86 @@ a{
     word-break: break-all;
     border: 1px solid #f2f2f2
 }
+.conditions {
+    background: #ECEEF4;
+    padding: 0 15px;
+    border-bottom: 1px solid #DBDFEA;
+    line-height: 24px;
+    font-size: 12px;
+    color: #666;
+}
+.con-type-item{
+    margin-top: 0
+}
+.con-type-title{
+    padding: 4px;
+    float: left;
+    font-weight: 700
+}
+.con-type-box{
+    border-bottom: 1px dashed #f2f2f2;
+    padding-left: 50px;
+    margin-bottom: 0
+}
+.con-type-box li{
+    display: inline-block;
+    padding: 4px;
+    list-style-type: none;
+    margin-bottom: 0
+}
+.con-type-box li a {
+    color: #3299FE;
+}
+.con-type-box .active a {
+    color: #FF3201;
+}
+.content .table{
+    border-bottom: 1px solid #f2f2f2
+}
+.content-pager{
+    padding: 0 15px 15px;
+}
+.fixedContacter{
+    position: fixed;
+    right: 0;
+    top: 30%;
+    width: 250px;
+    height: 132px;     
+}    
+.fixedContacter .fa{
+    color: #5D7181
+}
+.contact-items{
+    font-size: 14px;
+    padding: 5px 0 5px 10px;
+}
+.fixedContacter .col-xs-8{
+    border-left:1px solid  #3299FE;
+    border-top:1px solid  #3299FE;
+    border-bottom:1px solid  #3299FE;
+    display: none
+}
+.fixedContacter .col-xs-4{
+    border:1px solid  #3299FE;
+}
+.fixedContacter:hover>.row .col-xs-8{
+    display: block
+}
+.contact-tips{
+    padding: 15px 0 0;
+    height: 130px;   
+}
+.contact-tips .fa{
+    font-size: 72px
+}
+.footer{
+    padding-top: 8px;
+    border-top: 1px solid #ccc;
+    color: #ccc
+}
+.footer a{
+    color: #ccc
+}
 /*登录页面------*/
 .login-form{
     width: 378px;
@@ -54,6 +134,7 @@ a{
     margin-left:330px;
     background: #efefef;
     width:50px;height:50px;
+    display: none
 }
 .side-fixed:hover{background: #337ab7}
 .side-fixed a{
@@ -72,4 +153,4 @@ a{
 .feedback .fa{margin-top: 10px;}
 .back-to-top{bottom:70px;display: none}
 /*意见反馈和返回顶部-------*/
-ul.yiiPager{height:26px;margin:0;padding:0}ul.yiiPager li{display:inline;margin-right: 5px;}ul.yiiPager a:link,ul.yiiPager a:visited{padding:5px 9px;border:1px solid #ccc;border-radius:3px;background:#fff;color:#777;font-weight:normal}ul.yiiPager a:hover{border-color:#449d44;box-shadow:1px 1px 1px #333;color:#035d67;text-decoration:none}ul.yiiPager .selected a{padding:6px 10px;border:0;border-radius:3px;background:#449d44;color:#fff}ul.yiiPager .hidden,ul.yiiPager .last,ul.yiiPager .first{display:none}ul.yiiPager .previous{float: left}ul.yiiPager .next{float: right;margin-right: 0}ul.yiiPager .page{float:left}
+ul.yiiPager{height:26px;margin:0;padding:0}ul.yiiPager li{display:inline;margin-right: 5px;}ul.yiiPager a:link,ul.yiiPager a:visited{padding:5px 9px;border:1px solid #ccc;border-radius:3px;background:#fff;color:#777;font-weight:normal}ul.yiiPager a:hover{border-color:#449d44;box-shadow:1px 1px 1px #333;color:#035d67;text-decoration:none}ul.yiiPager .selected a{padding:6px 10px;border:0;border-radius:3px;background:#449d44;color:#fff}ul.yiiPager .hidden,ul.yiiPager .last,ul.yiiPager .first{display:none}ul.yiiPager .previous{float: left}ul.yiiPager .next{margin-right: 0}ul.yiiPager .page{float:left}

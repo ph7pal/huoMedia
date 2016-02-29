@@ -72,9 +72,10 @@ class Config extends CActiveRecord {
     public static function navbar($type = 'admin') {
         $arr = array(
             'baseinfo' => '基本信息',
-            'upload' => '上传设置',
+//            'upload' => '上传设置',
             'base' => '全局设置',
-            'email' => '邮件设置',
+//            'email' => '邮件设置',
+            'clearCache' => '清除缓存',
         );
         if ($type == 'admin') {
             return $arr;

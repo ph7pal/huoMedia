@@ -9,7 +9,7 @@
         $cs->registerCssFile(Yii::app()->baseUrl . '/common/admin/zmf.css');
         $cs->registerCssFile(Yii::app()->baseUrl . '/common/admin/web-font-awesome.css');
         $cs->registerCoreScript('jquery');
-        $cs->registerScriptFile(Yii::app()->baseUrl . "/jsCssSrc/js/web-bootstrap.js", CClientScript::POS_HEAD);
+        $cs->registerScriptFile(Yii::app()->baseUrl . "/jsCssSrc/coreJs/bootstrap-v3.3.4.js", CClientScript::POS_HEAD);
         $cs->registerScriptFile(Yii::app()->baseUrl . "/jsCssSrc/js/web-zmf.js", CClientScript::POS_END);
         ?>  
         <link rel="shortcut icon" href="<?php echo zmf::config('baseurl');?>favicon.ico" type="image/x-icon" />
