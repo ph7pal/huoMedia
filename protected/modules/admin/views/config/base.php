@@ -8,7 +8,7 @@
 </p>
 <p><label>缓存状态：</label>
     <select name="fileCache" id="fileCache">
-        <option value="0" <?php if($c['fileCache']=='1'){?>selected="selected"<?php }?>>关闭</option>
-        <option value="1" <?php if($c['fileCache']=='2'){?>selected="selected"<?php }?>>开启</option>
+        <option value="0" <?php if($c['fileCache']=='0'){?>selected="selected"<?php }?>>关闭</option>
+        <option value="1" <?php if($c['fileCache']=='1'){?>selected="selected"<?php }?>>开启</option>
     </select>
 </p>

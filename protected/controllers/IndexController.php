@@ -212,7 +212,7 @@ class IndexController extends Q {
             if ($typeCode) {
                 $criteria->addCondition('type=:type');
                 $criteria->params[':type'] = $typeCode;
-                $title = ServiceWebsites::types($type);
+                $title = ServiceWebsites::types($typeCode);
             }
             if ($keyword) {
                 $criteria->addSearchCondition('nickname', $keyword);
@@ -252,6 +252,9 @@ class IndexController extends Q {
             $view = '/index/_video';
             $title = '视频网站';
             $tags = ServiceVideos::getTags();
+        }
+        if(!$view){
+            throw new CHttpException(404, '您所查看的页面不存在.');
         }
         $this->pageTitle = $title . ' - ' . zmf::config('sitename');
         $now = zmf::now();
@@ -358,8 +361,12 @@ class IndexController extends Q {
                 }
                 $_char = $charterArr[$k + 1];
                 if (in_array($_attr, array('type', 'classify', 'forum', 'position'))) {
-                    $_battr = $_attr . 'Info';
-                    $_value = $pv->$_battr->title;
+                    if($table=='site' && $_attr=='type'){
+                        $_value=  ServiceWebsites::types($pv->$_attr);
+                    }else{
+                        $_battr = $_attr . 'Info';
+                        $_value = $pv->$_battr->title;
+                    }
                 } else {
                     $_value = $pv[$_attr];
                 }

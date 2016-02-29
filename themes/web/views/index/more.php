@@ -18,14 +18,17 @@
                 </div>
                 <div class="col-sm-3">
                     <?php if(!in_array($table,array('forum','video'))){?>
-                    <form method="GET" action="<?php echo Posts::url('btn','search');?>">
+                    <?php $form=$this->beginWidget('CActiveForm', array(
+                            'id'=>'search-form',
+                            'method'=>'GET',
+                    )); ?>
                         <div class="input-group">
                             <input type="text" name="keyword" class="form-control" placeholder="请输入关键词">
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="submit">搜索</button>
                             </span>
                         </div>
-                    </form>
+                    <?php $this->endWidget(); ?>
                     <?php }?>
                 </div>
             </div>
@@ -35,7 +38,9 @@
             <div class="con-type-item">
                 <span class="con-type-title"><?php echo $arr['label'];?></span>
                 <ul class="con-type-box">
+                    <?php if($table=='site' && $_key=='type'){}else{?>
                     <li class="<?php echo !$_GET[$_key] ? 'active' : '';?>"><?php echo CHtml::link('不限',  Posts::url($_key,''));?></li>
+                    <?php }?>
                     <?php foreach($arr['items'] as $_tag){?>
                     <li class="<?php echo $_GET[$_key]==$_tag['id'] ? 'active' : '';?>"><?php echo CHtml::link($_tag['title'],Posts::url($_key,$_tag['id']));?></li>
                     <?php }?>
