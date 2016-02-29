@@ -388,23 +388,124 @@ class IndexController extends Q {
     }
 
     public function actionIntoTags() {
-        $page=  zmf::val('page',2);
-        $page=$page>1 ? $page : 1;
-        $limit=30;
-        $classify='videoPosition';
+        $page = zmf::val('page', 2);
+        $page = $page > 1 ? $page : 1;
+        $limit = 30;
+        $classify = 'mediaClassify';
         $dir = Yii::app()->basePath . '/runtime/tags';
         $filename = $dir . '/tags.txt';
         $items = file($filename);
-        $items=array_map('self::trimall', $items);
+        $items = array_map('self::trimall', $items);
         $items = array_unique(array_filter($items));
-        foreach ($items as $_tag){
+        foreach ($items as $_tag) {
             $_data = array(
                 'title' => $_tag,
                 'classify' => $classify,
             );
             $modelB = new Tags;
             $modelB->attributes = $_data;
-            $modelB->save();            
+            $modelB->save();
+        }
+        echo 'well done!!';
+    }
+
+    public function actionIntoBelongTags() {
+        $classify = 'forumType';
+        $dir = Yii::app()->basePath . '/runtime/tags';
+        $filename = $dir . '/belongTags.txt';
+        $items = file($filename);
+        $items = array_map('self::trimall', $items);
+        $items = array_unique(array_filter($items));
+        foreach ($items as $_tag) {
+            $_arr = explode('@', $_tag);
+            $_info = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'forumForum'));
+            if (!$_info) {
+                continue;
+            }
+            $_data = array(
+                'title' => $_arr[1],
+                'classify' => $classify,
+                'pid' => $_info['id'],
+            );
+            $modelB = new Tags;
+            $modelB->attributes = $_data;
+            $modelB->save();
+        }
+        echo 'well done!!';
+    }
+
+    public function actionInto() {
+        $classify = 'media';
+        $dir = Yii::app()->basePath . '/runtime/items';
+        $filename = $dir . '/' . $classify . '.txt';
+        $items = file($filename);
+        $items = array_map('self::trimall', $items);
+        $items = array_unique(array_filter($items));
+        foreach ($items as $_tag) {
+            $_arr = explode('@', $_tag);
+            if ($classify == 'forum') {
+                if (!$_arr[0] || !$_arr[1]) {
+                    continue;
+                }
+                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'forumClassify'));
+                if (!$_info1) {
+                    continue;
+                }
+                $_info2 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[1], ':classify' => 'forumForum'));
+                if (!$_info2) {
+                    continue;
+                }
+                $_info3 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[2], ':classify' => 'forumType'));
+                $_data = array(
+                    'uid' => 1,
+                    'classify' => $_info1['id'],
+                    'forum' => $_info2['id'],
+                    'type' => $_info3['id'],
+                    'url' => $_arr[3],
+                    'forDigest' => zmf::myint($_arr[4]),
+                    'forDay' => zmf::myint($_arr[5]),
+                    'forWeek' => zmf::myint($_arr[6]),
+                    'forTwoWeek' => zmf::myint($_arr[7]),
+                    'forMonth' => zmf::myint($_arr[8]),
+                    'forQuarter' => zmf::myint($_arr[9]),
+                    'forHalfYear' => zmf::myint($_arr[10]),
+                    'forYear' => zmf::myint($_arr[11]),
+                );
+                $modelB = new ServiceForums;
+                $modelB->attributes = $_data;
+                $modelB->save();
+            } elseif ($classify == 'blog') {
+                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'blogType'));
+                $_info2 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[4], ':classify' => 'blogClassify'));
+                $_data = array(
+                    'uid' => 1,
+                    'type' => $_info1['id'],
+                    'classify' => $_info2['id'],
+                    'level' => ServiceBlogs::level('getCode', $_arr[5]),
+                    'nickname' => $_arr[2],
+                    'url' => $_arr[1],
+                    'hits' => zmf::myint($_arr[3]),
+                    'price' => $_arr[5] == '十万' ? '50' : ($_arr[5] == '百万' ? '100' : ($_arr[5] == '千万' ? '300' : '')),
+                );
+                $modelB = new ServiceBlogs;
+                $modelB->attributes = $_data;
+                $modelB->save();
+            } elseif ($classify == 'media') {
+                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'mediaClassify'));
+                $_data = array(
+                    'uid' => 1,
+                    'classify' =>$_info1['id'],
+                    'isSource' => ServiceMedias::isSource('getCode',$_arr[3]),
+                    'hasLink' => ServiceMedias::hasLink('getCode',$_arr[4]),
+                    'title' => $_arr[1],
+                    'url' => $_arr[2],
+                    'price' => zmf::myint($_arr[5]),
+                    'postscript' => $_arr[6],
+                );                
+                $modelB = new ServiceMedias;
+                $modelB->attributes = $_data;
+                $modelB->save();
+            }
         }
         echo 'well done!!';
     }

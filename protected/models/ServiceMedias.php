@@ -80,11 +80,11 @@ class ServiceMedias extends CActiveRecord {
             'criteria' => $criteria,
         ));
     }
-    
+
     public function beforeSave() {
-        if($this->url!=''){
-            if (stripos($this->url, 'http://') === false && stripos($this->url, 'https://') === false){
-                $this->url='http://'.$this->url;
+        if ($this->url != '') {
+            if (stripos($this->url, 'http://') === false && stripos($this->url, 'https://') === false) {
+                $this->url = 'http://' . $this->url;
             }
         }
         return true;
@@ -100,7 +100,7 @@ class ServiceMedias extends CActiveRecord {
         return parent::model($className);
     }
 
-    public static function isSource($return = '') {
+    public static function isSource($return = '', $extra = '') {
         $arr = array(
             '1000' => '百度新闻源',
             '1001' => '网易新闻源',
@@ -116,6 +116,9 @@ class ServiceMedias extends CActiveRecord {
                 );
             }
             return $returnArr;
+        } elseif ($return == 'getCode') {
+            $arr = array_flip($arr);
+            return $arr[$extra];
         } elseif ($return != 'admin') {
             return $arr[$return];
         } else {
@@ -123,7 +126,7 @@ class ServiceMedias extends CActiveRecord {
         }
     }
 
-    public static function hasLink($return = '') {
+    public static function hasLink($return = '', $extra = '') {
         $arr = array(
             '1' => '不能带网址',
             '2' => '可带网址',
@@ -138,6 +141,9 @@ class ServiceMedias extends CActiveRecord {
                 );
             }
             return $returnArr;
+        } elseif ($return == 'getCode') {
+            $arr = array_flip($arr);
+            return $arr[$extra];
         } elseif ($return != 'admin') {
             return $arr[$return];
         } else {

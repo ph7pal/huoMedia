@@ -96,16 +96,19 @@ class ServiceBlogs extends CActiveRecord {
 
     public function beforeSave() {
         $this->location = Area::getBelongInfo($this->area);
-        if($this->url!=''){
-            if (stripos($this->url, 'http://') === false && stripos($this->url, 'https://') === false){
-                $this->url='http://'.$this->url;
+        if ($this->url != '') {
+            if (stripos($this->url, 'http://') === false && stripos($this->url, 'https://') === false) {
+                $this->url = 'http://' . $this->url;
             }
         }
         return true;
     }
 
-    public static function level($return = '') {
+    public static function level($return = '', $extra = '') {
         $arr = array(
+            '997' => '百',
+            '998' => '千',
+            '999' => '万',
             '1000' => '十万',
             '1001' => '百万',
             '1002' => '千万',
@@ -121,6 +124,9 @@ class ServiceBlogs extends CActiveRecord {
                 );
             }
             return $returnArr;
+        } elseif ($return == 'getCode') {
+            $arr = array_flip($arr);
+            return $arr[$extra];
         } elseif ($return != 'admin') {
             return $arr[$return];
         } else {
@@ -130,7 +136,7 @@ class ServiceBlogs extends CActiveRecord {
 
     public static function getTags() {
         $cacheKey = Posts::cacheKeys('blogTags');
-        $expire=  Posts::CACHEEXPIRE;
+        $expire = Posts::CACHEEXPIRE;
         $posts = zmf::getFCache($cacheKey);
         if (!$posts) {
             $tags = Tags::model()->findAll(array(
