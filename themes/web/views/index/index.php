@@ -25,14 +25,14 @@
         <div class="panel-heading">
             <h3 class="panel-title">美丽说<span class="pull-right small"><?php echo CHtml::link('查看更多 <i class="fa fa-arrow-circle-right"></i>',array('index/more','table'=>'site','type'=>'meilishuo'));?></span></h3>
         </div>
-        <?php $this->renderPartial('/index/_website', array('posts' => $meilis)); ?>    
+        <?php $this->renderPartial('/index/_website', array('posts' => $meilis,'type'=>'meilishuo')); ?>    
     </div>
     <?php }if(!empty($mogus)){?>
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">蘑菇街<span class="pull-right small"><?php echo CHtml::link('查看更多 <i class="fa fa-arrow-circle-right"></i>',array('index/more','table'=>'site','type'=>'mogu'));?></span></h3>
         </div>
-        <?php $this->renderPartial('/index/_website', array('posts' => $mogus)); ?>    
+        <?php $this->renderPartial('/index/_website', array('posts' => $mogus,'type'=>'mogu')); ?>    
     </div>
     <?php }if(!empty($videos)){?>
     <div class="panel panel-default">
@@ -46,14 +46,14 @@
         <div class="panel-heading">
             <h3 class="panel-title">人人<span class="pull-right small"><?php echo CHtml::link('查看更多 <i class="fa fa-arrow-circle-right"></i>',array('index/more','table'=>'site','type'=>'renren'));?></span></h3>
         </div>
-        <?php $this->renderPartial('/index/_website', array('posts' => $renrens)); ?>    
+        <?php $this->renderPartial('/index/_website', array('posts' => $renrens,'type'=>'renren')); ?>    
     </div>
     <?php }if(!empty($doubans)){?>
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">豆瓣<span class="pull-right small"><?php echo CHtml::link('查看更多 <i class="fa fa-arrow-circle-right"></i>',array('index/more','table'=>'site','type'=>'douban'));?></span></h3>
         </div>
-        <?php $this->renderPartial('/index/_website', array('posts' => $doubans)); ?>    
+        <?php $this->renderPartial('/index/_website', array('posts' => $doubans,'type'=>'douban')); ?>    
     </div>
     <?php }?>
 </div>

@@ -67,7 +67,7 @@ class TagsController extends Admin {
             }
         }
         $belongTags = array();
-        if ($classify == 'forumType') {
+        if ($model->classify == 'forumType') {
             $belongTags = Tags::getClassifyTags('forumForum');
         }
 

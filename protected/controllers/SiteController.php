@@ -66,7 +66,10 @@ class SiteController extends Q {
 //                    User::model()->updateByPk($uid, $arr);                    
                     zmf::delCookie('checkWithCaptcha');
                     zmf::delFCache($cacheKey);
-                    if($this->referer){
+                    $info=  Users::getOne($uid);
+                    if($info['isAdmin']){
+                        $this->redirect(array('admin/index/index'));
+                    }elseif($this->referer){
                         $this->redirect($this->referer);
                     }else{
                         $this->redirect(zmf::config('baseurl'));

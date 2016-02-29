@@ -9,20 +9,44 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="<?php echo zmf::config('baseurl');?>">
                 <img alt="Brand" src="<?php echo zmf::config('baseurl');?>common/images/logo.png">
             </a>
         </div>
         
         <div class="collapse navbar-collapse" id="navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">Link</a></li>
-                <li><a href="#">Link</a></li>
+                <li class="<?php echo $_GET['table']=='forum' ? 'active' : '';?>"><?php echo CHtml::link('<i class="fa fa-users"></i> 社区',array('index/more','table'=>'forum'));?></li>
+                <li class="<?php echo $_GET['table']=='blog' ? 'active' : '';?>"><?php echo CHtml::link('<i class="fa fa-user"></i> 博客',array('index/more','table'=>'blog'));?></li>
+                <li class="<?php echo $_GET['table']=='media' ? 'active' : '';?>"><?php echo CHtml::link('<i class="fa fa-bullhorn"></i> 媒体',array('index/more','table'=>'media'));?></li>
+                <li class="<?php echo $_GET['table']=='video' ? 'active' : '';?>"><?php echo CHtml::link('<i class="fa fa-play-circle"></i> 视频',array('index/more','table'=>'video'));?></li>
+                <li class="<?php echo $_GET['table']=='site' ? 'active' : '';?>"><?php echo CHtml::link('<i class="fa fa-weibo"></i> 红人馆',array('index/more','table'=>'site','type'=>'meilishuo'));?></li>                
             </ul>
         </div>
     </div>
 </nav>
 <?php echo $content; ?>
-<div class="side-fixed back-to-top"><a href="#top" title="返回顶部"><span class="fa fa-angle-up"></span></a></div>
-<div class="side-fixed feedback"><a href="javascript:;" title="意见反馈" action="feedback"><span class="fa fa-comment"></span></a></div>
+<div class="footer">
+    <div class="container text-center">
+        <p>Copyright &copy; <?php echo CHtml::link(zmf::config('sitename'),  zmf::config('baseurl'));?> All Right reserved.</p>
+    </div>
+</div>
+<div class="fixedContacter hidden-xs">
+    <div class="row">
+        <div class="col-xs-8 col-sm-8">
+            <div class="contact-items">
+                <p><i class="fa fa-user"></i> <?php echo zmf::config('contactName');?></p>
+                <p><i class="fa fa-phone"></i> <?php echo zmf::config('contactPhone');?></p>
+                <p><i class="fa fa-qq"></i> <?php echo zmf::config('contactQQ');?></p>
+                <p><i class="fa fa-wechat"></i> <?php echo zmf::config('contactWeixin');?></p>
+            </div>
+        </div>
+        <div class="col-xs-4 col-sm-4 pull-right">
+            <div class="contact-tips">
+                <p><i class="fa fa-user"></i></p>
+                <p>联系我们</p> 
+            </div>
+        </div>
+    </div>
+</div>
 <?php $this->endContent(); ?>

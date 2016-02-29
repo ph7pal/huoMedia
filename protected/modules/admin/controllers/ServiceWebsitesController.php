@@ -2,6 +2,11 @@
 
 class ServiceWebsitesController extends Admin {
 
+    public function init() {
+        parent::init();
+        $this->checkPower('serviceWebsite');
+    }
+
     /**
      * @return array action filters
      */
@@ -51,14 +56,19 @@ class ServiceWebsitesController extends Admin {
      * Creates a new model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
-    public function actionCreate() {
-        $type=  zmf::val('type',1);
-        if(!$type){
-            $this->redirect(array('create', 'type' => 1000));
+    public function actionCreate($id = '') {
+        $this->checkPower('addWebsite');
+        if ($id) {
+            $model=  $this->loadModel($id);
+        } else {
+            $type = zmf::val('type', 1);
+            if (!$type) {
+                $this->redirect(array('create', 'type' => 1000));
+            }
+            $typeLabel = ServiceWebsites::types($type);
+            $model = new ServiceWebsites;
+            $model->type = $type;
         }
-        $typeLabel=ServiceWebsites::types($type);        
-        $model = new ServiceWebsites;
-        $model->type=$type;
         if (isset($_POST['ServiceWebsites'])) {
             $model->attributes = $_POST['ServiceWebsites'];
             if ($model->save())
@@ -76,20 +86,7 @@ class ServiceWebsitesController extends Admin {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
-        $model = $this->loadModel($id);
-
-        // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
-
-        if (isset($_POST['ServiceWebsites'])) {
-            $model->attributes = $_POST['ServiceWebsites'];
-            if ($model->save())
-                $this->redirect(array('view', 'id' => $model->id));
-        }
-
-        $this->render('update', array(
-            'model' => $model,
-        ));
+        $this->actionCreate($id);
     }
 
     /**
@@ -98,24 +95,28 @@ class ServiceWebsitesController extends Admin {
      * @param integer $id the ID of the model to be deleted
      */
     public function actionDelete($id) {
-        $this->loadModel($id)->delete();
-
+        $this->checkPower('delWebsite');        
+        $this->loadModel($id)->updateByPk($id,array('status'=>  Posts::STATUS_DELED));
         // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
         if (!isset($_GET['ajax']))
-            $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+            $this->redirect(array('index'));
     }
 
     /**
      * Lists all models.
      */
     public function actionIndex() {
-        $type=  zmf::val('type',2);
-        if(!$type){
-            $this->redirect(array('index', 'type' => 1000));
-        }        
+        $type = zmf::val('type', 1);
+        if (!$type) {
+            $this->redirect(array('index', 'type' => 'meilishuo'));
+        }
+        $typeCode = ServiceWebsites::getTypeCode($type);
+        if (!$typeCode) {
+            $this->redirect(array('index', 'type' => 'meilishuo'));
+        }
         $criteria = new CDbCriteria();
         $criteria->addCondition('status=' . Posts::STATUS_PASSED);
-        $criteria->addCondition('type=' . $type);
+        $criteria->addCondition('type=' . $typeCode);
         $criteria->order = 'cTime DESC';
         $count = ServiceWebsites::model()->count($criteria);
         $pager = new CPagination($count);
@@ -126,6 +127,7 @@ class ServiceWebsitesController extends Admin {
         $this->render('index', array(
             'pages' => $pager,
             'posts' => $posts,
+            'type' => $type,
         ));
     }
 

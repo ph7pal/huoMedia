@@ -1,20 +1,8 @@
 var tipsImgOrder = 0;
 var beforeModal;
 var ajaxReturn = true;
-
 var url=window.location.href;
-
-$(window).scroll(function () {
-    $(window).scrollTop() > 100 ? $(".back-to-top").fadeIn() : $(".back-to-top").fadeOut();
-}), $(".back-to-top").click(function () {
-    return $("body,html").animate({
-        scrollTop: 0
-    }, 200), !1;
-}), $(window).resize(function () {
-    backToTop();
-}), backToTop();
-
-function rebind() {    
+function rebind() {
     //输入框自动变大
     //textareaAutoResize();
     //意见反馈
@@ -238,18 +226,6 @@ function checkLogin() {
     } else {
         return false;
     }
-}
-function backToTop() {
-    var x = $(window).width();
-    var x1 = $(".container").width();
-    var x2 = $("#back-to-top").width();
-    if (x < x1) {
-        var x3 = x1 + 8;
-    } else {
-        var x3 = parseInt((x + x1 + 16) / 2);
-    }
-    $("#back-to-top").css('left', x3 + 'px');
-    //alert(x3);
 }
 function textareaAutoResize() {
     $('textarea').autoResize({

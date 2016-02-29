@@ -3,8 +3,8 @@
 //分页widget代码: 
 $this->widget('CLinkPager', array(
     'header' => '',
-    'prevPageLabel' => '<i class="fa fa-angle-double-left"></i>',
-    'nextPageLabel' => '<i class="fa fa-angle-double-right"></i>',
+    'prevPageLabel' => '上一页',
+    'nextPageLabel' => '下一页',
     'firstPageLabel' => '',
     'lastPageLabel' => '',
     'maxButtonCount' => 5,

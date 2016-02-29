@@ -17,15 +17,15 @@ $arr = array(
     'serviceVideos' => array('label' => '视频网站'),
     'serviceWebsites' => array(
         'label' => '主页',
-        'children' => ServiceWebsites::types('admin')
+        'children' => ServiceWebsites::getTypeArr()
     ),
 );
 foreach ($arr as $k => $v) {
     if(!empty($v['children'])){
-        foreach ($v['children'] as $_type=>$_sitename){
-            $this->menu[$_sitename.$v['label']] = array(
-                'link' => array($k . '/index','type'=>$_type),
-                'active' => ($c == $k && $_GET['type']==$_type)
+        foreach ($v['children'] as $_val){
+            $this->menu[$_val['title'].$v['label']] = array(
+                'link' => array($k . '/index','type'=>$_val['id']),
+                'active' => ($c == $k && $_GET['type']==$_val['id'])
             );
         }
     }else{

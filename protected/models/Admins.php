@@ -88,36 +88,66 @@ class Admins extends CActiveRecord {
             'addUser' => '新增用户',
             'updateUser' => '更新用户',
         );
-        $lang['posts']['desc'] = '文章相关，包括增删改等';
-        $lang['posts']['detail'] = array(
-            'posts' => '文章列表',
-            'delPost' => '删除文章',
-        );
-        $lang['comments']['desc'] = '评论相关，包括增删改等';
-        $lang['comments']['detail'] = array(
-            'comments' => '评论列表',
-            'delComment' => '删除评论',
-        );
-        $lang['tags']['desc'] = '标签相关，包括增删改等';
+//        $lang['posts']['desc'] = '文章相关，包括增删改等';
+//        $lang['posts']['detail'] = array(
+//            'posts' => '文章列表',
+//            'delPost' => '删除文章',
+//        );
+//        $lang['comments']['desc'] = '评论相关，包括增删改等';
+//        $lang['comments']['detail'] = array(
+//            'comments' => '评论列表',
+//            'delComment' => '删除评论',
+//        );
+        $lang['tags']['desc'] = '分类相关，包括增删改等';
         $lang['tags']['detail'] = array(
-            'tags' => '标签列表',
-            'addTag' => '新增标签',
-            'delTag' => '删除标签',
+            'tags' => '分类列表',
+            'addTag' => '新增分类',
+            'delTag' => '删除分类',
         );
-        $lang['attachments']['desc'] = '图片相关';
-        $lang['attachments']['detail'] = array(
-            'attachments' => '图片列表',
+        $lang['serviceBlog']['desc'] = '博客内容相关，包括增删改等';
+        $lang['serviceBlog']['detail'] = array(
+            'serviceBlog' => '博客列表',
+            'addBlog' => '新增博客',
+            'delBlog' => '删除博客',
         );
-        $lang['feedback']['desc'] = '意见反馈';
-        $lang['feedback']['detail'] = array(
-            'feedback' => '意见反馈',
+        $lang['serviceForum']['desc'] = '论坛内容相关，包括增删改等';
+        $lang['serviceForum']['detail'] = array(
+            'serviceForum' => '论坛列表',
+            'addForum' => '新增论坛',
+            'delForum' => '删除论坛',
         );
-        $lang['siteInfo']['desc'] = '站点文章';
-        $lang['siteInfo']['detail'] = array(
-            'siteInfo' => '站点文章',
-            'addSiteInfo' => '新增站点文章',
-            'updateSiteInfo' => '更新站点文章',
+        $lang['serviceMedia']['desc'] = '媒体内容相关，包括增删改等';
+        $lang['serviceMedia']['detail'] = array(
+            'serviceMedia' => '媒体列表',
+            'addMedia' => '新增媒体',
+            'delMedia' => '删除媒体',
         );
+        $lang['serviceVideo']['desc'] = '视频内容相关，包括增删改等';
+        $lang['serviceVideo']['detail'] = array(
+            'serviceVideo' => '视频列表',
+            'addVideo' => '新增视频',
+            'delVideo' => '删除视频',
+        );
+        $lang['serviceWebsite']['desc'] = '主页内容相关，包括增删改等';
+        $lang['serviceWebsite']['detail'] = array(
+            'serviceWebsite' => '主页列表',
+            'addWebsite' => '新增视频',
+            'delWebsite' => '删除视频',
+        );
+//        $lang['attachments']['desc'] = '图片相关';
+//        $lang['attachments']['detail'] = array(
+//            'attachments' => '图片列表',
+//        );
+//        $lang['feedback']['desc'] = '意见反馈';
+//        $lang['feedback']['detail'] = array(
+//            'feedback' => '意见反馈',
+//        );
+//        $lang['siteInfo']['desc'] = '站点文章';
+//        $lang['siteInfo']['detail'] = array(
+//            'siteInfo' => '站点文章',
+//            'addSiteInfo' => '新增站点文章',
+//            'updateSiteInfo' => '更新站点文章',
+//        );
         $lang['admins']['desc'] = '后台管理员';
         $lang['admins']['detail'] = array(
             'admins' => '后台管理员',

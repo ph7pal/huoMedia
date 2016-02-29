@@ -34,7 +34,7 @@ class ServiceVideos extends CActiveRecord {
             array('uid', 'default', 'setOnEmpty' => true, 'value' => zmf::uid()),
             array('cTime', 'default', 'setOnEmpty' => true, 'value' => zmf::now()),
             array('status', 'default', 'setOnEmpty' => true, 'value' => Posts::STATUS_PASSED),
-            array('uid, type, classify, position, url, stayTime, price', 'required'),
+            array('uid', 'required'),
             array('status', 'numerical', 'integerOnly' => true),
             array('uid, type, cTime', 'length', 'max' => 10),
             array('classify, position, url, stayTime, price', 'length', 'max' => 255),

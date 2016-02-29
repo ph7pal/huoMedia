@@ -135,6 +135,7 @@ class IndexController extends Q {
         } elseif ($table == 'blog') {
             $blogType = zmf::val('blogType', 2);
             $blogClassify = zmf::val('blogClassify', 2);
+            $level = zmf::val('level', 2);
             $criteria = new CDbCriteria();
             if ($blogType) {
                 $criteria->addCondition('type=:type');
@@ -146,6 +147,10 @@ class IndexController extends Q {
             }
             if ($keyword) {
                 $criteria->addSearchCondition('nickname', $keyword);
+            }
+            if($level){
+                $criteria->addCondition('level=:level');
+                $criteria->params[':level'] = $level;
             }
             $criteria->addCondition('status=' . Posts::STATUS_PASSED);
             $criteria->order = 'cTime DESC';
@@ -183,6 +188,7 @@ class IndexController extends Q {
             $forumClassify = zmf::val('forumClassify', 2);
             $forumForum = zmf::val('forumForum', 2);
             $type = zmf::val('type', 1);
+            $websiteClassify = zmf::val('websiteClassify', 2);
             if (!$type) {
                 throw new CHttpException(404, '您所查看的列表不存在.');
             }
@@ -199,10 +205,14 @@ class IndexController extends Q {
                 $criteria->addCondition('forum=:forum');
                 $criteria->params[':forum'] = $forumForum;
             }
+            if ($websiteClassify) {
+                $criteria->addCondition('classify=:classify');
+                $criteria->params[':classify'] = $websiteClassify;
+            }
             if ($typeCode) {
                 $criteria->addCondition('type=:type');
                 $criteria->params[':type'] = $typeCode;
-                $title = ServiceWebsites::types($type);
+                $title = ServiceWebsites::types($typeCode);
             }
             if ($keyword) {
                 $criteria->addSearchCondition('nickname', $keyword);
@@ -242,6 +252,9 @@ class IndexController extends Q {
             $view = '/index/_video';
             $title = '视频网站';
             $tags = ServiceVideos::getTags();
+        }
+        if(!$view){
+            throw new CHttpException(404, '您所查看的页面不存在.');
         }
         $this->pageTitle = $title . ' - ' . zmf::config('sitename');
         $now = zmf::now();
@@ -348,8 +361,12 @@ class IndexController extends Q {
                 }
                 $_char = $charterArr[$k + 1];
                 if (in_array($_attr, array('type', 'classify', 'forum', 'position'))) {
-                    $_battr = $_attr . 'Info';
-                    $_value = $pv->$_battr->title;
+                    if($table=='site' && $_attr=='type'){
+                        $_value=  ServiceWebsites::types($pv->$_attr);
+                    }else{
+                        $_battr = $_attr . 'Info';
+                        $_value = $pv->$_battr->title;
+                    }
                 } else {
                     $_value = $pv[$_attr];
                 }
@@ -386,134 +403,4 @@ class IndexController extends Q {
         //$this->redirect($this->referer);
         exit;
     }
-
-    public function actionIntoTags() {
-        $page = zmf::val('page', 2);
-        $page = $page > 1 ? $page : 1;
-        $limit = 30;
-        $classify = 'mediaClassify';
-        $dir = Yii::app()->basePath . '/runtime/tags';
-        $filename = $dir . '/tags.txt';
-        $items = file($filename);
-        $items = array_map('self::trimall', $items);
-        $items = array_unique(array_filter($items));
-        foreach ($items as $_tag) {
-            $_data = array(
-                'title' => $_tag,
-                'classify' => $classify,
-            );
-            $modelB = new Tags;
-            $modelB->attributes = $_data;
-            $modelB->save();
-        }
-        echo 'well done!!';
-    }
-
-    public function actionIntoBelongTags() {
-        $classify = 'forumType';
-        $dir = Yii::app()->basePath . '/runtime/tags';
-        $filename = $dir . '/belongTags.txt';
-        $items = file($filename);
-        $items = array_map('self::trimall', $items);
-        $items = array_unique(array_filter($items));
-        foreach ($items as $_tag) {
-            $_arr = explode('@', $_tag);
-            $_info = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'forumForum'));
-            if (!$_info) {
-                continue;
-            }
-            $_data = array(
-                'title' => $_arr[1],
-                'classify' => $classify,
-                'pid' => $_info['id'],
-            );
-            $modelB = new Tags;
-            $modelB->attributes = $_data;
-            $modelB->save();
-        }
-        echo 'well done!!';
-    }
-
-    public function actionInto() {
-        $classify = 'media';
-        $dir = Yii::app()->basePath . '/runtime/items';
-        $filename = $dir . '/' . $classify . '.txt';
-        $items = file($filename);
-        $items = array_map('self::trimall', $items);
-        $items = array_unique(array_filter($items));
-        foreach ($items as $_tag) {
-            $_arr = explode('@', $_tag);
-            if ($classify == 'forum') {
-                if (!$_arr[0] || !$_arr[1]) {
-                    continue;
-                }
-                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'forumClassify'));
-                if (!$_info1) {
-                    continue;
-                }
-                $_info2 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[1], ':classify' => 'forumForum'));
-                if (!$_info2) {
-                    continue;
-                }
-                $_info3 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[2], ':classify' => 'forumType'));
-                $_data = array(
-                    'uid' => 1,
-                    'classify' => $_info1['id'],
-                    'forum' => $_info2['id'],
-                    'type' => $_info3['id'],
-                    'url' => $_arr[3],
-                    'forDigest' => zmf::myint($_arr[4]),
-                    'forDay' => zmf::myint($_arr[5]),
-                    'forWeek' => zmf::myint($_arr[6]),
-                    'forTwoWeek' => zmf::myint($_arr[7]),
-                    'forMonth' => zmf::myint($_arr[8]),
-                    'forQuarter' => zmf::myint($_arr[9]),
-                    'forHalfYear' => zmf::myint($_arr[10]),
-                    'forYear' => zmf::myint($_arr[11]),
-                );
-                $modelB = new ServiceForums;
-                $modelB->attributes = $_data;
-                $modelB->save();
-            } elseif ($classify == 'blog') {
-                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'blogType'));
-                $_info2 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[4], ':classify' => 'blogClassify'));
-                $_data = array(
-                    'uid' => 1,
-                    'type' => $_info1['id'],
-                    'classify' => $_info2['id'],
-                    'level' => ServiceBlogs::level('getCode', $_arr[5]),
-                    'nickname' => $_arr[2],
-                    'url' => $_arr[1],
-                    'hits' => zmf::myint($_arr[3]),
-                    'price' => $_arr[5] == '十万' ? '50' : ($_arr[5] == '百万' ? '100' : ($_arr[5] == '千万' ? '300' : '')),
-                );
-                $modelB = new ServiceBlogs;
-                $modelB->attributes = $_data;
-                $modelB->save();
-            } elseif ($classify == 'media') {
-                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'mediaClassify'));
-                $_data = array(
-                    'uid' => 1,
-                    'classify' =>$_info1['id'],
-                    'isSource' => ServiceMedias::isSource('getCode',$_arr[3]),
-                    'hasLink' => ServiceMedias::hasLink('getCode',$_arr[4]),
-                    'title' => $_arr[1],
-                    'url' => $_arr[2],
-                    'price' => zmf::myint($_arr[5]),
-                    'postscript' => $_arr[6],
-                );                
-                $modelB = new ServiceMedias;
-                $modelB->attributes = $_data;
-                $modelB->save();
-            }
-        }
-        echo 'well done!!';
-    }
-
-    function trimall($str) {//删除空格
-        $qian = array(" ", "　", "\t", "\n", "\r");
-        $hou = array("", "", "", "", "");
-        return str_replace($qian, $hou, $str);
-    }
-
 }

@@ -2,6 +2,11 @@
 
 class ServiceForumsController extends Admin {
 
+    public function init() {
+        parent::init();
+        $this->checkPower('serviceForum');
+    }
+
     /**
      * @return array action filters
      */
@@ -51,9 +56,13 @@ class ServiceForumsController extends Admin {
      * Creates a new model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
-    public function actionCreate() {
-        $model = new ServiceForums;
-
+    public function actionCreate($id='') {
+        $this->checkPower('addForum');
+        if ($id) {
+            $model=  $this->loadModel($id);
+        } else {
+            $model = new ServiceForums;
+        }
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
 
@@ -74,20 +83,7 @@ class ServiceForumsController extends Admin {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
-        $model = $this->loadModel($id);
-
-        // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
-
-        if (isset($_POST['ServiceForums'])) {
-            $model->attributes = $_POST['ServiceForums'];
-            if ($model->save())
-                $this->redirect(array('view', 'id' => $model->id));
-        }
-
-        $this->render('update', array(
-            'model' => $model,
-        ));
+        $this->actionCreate($id);
     }
 
     /**
@@ -96,11 +92,11 @@ class ServiceForumsController extends Admin {
      * @param integer $id the ID of the model to be deleted
      */
     public function actionDelete($id) {
-        $this->loadModel($id)->delete();
-
+        $this->checkPower('delForum');        
+        $this->loadModel($id)->updateByPk($id,array('status'=>  Posts::STATUS_DELED));
         // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
         if (!isset($_GET['ajax']))
-            $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+            $this->redirect(array('index'));
     }
 
     /**
