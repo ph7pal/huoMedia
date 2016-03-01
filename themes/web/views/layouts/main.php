@@ -1,5 +1,5 @@
 <?php $this->beginContent('/layouts/common'); ?>
-<nav class="navbar navbar-primary">
+<nav class="navbar navbar-default">
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">

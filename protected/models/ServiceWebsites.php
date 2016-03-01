@@ -159,7 +159,7 @@ class ServiceWebsites extends CActiveRecord {
     }
 
     public static function getTags() {
-        $cacheKey = Posts::cacheKeys('blogTags');
+        $cacheKey = Posts::cacheKeys('siteTags');
         $expire = Posts::CACHEEXPIRE;
         $posts = zmf::getFCache($cacheKey);
         if (!$posts) {

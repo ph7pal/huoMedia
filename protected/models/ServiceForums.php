@@ -104,7 +104,7 @@ class ServiceForums extends CActiveRecord {
     }
 
     public static function getTags() {
-        $cacheKey = Posts::cacheKeys('blogTags');
+        $cacheKey = Posts::cacheKeys('forumTags');
         $expire = Posts::CACHEEXPIRE;
         $posts = zmf::getFCache($cacheKey);
         if (!$posts) {

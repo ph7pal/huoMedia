@@ -56,13 +56,15 @@
         <input type="hidden" name="download" value="<?php echo $downloadCode;?>"/>
         <?php $this->renderPartial($view, array('posts' => $posts,'from'=>'detail','type'=>$type)); ?>
         <div class="row content-pager">
-            <div class="col-xs-8">
+            <div class="col-sm-9 col-xs-12">
                 <?php $this->renderPartial('/common/pager',array('pages'=>$pages));?>
             </div>
-            <div class="col-xs-4">
-                <div class="btn-group pull-right" role="group">
-                    <input id="allcheck" type="button" value="全选" class="btn btn-default btn-sm" onclick="selectAll('selected[]','allcheck');">
-                    <button type="submit" class="btn btn-default btn-sm">导出选中到Excel</button>
+            <div class="col-sm-3 col-xs-12">
+                <div class="hidden-xs">
+                    <div class="btn-group pull-right" role="group">
+                        <input id="allcheck" type="button" value="全选" class="btn btn-default btn-sm" onclick="selectAll('selected[]','allcheck');">
+                        <button type="submit" class="btn btn-default btn-sm">导出选中到Excel</button>
+                    </div>
                 </div>
             </div>
         </div>
