@@ -8,41 +8,6 @@ class ServiceWebsitesController extends Admin {
     }
 
     /**
-     * @return array action filters
-     */
-    public function filters() {
-        return array(
-            'accessControl', // perform access control for CRUD operations
-            'postOnly + delete', // we only allow deletion via POST request
-        );
-    }
-
-    /**
-     * Specifies the access control rules.
-     * This method is used by the 'accessControl' filter.
-     * @return array access control rules
-     */
-    public function accessRules() {
-        return array(
-            array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('index', 'view'),
-                'users' => array('*'),
-            ),
-            array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update'),
-                'users' => array('@'),
-            ),
-            array('allow', // allow admin user to perform 'admin' and 'delete' actions
-                'actions' => array('admin', 'delete'),
-                'users' => array('admin'),
-            ),
-            array('deny', // deny all users
-                'users' => array('*'),
-            ),
-        );
-    }
-
-    /**
      * Displays a particular model.
      * @param integer $id the ID of the model to be displayed
      */
@@ -60,19 +25,29 @@ class ServiceWebsitesController extends Admin {
         $this->checkPower('addWebsite');
         if ($id) {
             $model=  $this->loadModel($id);
+            $typeLabel = ServiceWebsites::types($model->type);
         } else {
             $type = zmf::val('type', 1);
             if (!$type) {
                 $this->redirect(array('create', 'type' => 1000));
             }
-            $typeLabel = ServiceWebsites::types($type);
+            $typeCode = ServiceWebsites::getTypeCode($type);
+            $typeLabel = ServiceWebsites::types($typeCode);
             $model = new ServiceWebsites;
-            $model->type = $type;
+            $model->type = $typeCode;
         }
         if (isset($_POST['ServiceWebsites'])) {
             $model->attributes = $_POST['ServiceWebsites'];
-            if ($model->save())
-                $this->redirect(array('view', 'id' => $model->id));
+            if ($model->save()){
+                if(!$id){
+                    Yii::app()->user->setFlash('websiteCreateSuccess', "保存成功！您可以继续添加。");
+                    $this->redirect(array('create','type'=>$type));
+                }else{
+                    $typeCodes=  ServiceWebsites::getTypeCode('admin');
+                    $typeCodesArr=  array_flip($typeCodes);
+                    $this->redirect(array('index','type'=>$typeCodesArr[$model->type]));
+                }
+            }      
         }
         $this->render('create', array(
             'model' => $model,

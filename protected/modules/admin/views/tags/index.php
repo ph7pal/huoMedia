@@ -19,7 +19,7 @@ $this->renderPartial('/tags/_nav');
     <?php foreach ($posts as $tag){?>
     <tr id="tag-<?php echo $tag['id'];?>">
         <td><?php echo $tag['title'];?></td>
-        <td><?php echo Tags::classify($tag['classify']);?></td>
+        <td><?php echo CHtml::link(Tags::classify($tag['classify']),array('index','classify'=>$tag['classify']));?></td>
         <td class="text-right">
             <?php echo CHtml::link('编辑',array('tags/update','id'=>$tag['id']));?>
             <?php echo CHtml::link('删除','javascript:;',array('action'=>'del-content','action-type'=>'tag','action-data'=>  $tag['id'],'action-confirm'=>1,'action-target'=>'tag-'.$tag['id']));?>

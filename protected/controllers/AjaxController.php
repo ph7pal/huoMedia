@@ -14,7 +14,7 @@ class AjaxController extends Q {
             $this->jsonOutPut(0, Yii::t('default', 'loginfirst'));
         }
     }
-    
+
     public function actionFeedback() {
         $content = zmf::val('content', 1);
         if (!$content) {
@@ -43,29 +43,58 @@ class AjaxController extends Q {
         }
     }
 
-    public function actionAreaChildren(){
-        $id=  zmf::val('areaid', 2);
-        $type=  zmf::val('type', 1);
-        if(!$id){
+    public function actionAreaChildren() {
+        $id = zmf::val('areaid', 2);
+        $type = zmf::val('type', 1);
+        if (!$id) {
             $this->jsonOutPut(0, '请选择地区');
         }
-        if($type=='area'){
-            $name='areaFirst';
-        }elseif($type=='areaFirst'){
-            $name='areaSecond';
+        if ($type == 'area') {
+            $name = 'areaFirst';
+        } elseif ($type == 'areaFirst') {
+            $name = 'areaSecond';
         }
-        $areas=  Area::model()->findAll(array(
-            'condition'=>'pid=:id',
-            'order'=>'`order` ASC',
-            'select'=>'area_id,title',
-            'params'=>array(
-                ':id'=>$id
+        $areas = Area::model()->findAll(array(
+            'condition' => 'pid=:id',
+            'order' => '`order` ASC',
+            'select' => 'area_id,title',
+            'params' => array(
+                ':id' => $id
             )
         ));
-        if(empty($areas)){
+        if (empty($areas)) {
             $this->jsonOutPut(1, '');
         }
-        $this->jsonOutPut(1, CHtml::dropDownList($name, '', CHtml::listData($areas, 'area_id', 'title'), array('class'=>'form-control','empty'=>'--请选择--','onclick'=>'getAreaChildren("'.$name.'");')));
+        $this->jsonOutPut(1, CHtml::dropDownList($name, '', CHtml::listData($areas, 'area_id', 'title'), array('class' => 'form-control', 'empty' => '--请选择--', 'onclick' => 'getAreaChildren("' . $name . '");')));
+    }
+
+    public function actionDelContent() {
+        $this->checkLogin();
+        $data = zmf::val('data', 1);
+        $type = zmf::val('type', 1);
+        if (!$data || !$type) {
+            $this->jsonOutPut(0, '数据不全，请核实');
+        }
+        if (!in_array($type, array('tag'))) {
+            $this->jsonOutPut(0, '暂不允许的分类');
+        }
+        switch ($type) {
+            case 'tag':
+                if (!$data || !is_numeric($data)) {
+                    $this->jsonOutPut(0, '您所操作的内容不存在');
+                }
+                if (!$this->checkPower('delTag', $this->uid, true)) {
+                    $this->jsonOutPut(0, '您无权操作');
+                }
+                if (Tags::model()->updateByPk($data, array('status' => Posts::STATUS_DELED))) {
+                    $this->jsonOutPut(1, '已删除');
+                }
+                $this->jsonOutPut(1, '已删除');
+                break;
+            default:
+                $this->jsonOutPut(0, '操作有误');
+                break;
+        }
     }
 
 }

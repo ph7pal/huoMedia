@@ -3,6 +3,10 @@ var beforeModal;
 var ajaxReturn = true;
 var url=window.location.href;
 function rebind() {
+    $("a[action=del-content]").unbind('click').click(function () {
+        var dom = $(this);
+        delContent(dom);
+    });
     //输入框自动变大
     //textareaAutoResize();
     //意见反馈
@@ -31,6 +35,46 @@ function feedback() {
         ajaxReturn = true;
         result = $.parseJSON(result);
         dialog({msg: result['msg']});
+        return false;
+    });
+}
+function delContent(dom) {
+    var acdata = dom.attr("action-data");
+    var t = dom.attr("action-type");
+    var cf = dom.attr('action-confirm');
+    var rurl = dom.attr('action-redirect');
+    var targetBox = dom.attr('action-target');
+    if (!acdata || !t) {
+        return false;
+    }
+    var todo = true;
+    if (parseInt(cf) === 1) {
+        if (confirm('确定删除此内容？')) {
+            todo = true;
+        } else {
+            todo = false;
+        }
+    }
+    if (!todo) {
+        return false;
+    }
+    if (!checkAjax()) {
+        return false;
+    }
+    $.post(zmf.delContentUrl, {type: t, data: acdata, YII_CSRF_TOKEN: zmf.csrfToken}, function (result) {
+        ajaxReturn = true;
+        result = $.parseJSON(result);
+        if (result.status === 1) {
+            if (rurl) {
+                window.location.href = rurl;
+            } else if (targetBox) {
+                $('#' + targetBox).fadeOut(500).remove();                
+            }else {
+                alert(result.msg);
+            }
+        } else {
+            dialog({msg: result.msg});
+        }
         return false;
     });
 }
