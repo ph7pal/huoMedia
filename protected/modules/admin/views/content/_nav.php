@@ -14,6 +14,9 @@ $arr = array(
     'serviceForums' => array('label' => '社区'),
     'serviceBlogs' => array('label' => '博客'),
     'serviceMedias' => array('label' => '媒体'),
+    'serviceWeibo' => array('label' => '微博'),
+    'serviceWeixin' => array('label' => '微信'),
+    'serviceQzone' => array('label' => 'QQ空间'),
     'serviceVideos' => array('label' => '视频网站'),
     'serviceWebsites' => array(
         'label' => '主页',

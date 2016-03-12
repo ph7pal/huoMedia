@@ -20,7 +20,9 @@
                 <li class="<?php echo $_GET['table']=='blog' ? 'active' : '';?>"><?php echo CHtml::link('<i class="fa fa-user"></i> 博客',array('index/more','table'=>'blog'));?></li>
                 <li class="<?php echo $_GET['table']=='media' ? 'active' : '';?>"><?php echo CHtml::link('<i class="fa fa-bullhorn"></i> 媒体',array('index/more','table'=>'media'));?></li>
                 <li class="<?php echo $_GET['table']=='video' ? 'active' : '';?>"><?php echo CHtml::link('<i class="fa fa-play-circle"></i> 视频',array('index/more','table'=>'video'));?></li>
-                <li class="<?php echo $_GET['table']=='site' ? 'active' : '';?>"><?php echo CHtml::link('<i class="fa fa-weibo"></i> 红人馆',array('index/more','table'=>'site','type'=>'meilishuo'));?></li>                
+                <li class="<?php echo $_GET['table']=='weibo' ? 'active' : '';?>"><?php echo CHtml::link('<i class="fa fa-weibo"></i> 微博',array('index/more','table'=>'weibo'));?></li>                
+                <li class="<?php echo $_GET['table']=='weixin' ? 'active' : '';?>"><?php echo CHtml::link('<i class="fa fa-weixin"></i> 微信',array('index/more','table'=>'weixin'));?></li>                
+                <li class="<?php echo $_GET['table']=='qzone' ? 'active' : '';?>"><?php echo CHtml::link('<i class="fa fa-qq"></i> QQ空间',array('index/more','table'=>'qzone'));?></li>                
             </ul>
         </div>
     </div>

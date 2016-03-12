@@ -13,6 +13,27 @@
         </div>
         <?php $this->renderPartial('/index/_blog', array('posts' => $blogs)); ?>    
     </div>
+    <?php }if(!empty($weibos)){?>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">微博<span class="pull-right small"><?php echo CHtml::link('查看更多 <i class="fa fa-arrow-circle-right"></i>',array('index/more','table'=>'weibo'));?></span></h3>
+        </div>
+        <?php $this->renderPartial('/index/_weibo', array('posts' => $weibos)); ?>    
+    </div>
+    <?php }if(!empty($weixins)){?>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">微信<span class="pull-right small"><?php echo CHtml::link('查看更多 <i class="fa fa-arrow-circle-right"></i>',array('index/more','table'=>'weixin'));?></span></h3>
+        </div>
+        <?php $this->renderPartial('/index/_weixin', array('posts' => $weixins)); ?>    
+    </div>
+    <?php }if(!empty($qzones)){?>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">QQ空间<span class="pull-right small"><?php echo CHtml::link('查看更多 <i class="fa fa-arrow-circle-right"></i>',array('index/more','table'=>'qzone'));?></span></h3>
+        </div>
+        <?php $this->renderPartial('/index/_qzone', array('posts' => $qzones)); ?>    
+    </div>
     <?php }if(!empty($medias)){?>
     <div class="panel panel-default">
         <div class="panel-heading">

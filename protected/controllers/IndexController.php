@@ -84,6 +84,24 @@ class IndexController extends Q {
                     ':type' => ServiceWebsites::getTypeCode('douban')
                 )
             ));
+            //微博
+            $weibos = ServiceWeibo::model()->findAll(array(
+                'condition' => 'status=' . Posts::STATUS_PASSED,
+                'limit' => $limit,
+                'order' => 'cTime ASC'
+            ));
+            //微信
+            $weixins = ServiceWeixin::model()->findAll(array(
+                'condition' => 'status=' . Posts::STATUS_PASSED,
+                'limit' => $limit,
+                'order' => 'cTime ASC'
+            ));
+            //空间
+            $qzones = ServiceQzone::model()->findAll(array(
+                'condition' => 'status=' . Posts::STATUS_PASSED,
+                'limit' => $limit,
+                'order' => 'cTime ASC'
+            ));
             $data = array(
                 'forums' => $forums,
                 'blogs' => $blogs,
@@ -93,6 +111,9 @@ class IndexController extends Q {
                 'videos' => $videos,
                 'renrens' => $renrens,
                 'doubans' => $doubans,
+                'weibos' => $weibos,
+                'weixins' => $weixins,
+                'qzones' => $qzones,
             );
             zmf::setFCache($cacheKey, $data, $expire);
         }
@@ -102,7 +123,7 @@ class IndexController extends Q {
 
     public function actionMore() {
         $table = zmf::val('table', 1);
-        if (!$table || !in_array($table, array('forum', 'blog', 'media', 'site', 'video'))) {
+        if (!$table || !in_array($table, array('forum', 'blog', 'media', 'site', 'video','weibo','weixin','qzone'))) {
             $table = 'form';
         }
         $keyword = zmf::val('keyword', 1);
@@ -252,6 +273,54 @@ class IndexController extends Q {
             $view = '/index/_video';
             $title = '视频网站';
             $tags = ServiceVideos::getTags();
+        }elseif ($table == 'weibo') {
+            $weiboClassify = zmf::val('weiboClassify', 2);
+            $criteria = new CDbCriteria();
+            if ($weiboClassify) {
+                $criteria->addCondition('classify=:classify');
+                $criteria->params[':classify'] = $weiboClassify;
+            }
+            if ($keyword) {
+                $criteria->addSearchCondition('nickname', $keyword);
+            }
+            $criteria->addCondition('status=' . Posts::STATUS_PASSED);
+            $criteria->order = 'cTime DESC';
+            $count = ServiceWeibo::model()->count($criteria);
+            $pager = new CPagination($count);
+            $pager->pageSize = 30;
+            $pager->applyLimit($criteria);
+            $posts = ServiceWeibo::model()->findAll($criteria);
+            $view = '/index/_weibo';
+            $title = '微博';
+            $tags = ServiceWeibo::getTags();
+        }elseif ($table == 'weixin') {
+            $weixinClassify = zmf::val('weixinClassify', 2);
+            $criteria = new CDbCriteria();
+            if ($weixinClassify) {
+                $criteria->addCondition('classify=:classify');
+                $criteria->params[':classify'] = $weixinClassify;
+            }
+            $criteria->addCondition('status=' . Posts::STATUS_PASSED);
+            $criteria->order = 'cTime DESC';
+            $count = ServiceWeixin::model()->count($criteria);
+            $pager = new CPagination($count);
+            $pager->pageSize = 30;
+            $pager->applyLimit($criteria);
+            $posts = ServiceWeixin::model()->findAll($criteria);
+            $view = '/index/_weixin';
+            $title = '微信';
+            $tags = ServiceWeixin::getTags();
+        }elseif ($table == 'qzone') {
+            $criteria = new CDbCriteria();            
+            $criteria->addCondition('status=' . Posts::STATUS_PASSED);
+            $criteria->order = 'cTime DESC';
+            $count = ServiceQzone::model()->count($criteria);
+            $pager = new CPagination($count);
+            $pager->pageSize = 30;
+            $pager->applyLimit($criteria);
+            $posts = ServiceQzone::model()->findAll($criteria);
+            $view = '/index/_qzone';
+            $title = 'QQ空间';
         }
         if(!$view){
             throw new CHttpException(404, '您所查看的页面不存在.');
@@ -281,7 +350,7 @@ class IndexController extends Q {
         if ($codeFromSession != $this->downloadCode) {
             throw new CHttpException(404, '请勿重复刷新页面.');
         }
-        if (!$table || !in_array($table, array('forum', 'blog', 'media', 'site', 'video'))) {
+        if (!$table || !in_array($table, array('forum', 'blog', 'media', 'site', 'video','weibo','weixin','qzone'))) {
             throw new CHttpException(404, '不允许的分类.');
         }
         $selected = $_POST['selected'];
@@ -340,6 +409,27 @@ class IndexController extends Q {
                 'condition' => "id IN ({$idsStr})",
                 'select' => $selectAttr
             ));
+        }elseif ($table == 'weibo') {
+            $selectAttr = 'classify,nickname,url,favors,shenfen,location,ptzhuanfa,ptzhifa,ygzhuanfa,ygzhifa';
+            $model = new ServiceWeibo();
+            $posts = $model->findAll(array(
+                'condition' => "id IN ({$idsStr})",
+                'select' => $selectAttr
+            ));
+        }elseif ($table == 'weixin') {
+            $selectAttr = 'classify,nickname,account,favors,danTuwen,duoTuwen,renzhen';
+            $model = new ServiceWeixin();
+            $posts = $model->findAll(array(
+                'condition' => "id IN ({$idsStr})",
+                'select' => $selectAttr
+            ));
+        }elseif ($table == 'qzone') {
+            $selectAttr = 'nickname,url,favors,shuoshuo';
+            $model = new ServiceQzone();
+            $posts = $model->findAll(array(
+                'condition' => "id IN ({$idsStr})",
+                'select' => $selectAttr
+            ));
         }
         if (empty($posts)) {
             throw new CHttpException(404, '没有数据需要导出.');
@@ -349,7 +439,7 @@ class IndexController extends Q {
         foreach ($attrKeys as $k => $_attr) {
             $_char = $charterArr[$k + 1];
             $_extra = '';
-            if (in_array($_attr, array('price', 'forDigest', 'forDay', 'forWeek', 'forTwoWeek', 'forMonth', 'forQuarter', 'forHalfYear', 'forYear'))) {
+            if (in_array($_attr, array('price', 'forDigest', 'forDay', 'forWeek', 'forTwoWeek', 'forMonth', 'forQuarter', 'forHalfYear', 'forYear','ptzhuanfa','ptzhifa','ygzhuanfa','ygzhifa','danTuwen','duoTuwen','shuoshuo'))) {
                 $_extra = '（元）';
             }
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($_char . '1', $model->getAttributeLabel($_attr) . $_extra);

@@ -223,6 +223,8 @@ class Posts extends CActiveRecord {
             'videoTags' => 'serviceVideoTags',
             'siteTags' => 'serviceWebsiteTags',
             'indexPage' => 'indexPageNews',
+            'weixinTags' => 'serviceWeixinTags',
+            'weiboTags' => 'serviceWeiboTags',
         );
         if($return!='admin'){
             return $arr[$return];

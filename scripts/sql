@@ -349,3 +349,55 @@ CREATE TABLE `pre_users` (
 
 
 alter table pre_tags add pid int(10) not null COMMENT '所属ID';
+
+DROP TABLE IF EXISTS `pre_service_weibo`;
+CREATE TABLE `pre_service_weibo` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uid` int(10) unsigned NOT NULL COMMENT '作者ID',
+  `classify` int(10) unsigned NOT NULL COMMENT '分类',
+  `nickname` varchar(255) NOT NULL COMMENT '昵称',
+  `url` varchar(255) NOT NULL COMMENT '链接',
+  `favors` varchar(255) NOT NULL COMMENT '粉丝数量',
+  `shenfen` varchar(255) NOT NULL COMMENT '身份',
+  `area` int(10) unsigned NOT NULL COMMENT '地区',
+  `location` varchar(255) NOT NULL COMMENT '地区',
+  `sex` tinyint(1) unsigned NOT NULL COMMENT '性别',
+  `ptzhuanfa` varchar(255) NOT NULL COMMENT '普通转发',
+  `ptzhifa` varchar(255) NOT NULL COMMENT '普通直发',
+  `ygzhuanfa` varchar(255) NOT NULL COMMENT '硬广转发',
+  `ygzhifa` varchar(255) NOT NULL COMMENT '硬广直发',
+  `desc` varchar(255) NOT NULL COMMENT '账号介绍',
+  `postscript` varchar(255) NOT NULL COMMENT '备注',
+  `cTime` int(10) unsigned NOT NULL COMMENT '创建时间',
+  `status` tinyint(3) NOT NULL COMMENT '状态',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `pre_service_weixin`;
+CREATE TABLE `pre_service_weixin` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uid` int(10) unsigned NOT NULL COMMENT '作者ID',
+  `classify` int(10) unsigned NOT NULL COMMENT '分类',
+  `nickname` varchar(255) NOT NULL COMMENT '微信名称',
+  `account` varchar(255) NOT NULL COMMENT '微信号',  
+  `favors` varchar(255) NOT NULL COMMENT '粉丝数量',
+  `danTuwen` varchar(255) NOT NULL COMMENT '单图文价格',
+  `duoTuwen` varchar(255) NOT NULL COMMENT '多图文价格',
+  `renzhen` varchar(255) NOT NULL COMMENT '认证情况',  
+  `cTime` int(10) unsigned NOT NULL COMMENT '创建时间',
+  `status` tinyint(3) NOT NULL COMMENT '状态',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `pre_service_qzone`;
+CREATE TABLE `pre_service_qzone` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uid` int(10) unsigned NOT NULL COMMENT '作者ID',  
+  `nickname` varchar(255) NOT NULL COMMENT '昵称',
+  `url` varchar(255) NOT NULL COMMENT '链接',
+  `favors` varchar(255) NOT NULL COMMENT '粉丝数量',
+  `shuoshuo` varchar(255) NOT NULL COMMENT '说说价格',
+  `cTime` int(10) unsigned NOT NULL COMMENT '创建时间',
+  `status` tinyint(3) NOT NULL COMMENT '状态',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
