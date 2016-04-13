@@ -123,7 +123,7 @@ class IndexController extends Q {
 
     public function actionMore() {
         $table = zmf::val('table', 1);
-        if (!$table || !in_array($table, array('forum', 'blog', 'media', 'site', 'video','weibo','weixin','qzone'))) {
+        if (!$table || !in_array($table, array('forum', 'blog', 'media', 'site', 'video', 'weibo', 'weixin', 'qzone'))) {
             $table = 'form';
         }
         $keyword = zmf::val('keyword', 1);
@@ -169,7 +169,7 @@ class IndexController extends Q {
             if ($keyword) {
                 $criteria->addSearchCondition('nickname', $keyword);
             }
-            if($level){
+            if ($level) {
                 $criteria->addCondition('level=:level');
                 $criteria->params[':level'] = $level;
             }
@@ -273,7 +273,7 @@ class IndexController extends Q {
             $view = '/index/_video';
             $title = '视频网站';
             $tags = ServiceVideos::getTags();
-        }elseif ($table == 'weibo') {
+        } elseif ($table == 'weibo') {
             $weiboClassify = zmf::val('weiboClassify', 2);
             $criteria = new CDbCriteria();
             if ($weiboClassify) {
@@ -293,7 +293,7 @@ class IndexController extends Q {
             $view = '/index/_weibo';
             $title = '微博';
             $tags = ServiceWeibo::getTags();
-        }elseif ($table == 'weixin') {
+        } elseif ($table == 'weixin') {
             $weixinClassify = zmf::val('weixinClassify', 2);
             $criteria = new CDbCriteria();
             if ($weixinClassify) {
@@ -310,8 +310,8 @@ class IndexController extends Q {
             $view = '/index/_weixin';
             $title = '微信';
             $tags = ServiceWeixin::getTags();
-        }elseif ($table == 'qzone') {
-            $criteria = new CDbCriteria();            
+        } elseif ($table == 'qzone') {
+            $criteria = new CDbCriteria();
             $criteria->addCondition('status=' . Posts::STATUS_PASSED);
             $criteria->order = 'cTime DESC';
             $count = ServiceQzone::model()->count($criteria);
@@ -322,7 +322,7 @@ class IndexController extends Q {
             $view = '/index/_qzone';
             $title = 'QQ空间';
         }
-        if(!$view){
+        if (!$view) {
             throw new CHttpException(404, '您所查看的页面不存在.');
         }
         $this->pageTitle = $title . ' - ' . zmf::config('sitename');
@@ -350,7 +350,7 @@ class IndexController extends Q {
         if ($codeFromSession != $this->downloadCode) {
             throw new CHttpException(404, '请勿重复刷新页面.');
         }
-        if (!$table || !in_array($table, array('forum', 'blog', 'media', 'site', 'video','weibo','weixin','qzone'))) {
+        if (!$table || !in_array($table, array('forum', 'blog', 'media', 'site', 'video', 'weibo', 'weixin', 'qzone'))) {
             throw new CHttpException(404, '不允许的分类.');
         }
         $selected = $_POST['selected'];
@@ -409,21 +409,21 @@ class IndexController extends Q {
                 'condition' => "id IN ({$idsStr})",
                 'select' => $selectAttr
             ));
-        }elseif ($table == 'weibo') {
+        } elseif ($table == 'weibo') {
             $selectAttr = 'classify,nickname,url,favors,shenfen,location,ptzhuanfa,ptzhifa,ygzhuanfa,ygzhifa';
             $model = new ServiceWeibo();
             $posts = $model->findAll(array(
                 'condition' => "id IN ({$idsStr})",
                 'select' => $selectAttr
             ));
-        }elseif ($table == 'weixin') {
+        } elseif ($table == 'weixin') {
             $selectAttr = 'classify,nickname,account,favors,danTuwen,duoTuwen,renzhen';
             $model = new ServiceWeixin();
             $posts = $model->findAll(array(
                 'condition' => "id IN ({$idsStr})",
                 'select' => $selectAttr
             ));
-        }elseif ($table == 'qzone') {
+        } elseif ($table == 'qzone') {
             $selectAttr = 'nickname,url,favors,shuoshuo';
             $model = new ServiceQzone();
             $posts = $model->findAll(array(
@@ -439,7 +439,7 @@ class IndexController extends Q {
         foreach ($attrKeys as $k => $_attr) {
             $_char = $charterArr[$k + 1];
             $_extra = '';
-            if (in_array($_attr, array('price', 'forDigest', 'forDay', 'forWeek', 'forTwoWeek', 'forMonth', 'forQuarter', 'forHalfYear', 'forYear','ptzhuanfa','ptzhifa','ygzhuanfa','ygzhifa','danTuwen','duoTuwen','shuoshuo'))) {
+            if (in_array($_attr, array('price', 'forDigest', 'forDay', 'forWeek', 'forTwoWeek', 'forMonth', 'forQuarter', 'forHalfYear', 'forYear', 'ptzhuanfa', 'ptzhifa', 'ygzhuanfa', 'ygzhifa', 'danTuwen', 'duoTuwen', 'shuoshuo'))) {
                 $_extra = '（元）';
             }
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue($_char . '1', $model->getAttributeLabel($_attr) . $_extra);
@@ -451,9 +451,9 @@ class IndexController extends Q {
                 }
                 $_char = $charterArr[$k + 1];
                 if (in_array($_attr, array('type', 'classify', 'forum', 'position'))) {
-                    if($table=='site' && $_attr=='type'){
-                        $_value=  ServiceWebsites::types($pv->$_attr);
-                    }else{
+                    if ($table == 'site' && $_attr == 'type') {
+                        $_value = ServiceWebsites::types($pv->$_attr);
+                    } else {
                         $_battr = $_attr . 'Info';
                         $_value = $pv->$_battr->title;
                     }
@@ -493,4 +493,209 @@ class IndexController extends Q {
         //$this->redirect($this->referer);
         exit;
     }
+
+    public function actionIntoTags() {
+        $page = zmf::val('page', 2);
+        $page = $page > 1 ? $page : 1;
+        $limit = 30;
+        $classify = 'websiteClassify';
+        $dir = Yii::app()->basePath . '/runtime/tags';
+        $filename = $dir . '/tags.txt';
+        $items = file($filename);
+        $items = array_map('self::trimall', $items);
+        $items = array_unique(array_filter($items));
+        foreach ($items as $k => $str) {
+            preg_match('/^(.+?)(?=，|,|、).*?/', $str, $m);
+            $items[$k] = !empty($m) ? $m[0] : $str;
+        }
+        zmf::test($items);
+        exit();
+        foreach ($items as $_tag) {
+            $_data = array(
+                'title' => $_tag,
+                'classify' => $classify,
+            );
+            $modelB = new Tags;
+            $modelB->attributes = $_data;
+            $modelB->save();
+        }
+        echo 'well done!!';
+    }
+
+    public function actionInto() {
+        $classify = 'douban';
+        $dir = Yii::app()->basePath . '/runtime/tags';
+        $filename = $dir . '/' . $classify . '.txt';
+        $items = file($filename);
+        $items = array_map('self::trimall', $items);
+        $items = array_unique(array_filter($items));
+        foreach ($items as $_tag) {
+            $_arr = explode('@', $_tag);
+            if ($classify == 'video') {
+                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'videoType'));
+                if (!$_info1) {
+                    continue;
+                }
+                $_info2 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[1], ':classify' => 'videoClassify'));
+                if (!$_info2) {
+                    continue;
+                }
+                $_info3 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[2], ':classify' => 'videoPosition'));
+                if (!$_info3) {
+                    continue;
+                }
+                $_data = array(
+                    'uid' => 1,
+                    'type' => $_info1['id'],
+                    'classify' => $_info2['id'],
+                    'position' => $_info3['id'],
+                    'url' => $_arr[3],
+                    'stayTime' => $_arr[4],
+                    'price' => zmf::myint($_arr[5]),
+                );
+                $modelB = new ServiceVideos;
+                $modelB->attributes = $_data;
+                $modelB->save();
+            } elseif ($classify == 'meilishuo') {
+                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[1], ':classify' => 'websiteClassify'));
+                if (!$_info1) {
+                    continue;
+                }
+                $_data = array(
+                    'uid' => 1,
+                    'type' => 'meilishuo',
+                    'classify' => $_info1['id'],
+                    'nickname' => $_arr[2],
+                    'url' => $_arr[3],
+                    'favors' => zmf::myint($_arr[4]) * 10000,
+                    'price' => zmf::myint($_arr[5]),
+                );
+                $modelB = new ServiceWebsites;
+                $modelB->attributes = $_data;
+                $modelB->save();
+            } elseif ($classify == 'mogu') {
+                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'websiteClassify'));
+                if (!$_info1) {
+                    continue;
+                }
+                $_data = array(
+                    'uid' => 1,
+                    'type' => '1001',
+                    'classify' => $_info1['id'],
+                    'nickname' => $_arr[1],
+                    'url' => $_arr[2],
+                    'favors' => zmf::myint($_arr[3]) * 10000,
+                    'price' => zmf::myint($_arr[4]),
+                );
+                $modelB = new ServiceWebsites;
+                $modelB->attributes = $_data;
+                $modelB->save();
+            } elseif ($classify == 'renren') {
+                $_info1 = Area::model()->find("title LIKE '%{$_arr[2]}%'");
+                $_data = array(
+                    'uid' => 1,
+                    'type' => '1002',
+                    'nickname' => $_arr[0],
+                    'url' => $_arr[3],
+                    'favors' => zmf::myint($_arr[3]),
+                    'price' => zmf::myint($_arr[6]),
+                    'vipInfo' => $_arr[5],
+                    'sex' => $_arr[1] == '女' ? 2 : ($_arr[1] == '男' ? 1 : ''),
+                    'area' => $_info1['area_id'],
+                    'location' => $_arr[2],
+                );
+                $modelB = new ServiceWebsites;
+                $modelB->attributes = $_data;
+                $modelB->save();
+            } elseif ($classify == 'douban') {
+                $_info1 = Area::model()->find("title LIKE '%{$_arr[4]}%'");
+                $_data = array(
+                    'uid' => 1,
+                    'type' => '1003',
+                    'nickname' => $_arr[0],
+                    'url' => $_arr[2],
+                    'favors' => zmf::myint($_arr[1]) * 10000,
+                    'price' => zmf::myint($_arr[3]),
+                    'area' => $_info1['area_id'],
+                    'location' => Area::getBelongInfo($_info1['area_id']),
+                );
+                $modelB = new ServiceWebsites;
+                $modelB->attributes = $_data;
+                $modelB->save();
+            } elseif ($classify == 'weibo') {
+                preg_match('/^(.+?)(?=，|,|、).*?/', $_arr[0], $m);
+                $_arr[0] = !empty($m) ? $m[0] : $_arr[0];
+                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'weiboClassify'));
+                if (!$_info1) {
+                    continue;
+                }
+                $_data = array(
+                    'uid' => 1,
+                    'type' => '1001',
+                    'classify' => $_info1['id'],
+                    'nickname' => $_arr[1],
+                    'url' => $_arr[2],
+                    'favors' => zmf::myint($_arr[3]) * 10000,
+                    'price' => zmf::myint($_arr[4]),
+                );
+                $_data = array(
+                    'uid' => 1,
+                    'classify' => $_info1['id'],
+                    'nickname' => '微博号',
+                    'url' => '链接',
+                    'favors' => '粉丝数量',
+                    'shenfen' => '身份',
+                    'area' => '地区',
+                    'location' => '地区',
+                    'sex' => '性别',
+                    'ptzhuanfa' => '普通转发',
+                    'ptzhifa' => '普通直发',
+                    'ygzhuanfa' => '硬广转发',
+                    'ygzhifa' => '硬广直发',
+                    'desc' => '账号介绍',
+                    'postscript' => '备注',
+                );
+                $modelB = new ServiceWeibo;
+                $modelB->attributes = $_data;
+                $modelB->save();
+            } elseif ($classify == 'weixin') {
+                preg_match('/^(.+?)(?=，|,|、).*?/', $_arr[0], $m);
+                $_arr[0] = !empty($m) ? $m[0] : $_arr[0];
+                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'weixinClassify'));
+                if (!$_info1) {
+                    continue;
+                }
+                $_data = array(
+                    'uid' => 1,
+                    'type' => '1001',
+                    'classify' => $_info1['id'],
+                    'nickname' => $_arr[1],
+                    'url' => $_arr[2],
+                    'favors' => zmf::myint($_arr[3]) * 10000,
+                    'price' => zmf::myint($_arr[4]),
+                );
+                $_data = array(
+                    'uid' => 1,
+                    'classify' => $_info1['id'],
+                    'nickname' => '微信名称',
+                    'account' => '微信号',
+                    'favors' => '粉丝数量',
+                    'danTuwen' => '单图文价格',
+                    'duoTuwen' => '多图文价格',
+                    'renzhen' => '认证情况',
+                );
+                $modelB = new ServiceWeixin;
+                $modelB->attributes = $_data;
+                $modelB->save();
+            }
+        }
+        echo 'well done!!';
+    }
+
+    function trimall($str) {//删除空格
+        $qian = array(" ", "　", "\t", "\n", "\r");
+        $hou = array("", "", "", "", "");
+        return str_replace($qian, $hou, $str);
+    }
+
 }
