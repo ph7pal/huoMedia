@@ -495,10 +495,11 @@ class IndexController extends Q {
     }
 
     public function actionIntoTags() {
+        exit('closed');
         $page = zmf::val('page', 2);
         $page = $page > 1 ? $page : 1;
         $limit = 30;
-        $classify = 'websiteClassify';
+        $classify = 'weixinClassify';
         $dir = Yii::app()->basePath . '/runtime/tags';
         $filename = $dir . '/tags.txt';
         $items = file($filename);
@@ -508,13 +509,14 @@ class IndexController extends Q {
             preg_match('/^(.+?)(?=，|,|、).*?/', $str, $m);
             $items[$k] = !empty($m) ? $m[0] : $str;
         }
-        zmf::test($items);
-        exit();
         foreach ($items as $_tag) {
             $_data = array(
                 'title' => $_tag,
                 'classify' => $classify,
             );
+            if(Tags::model()->findByAttributes($_data)){
+                continue;
+            }
             $modelB = new Tags;
             $modelB->attributes = $_data;
             $modelB->save();
@@ -523,7 +525,8 @@ class IndexController extends Q {
     }
 
     public function actionInto() {
-        $classify = 'douban';
+        exit('closed');
+        $classify = 'weixin';
         $dir = Yii::app()->basePath . '/runtime/tags';
         $filename = $dir . '/' . $classify . '.txt';
         $items = file($filename);
@@ -622,38 +625,26 @@ class IndexController extends Q {
                 $modelB = new ServiceWebsites;
                 $modelB->attributes = $_data;
                 $modelB->save();
-            } elseif ($classify == 'weibo') {
+            } elseif ($classify == 'weibo') {                
                 preg_match('/^(.+?)(?=，|,|、).*?/', $_arr[0], $m);
                 $_arr[0] = !empty($m) ? $m[0] : $_arr[0];
-                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'weiboClassify'));
-                if (!$_info1) {
-                    continue;
+                if($_arr[0]!=''){
+                    $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'weiboClassify'));
                 }
                 $_data = array(
                     'uid' => 1,
-                    'type' => '1001',
-                    'classify' => $_info1['id'],
+                    'classify' => $_info1['id'] ? $_info1['id'] : 0,
                     'nickname' => $_arr[1],
                     'url' => $_arr[2],
-                    'favors' => zmf::myint($_arr[3]) * 10000,
-                    'price' => zmf::myint($_arr[4]),
-                );
-                $_data = array(
-                    'uid' => 1,
-                    'classify' => $_info1['id'],
-                    'nickname' => '微博号',
-                    'url' => '链接',
-                    'favors' => '粉丝数量',
-                    'shenfen' => '身份',
-                    'area' => '地区',
-                    'location' => '地区',
-                    'sex' => '性别',
-                    'ptzhuanfa' => '普通转发',
-                    'ptzhifa' => '普通直发',
-                    'ygzhuanfa' => '硬广转发',
-                    'ygzhifa' => '硬广直发',
-                    'desc' => '账号介绍',
-                    'postscript' => '备注',
+                    'favors' => is_numeric($_arr[3]) ? $_arr[3] : '',
+                    'shenfen' => $_arr[4],
+                    'location' => $_arr[5],
+                    'ptzhuanfa' => $_arr[6],
+                    'ptzhifa' => $_arr[7],
+                    'ygzhuanfa' => $_arr[8],
+                    'ygzhifa' => $_arr[9],
+                    'desc' => $_arr[10],
+                    'postscript' => $_arr[11],
                 );
                 $modelB = new ServiceWeibo;
                 $modelB->attributes = $_data;
@@ -661,28 +652,18 @@ class IndexController extends Q {
             } elseif ($classify == 'weixin') {
                 preg_match('/^(.+?)(?=，|,|、).*?/', $_arr[0], $m);
                 $_arr[0] = !empty($m) ? $m[0] : $_arr[0];
-                $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'weixinClassify'));
-                if (!$_info1) {
-                    continue;
+                if($_arr[0]!=''){
+                    $_info1 = Tags::model()->find('title=:title AND classify=:classify', array(':title' => $_arr[0], ':classify' => 'weixinClassify'));
                 }
                 $_data = array(
                     'uid' => 1,
-                    'type' => '1001',
-                    'classify' => $_info1['id'],
+                    'classify' => $_info1['id'] ? $_info1['id'] : 0,
                     'nickname' => $_arr[1],
-                    'url' => $_arr[2],
-                    'favors' => zmf::myint($_arr[3]) * 10000,
-                    'price' => zmf::myint($_arr[4]),
-                );
-                $_data = array(
-                    'uid' => 1,
-                    'classify' => $_info1['id'],
-                    'nickname' => '微信名称',
-                    'account' => '微信号',
-                    'favors' => '粉丝数量',
-                    'danTuwen' => '单图文价格',
-                    'duoTuwen' => '多图文价格',
-                    'renzhen' => '认证情况',
+                    'account' => $_arr[2],
+                    'favors' => zmf::myint($_arr[3]),
+                    'danTuwen' => is_numeric($_arr[4]) ? $_arr[4] : '',
+                    'duoTuwen' => is_numeric($_arr[5]) ? $_arr[5] : '',
+                    'renzhen' => $_arr[6],
                 );
                 $modelB = new ServiceWeixin;
                 $modelB->attributes = $_data;
