@@ -73,10 +73,19 @@ class ServiceWeixinController extends Admin {
     /**
      * Lists all models.
      */
-    public function actionIndex() {
-        $dataProvider = new CActiveDataProvider('ServiceWeixin');
+    public function actionIndex() {        
+        $criteria = new CDbCriteria();
+        $criteria->addCondition('status=' . Posts::STATUS_PASSED);
+        $criteria->order = 'cTime DESC';
+        $count = ServiceWeixin::model()->count($criteria);
+        $pager = new CPagination($count);
+        $pager->pageSize = 30;
+        $pager->applyLimit($criteria);
+        $posts = ServiceWeixin::model()->findAll($criteria);
+
         $this->render('index', array(
-            'dataProvider' => $dataProvider,
+            'pages' => $pager,
+            'posts' => $posts,
         ));
     }
 
