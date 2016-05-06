@@ -21,6 +21,7 @@ $this->renderPartial('/content/_nav');
         <th>链接</th>
         <th>粉丝</th>
         <th>身份</th>
+        <th>地区</th>
         <th>普通转发</th>
         <th>普通直发</th>
         <th>硬广转发</th>
